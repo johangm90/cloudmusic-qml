@@ -1,0 +1,353 @@
+# Czech translation for cloudmusic
+# Copyright (c) 2015 Rosetta Contributors and Canonical Ltd 2015
+# This file is distributed under the same license as the cloudmusic package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cloudmusic\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2017-02-04 03:42+0000\n"
+"PO-Revision-Date: 2015-09-10 01:58+0000\n"
+"Last-Translator: zubozrout <zubozrout@gmail.com>\n"
+"Language-Team: Czech <cs@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Launchpad-Export-Date: 2017-03-19 06:51+0000\n"
+"X-Generator: Launchpad (build 18332)\n"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:45
+#, qt-format
+msgid "%1 songs played today"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:46
+msgid "0 songs played today"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:71
+#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:10
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:13
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:17
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SearchHistory.qml:13
+msgid "Search"
+msgstr "Hledat"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:79
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:230
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:272
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:178
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:251
+msgid "Download"
+msgstr "Stáhnout"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:105
+msgid "Migration required"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:119
+msgid ""
+"This migration is to ensure your previous database works properly. If you "
+"haven't run CloudMusic before, click the button anyway and you'll have a "
+"fresh database"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:130
+msgid "Migrate"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:233
+#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:150
+#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:151
+msgid "Artist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:252
+msgid "Album"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:258
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:95
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:238
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:280
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:259
+msgid "Add to playlist"
+msgstr "Přidat do seznamu skladeb"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:284
+msgid "Playlist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:302
+#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:251
+#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:252
+msgid "Now Playing"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:306
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/NowPlaying.qml:145
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Queue.qml:9
+msgid "Queue"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:11
+msgid "What's new?"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:38
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:107
+msgid "Donate"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:47
+msgid "Rate this app!"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:54
+msgid "Close"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:36
+msgid "Album added to playlist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:39
+msgid "Song added to playlist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:57
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:49
+msgid "New playlist"
+msgstr "Nový seznam skladeb"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:61
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:53
+msgid "Enter playlist name"
+msgstr "Zadat název seznamu skladeb"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:71
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:62
+msgid "Create"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:81
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:147
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:72
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:110
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:138
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:96
+msgid "Select one playlist to add"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:110
+msgid "Create new playlist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:137
+msgid "Add"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:19
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/NewAlbums.qml:15
+msgid "New Albums"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:28
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/TopArtists.qml:15
+msgid "Top Artists"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:37
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:26
+msgid "Playlists"
+msgstr "Seznamy skladeb"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:46
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:14
+msgid "Settings"
+msgstr "Nastavení"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:55
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:15
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:30
+msgid "About"
+msgstr "O aplikaci"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:30
+msgid "Credits"
+msgstr ""
+
+#. TRANSLATORS: App version number e.g Version 1.0.0
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:79
+#, qt-format
+msgid "Version %1"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:100
+msgid "Released under the terms of the GNU GPL v3"
+msgstr "Vydáno pod podmínkami licence GNU GPL v3"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:117
+#, qt-format
+msgid "Report bugs on %1"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:249
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:291
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:196
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:270
+msgid "Add to queue"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:257
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:299
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:204
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:278
+msgid "Song added to queue"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:261
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:217
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:291
+msgid "Go to artist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:226
+msgid "Top Songs"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:303
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:208
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:282
+msgid "Go to album"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:427
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:423
+msgid "Albums"
+msgstr ""
+
+#. TRANSLATORS: %1 refers to the amount of songs in album
+#. TRANSLATORS: %1 refers to the amount of songs in playlist
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:498
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:211
+#, qt-format
+msgid "%1 song"
+msgid_plural "%1 songs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Credits.qml:12
+msgid "Developers"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Credits.qml:13
+msgid "Icon"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Credits.qml:14
+msgid "Translators"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/NewAlbums.qml:45
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/TopArtists.qml:45
+msgid ""
+"An error occurred\n"
+"Touch to retry"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:62
+msgid "Available offline"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:186
+msgid "Remove"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:192
+msgid "Song removed"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:34
+msgid "Add Playlist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:85
+msgid "Edit playlist"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:90
+msgid "Edit playlist name"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:100
+msgid "Save"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:124
+msgid "Delete playlist"
+msgstr "Smazat seznam skladeb"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:125
+msgid "This cannot be undone"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:128
+msgid "Delete"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:209
+msgid "Songs"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:513
+msgid "Artists"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:31
+msgid "Download quality"
+msgstr "Kvalita stahované hudby"
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:37
+msgid "Streaming quality"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:54
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:84
+msgid "Normal"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:54
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:84
+msgid "High"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:54
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:84
+msgid "Extreme"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:102
+msgid "Ambiance"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:102
+msgid "SuruDark"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:104
+msgid "Theme"
+msgstr ""
+
+#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:443
+msgid "I'm sorry but I forgot that lyric :("
+msgstr ""
+
+#: /home/johan/Develop/qml/build-CloudMusic-UbuntuSDK_for_desktop_GCC_amd64_ubuntu_sdk_16_04-Debug/apu/apu.desktop.h:1
+msgid "Cloud Music"
+msgstr ""

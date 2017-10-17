@@ -1,0 +1,2 @@
+DISTFILES += \
+    TopArtists.qml
