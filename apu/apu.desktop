@@ -1,9 +1,0 @@
-[Desktop Entry]
-_Name=Cloud Music
-Exec=qmlscene %U apu/Main.qml
-Icon=apu/apu.png
-Terminal=false
-Type=Application
-X-Ubuntu-Touch=true
-X-Ubuntu-Splash-Color=#333
-

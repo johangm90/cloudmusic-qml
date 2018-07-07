@@ -1,9 +1,0 @@
-{
-    "policy_groups": [
-        "networking",
-        "audio",
-        "content_exchange_source",
-        "usermetrics"
-    ],
-    "policy_version": 1.3
-}
