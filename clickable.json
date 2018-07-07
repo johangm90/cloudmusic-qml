@@ -1,0 +1,8 @@
+{
+  "template": "cmake",
+  "kill": "qmlscene",
+  "dependencies": [
+      "fonts-wqy-zenhei",
+      "gstreamer1.0-fluendo-mp3"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+    "name": "apu.johangm90",
+    "description": "A music player for ubuntu touch",
+    "architecture": "@CLICK_ARCH@",
+    "title": "Cloud Music",
+    "hooks": {
+        "apu": {
+            "apparmor": "apu.apparmor",
+            "desktop":  "apu.desktop"
+        }
+    },
+    "version": "1.6.1",
+    "maintainer": "Johan Guerreros <johangm90@gmail.com>",
+    "framework" : "ubuntu-sdk-15.04.5"
+}
