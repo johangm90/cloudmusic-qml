@@ -4,6 +4,7 @@ import "../components"
 
 Page {
     id: aboutPage
+    property var date: new Date()
 
     TabsList {
         id: tabsList
@@ -59,7 +60,7 @@ Page {
                         anchors.horizontalCenter: parent.horizontalCenter
                         radius: "medium"
                         image: Image{
-                            source: "../apu.png"
+                            source: "../../assets/logo.svg"
                         }
                     }
 
@@ -90,7 +91,7 @@ Page {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             horizontalAlignment: Text.AlignHCenter
-                            text: "(C) 2015 -2016 Johan Guerreros"
+                            text: "(C) 2015 - " + date.getFullYear() + " Johan Guerreros"
                         }
                         Label {
                             fontSize: "small"
@@ -114,7 +115,7 @@ Page {
                         fontSize: "small"
                         horizontalAlignment: Text.AlignHCenter
                         linkColor: UbuntuColors.blue
-                        text: i18n.tr("Report bugs on %1").arg("<a href=\"https://bugs.launchpad.net/cloudmusic/+filebug\">launchpad.net</a>")
+                        text: i18n.tr("Report bugs on %1").arg("<a href=\"https://gitlab.com/johangm90/cloudmusic-qml/issues\">gitlab.com</a>")
                         onLinkActivated: Qt.openUrlExternally(link)
                     }
                 }

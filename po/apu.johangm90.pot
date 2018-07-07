@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the apu.johangm90 package.
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apu.johangm90\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-06 11:30+0000\n"
+"POT-Creation-Date: 2018-07-07 00:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "What's new?"
 msgstr ""
 
-#: ../qml/components/ChangeLogDialog.qml:39 ../qml/ui/About.qml:107
+#: ../qml/components/ChangeLogDialog.qml:39 ../qml/ui/About.qml:108
 msgid "Donate"
 msgstr ""
 
@@ -73,8 +73,9 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: ../qml/components/TabsList.qml:10 ../qml/Main.qml:70 ../qml/ui/Search.qml:13
-#: ../qml/ui/Search.qml:17 ../qml/ui/SearchHistory.qml:13
+#: ../qml/components/TabsList.qml:10 ../qml/Main.qml:70
+#: ../qml/ui/Search.qml:13 ../qml/ui/Search.qml:17
+#: ../qml/ui/SearchHistory.qml:13
 msgid "Search"
 msgstr ""
 
@@ -94,8 +95,8 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../qml/components/TabsList.qml:55 ../qml/ui/About.qml:15
-#: ../qml/ui/About.qml:30
+#: ../qml/components/TabsList.qml:55 ../qml/ui/About.qml:16
+#: ../qml/ui/About.qml:31
 msgid "About"
 msgstr ""
 
@@ -209,20 +210,20 @@ msgstr ""
 msgid "Song removed"
 msgstr ""
 
-#: ../qml/ui/About.qml:30
+#: ../qml/ui/About.qml:31
 msgid "Credits"
 msgstr ""
 
 #. TRANSLATORS: App version number e.g Version 1.0.0
-#: ../qml/ui/About.qml:79
+#: ../qml/ui/About.qml:80
 msgid "Version %1"
 msgstr ""
 
-#: ../qml/ui/About.qml:100
+#: ../qml/ui/About.qml:101
 msgid "Released under the terms of the GNU GPL v3"
 msgstr ""
 
-#: ../qml/ui/About.qml:117
+#: ../qml/ui/About.qml:118
 msgid "Report bugs on %1"
 msgstr ""
 

@@ -24,9 +24,8 @@ Component {
                 ChangeLogListItem {
                     app_version: cloudMusic.app_version
                     changesModel: [
-                        "[FIX] Playback",
-                        "[FIX] Downloads",
-                        "[NOTE] I need screenshots for the store. best regards and enjoy it."
+                        "[FIX] Small bugs fixs",
+                        "[NOTE] Enjoy it."
                     ]
                 }
             }

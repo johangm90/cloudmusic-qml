@@ -27,7 +27,7 @@ MainView {
     width: units.gu(50)
     height: units.gu(75)
 
-    property string app_version: "1.6.1"
+    property string app_version: "1.6.2"
 
     property var settings: Settings {
         property string download_quality: "96000"
