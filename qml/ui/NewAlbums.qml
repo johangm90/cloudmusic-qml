@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
+import QtGraphicalEffects 1.0
 import "../components"
 import "../logic/Api.js" as Api
 
@@ -26,7 +27,7 @@ Page {
     ListModel {
         id: newAlbumsModel
         Component.onCompleted: {
-            getNewAlbums(100)
+            getNewAlbums(50)
         }
     }
 
@@ -67,7 +68,7 @@ Page {
         z: 1
         width: parent.width
         height: parent.height
-        cellWidth: cloudMusic.width > units.gu(25) ? (parent.width/Math.ceil(parent.width/units.gu(25))) : (parent.width)
+        cellWidth: cloudMusic.width > units.gu(25) ? (parent.width / Math.ceil(parent.width / units.gu(25))) : (parent.width)
         cellHeight: cellWidth + units.gu(8)
         model: newAlbumsModel
         cacheBuffer: 50
@@ -75,41 +76,61 @@ Page {
         delegate: MouseArea {
             width: newAlbumsView.cellWidth
             height: newAlbumsView.cellHeight
-            Column {
-                id: delegateitem
-                anchors.fill: parent
-                Image {
-                    id: wimage
-                    width: parent.width
-                    height: parent.height - units.gu(8)
-                    source: image
-                    clip: true
-                    cache: true
-                    fillMode: Image.PreserveAspectCrop
-                    //smooth: true
+
+            Rectangle {
+                id: item
+                color: "transparent"
+
+                anchors {
+                    fill: parent
+                    margins: units.gu(1)
                 }
-                Rectangle{
-                    color: "#333"
-                    width: newAlbumsView.cellWidth
-                    height: units.gu(4)
+
+                border.color: cloudMusic.settings.theme == "Ambiance" ? Qt.rgba(0,0,0,0.2) : Qt.rgba(250,250,250,0.2)
+                border.width: 1
+                radius: units.gu(1.5)
+
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle {
+                        x: item.x; y: item.y
+                        width: item.width
+                        height: item.height
+                        radius: item.radius
+                    }
+                }
+
+                Column {
+                    anchors {
+                        fill: parent
+                        margins: 1
+                    }
+
+                    Image {
+                        id: wimage
+                        width: parent.width
+                        height: parent.height - units.gu(8)
+                        source: image
+                        clip: true
+                        cache: true
+                        fillMode: Image.PreserveAspectCrop
+                        //smooth: true
+                    }
+
                     Label {
                         text: name
-                        width: newAlbumsView.cellWidth
+                        width: parent.width
                         height: units.gu(4)
                         horizontalAlignment: Label.AlignHCenter
                         verticalAlignment: Label.AlignBottom
                         elide: Label.ElideRight
                         fontSize: "medium"
-                        color: "#fff"
                     }
-                }
-                Rectangle{
-                    color: "#333"
-                    width: newAlbumsView.cellWidth
-                    height: units.gu(4)
+
+
                     Label {
                         text: artist
-                        width: newAlbumsView.cellWidth
+                        width: parent.width
                         height: units.gu(4)
                         horizontalAlignment: Label.AlignHCenter
                         verticalAlignment: Label.AlignTop

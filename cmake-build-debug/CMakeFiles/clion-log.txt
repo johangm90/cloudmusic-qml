@@ -1,0 +1,58 @@
+/snap/clion/124/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/johan/Develop/cloudmusic-qml
+CMake Warning at CMakeLists.txt:6 (find_package):
+  By not providing "FindQt5Core.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "Qt5Core", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "Qt5Core" with any
+  of the following names:
+
+    Qt5CoreConfig.cmake
+    qt5core-config.cmake
+
+  Add the installation prefix of "Qt5Core" to CMAKE_PREFIX_PATH or set
+  "Qt5Core_DIR" to a directory containing one of the above files.  If
+  "Qt5Core" provides a separate development package or SDK, be sure it has
+  been installed.
+
+
+CMake Warning at CMakeLists.txt:7 (find_package):
+  By not providing "FindQt5Qml.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "Qt5Qml", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "Qt5Qml" with any
+  of the following names:
+
+    Qt5QmlConfig.cmake
+    qt5qml-config.cmake
+
+  Add the installation prefix of "Qt5Qml" to CMAKE_PREFIX_PATH or set
+  "Qt5Qml_DIR" to a directory containing one of the above files.  If "Qt5Qml"
+  provides a separate development package or SDK, be sure it has been
+  installed.
+
+
+CMake Warning at CMakeLists.txt:8 (find_package):
+  By not providing "FindQt5Quick.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "Qt5Quick",
+  but CMake did not find one.
+
+  Could not find a package configuration file provided by "Qt5Quick" with any
+  of the following names:
+
+    Qt5QuickConfig.cmake
+    qt5quick-config.cmake
+
+  Add the installation prefix of "Qt5Quick" to CMAKE_PREFIX_PATH or set
+  "Qt5Quick_DIR" to a directory containing one of the above files.  If
+  "Qt5Quick" provides a separate development package or SDK, be sure it has
+  been installed.
+
+
+CMake Error at plugins/Apu/CMakeLists.txt:14 (qt5_use_modules):
+  Unknown CMake command "qt5_use_modules".
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/johan/Develop/cloudmusic-qml/cmake-build-debug/CMakeFiles/CMakeOutput.log".

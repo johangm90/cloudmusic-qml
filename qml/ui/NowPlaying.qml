@@ -15,7 +15,8 @@ import "../logic/Database.js" as Db
 Item {
     id: playingContainer
 
-    property var settings: Settings {
+    property
+    var settings: Settings {
         property bool shuffle: false
         property int repeat: 0
         property bool lyrics: true
@@ -26,7 +27,7 @@ Item {
             media_player.setRepeatMode(settings.repeat)
         }
         onLyricsChanged: {
-            if(lyrics){
+            if (lyrics) {
                 showLyrics()
             }
         }
@@ -35,12 +36,7 @@ Item {
     property bool activeState: Qt.application.active
 
     onActiveStateChanged: {
-        /*console.log("Estado: " + activeState)
-        console.log("Current index: " + current_index)
-        console.log("Playlist index: " + media_player.getIndex())
-        console.log("Song id by playlist: " + songs_list[media_player.getIndex()])
-        console.log("Song id by porperty: " + current_id)*/
-        if(media_player.queue > 1 && (media_player.getIndex() != current_index || songs_list[media_player.getIndex()] != current_id)){
+        if (media_player.queue > 1 && (media_player.getIndex() != current_index || songs_list[media_player.getIndex()] != current_id)) {
             getSongDetail();
         }
     }
@@ -50,20 +46,20 @@ Item {
 
     property variant songs_list: []
 
-    function setIndex(index){
-        if(index > -1){
+    function setIndex(index) {
+        if (index > -1) {
             current_index = index
             getSongDetail()
         }
     }
 
-    function getSongDetail(){
+    function getSongDetail() {
         var index = media_player.getIndex()
         console.log("Obteniendo detalle de: " + songs_list[index])
         Api.getSongDetail(songs_list[index]);
     }
 
-    function showLyrics(){
+    function showLyrics() {
         Api.getLyric(current_id);
     }
 
@@ -71,7 +67,7 @@ Item {
         id: queue_model
     }
 
-    property ListModel model_lyric: ListModel{
+    property ListModel model_lyric: ListModel {
         id: lyric_model
     }
 
@@ -117,20 +113,14 @@ Item {
 
                     ItemLayout {
                         item: "layout_player"
-                        width: (parent.width/3)*2
+                        width: (parent.width / 3) * 2
                         height: parent.height
                     }
-
-                    /*ItemLayout {
-                        item: "layout_queue"
-                        width: parent.width/3
-                        height: parent.height
-                    }*/
 
                     Rectangle {
                         id: queue_layout
                         color: "transparent"
-                        width: parent.width/3
+                        width: parent.width / 3
                         height: parent.height
 
                         Rectangle {
@@ -138,7 +128,7 @@ Item {
                             color: "#333"
                             width: parent.width
                             height: units.gu(5)
-                            Label{
+                            Label {
                                 anchors.left: parent.left
                                 anchors.leftMargin: units.gu(1)
                                 anchors.verticalCenter: parent.verticalCenter
@@ -226,30 +216,7 @@ Item {
             Layouts.item: "layout_player"
             width: parent.width
             height: parent.height
-
-            Image {
-                id: bg
-                source: albumImage.source
-                anchors.fill: parent
-                fillMode: Image.PreserveAspectCrop
-                smooth: true
-                z: 1
-                onStatusChanged: bg.status == Image.Ready ? overlay.opacity=0.7 : overlay.opacity=1
-            }
-
-            FastBlur {
-                anchors.fill: bg
-                source: bg
-                radius: 32
-            }
-
-            Rectangle {
-                id: overlay
-                anchors.fill: parent
-                color: "#000"
-                opacity: 0.7
-                z: 2
-            }
+            color: "transparent"
 
             Rectangle {
                 id: detalle_wrapper
@@ -284,34 +251,15 @@ Item {
 
                     Image {
                         id: albumImage
-                        property real escalay: parent.height/albumImage.sourceSize.height
-                        property real escalax: parent.width/albumImage.sourceSize.width
+                        property real escalay: parent.height / albumImage.sourceSize.height
+                        property real escalax: parent.width / albumImage.sourceSize.width
                         source: "../graphics/default.png"
-                        width: albumImage.sourceSize.width*escalax
-                        height: albumImage.sourceSize.height*escalay
+                        width: albumImage.sourceSize.width * escalax - units.gu(5)
+                        height: albumImage.sourceSize.height * escalay - units.gu(5)
                         anchors.centerIn: parent
                         fillMode: Image.PreserveAspectFit
+                        z: 3
                     }
-
-                    /*MouseArea {
-                        anchors.fill: parent
-                        property real lastX: -1
-
-                        onPressed: lastX = mouse.x
-
-                        onReleased: {
-                            var diff = mouse.x - lastX
-                            if (Math.abs(diff) < units.gu(4)) {
-                                return;
-                            } else if (diff < 0) {
-                                //playMusic.playSong(1, false)
-                                media_player.next()
-                            } else if (diff > 0) {
-                                //playMusic.playSong(-1, false)
-                                media_player.previuos()
-                            }
-                        }
-                    }*/
 
                     Rectangle {
                         id: lyric_overlay
@@ -326,8 +274,9 @@ Item {
                         id: lyric_view
                         color: "transparent"
                         anchors.fill: parent
+                        anchors.margins: units.gu(2.5)
                         visible: lyric_overlay.visible
-                        z : 5
+                        z: 5
 
                         Rectangle {
                             id: lyric_bg
@@ -341,7 +290,8 @@ Item {
 
                         Label {
                             id: lbl_lyric
-                            fontSize: "large"
+                            fontSize: "medium"
+                            font.weight: Font.DemiBold
                             color: "#fff"
                             width: parent.width - units.gu(6)
                             anchors {
@@ -353,7 +303,7 @@ Item {
                         }
                         Label {
                             id: lbl_next
-                            fontSize: "medium"
+                            fontSize: "small"
                             color: "#fefefe"
                             anchors {
                                 top: lbl_lyric.bottom
@@ -368,44 +318,61 @@ Item {
                             verticalAlignment: Label.AlignVCenter
                         }
                     }
+
+                    Rectangle {
+                        id: bgOverlay
+                        anchors.fill: parent
+                        color: "#000"
+                        opacity: 0.7
+                        z: 2
+                    }
+
+                    Image {
+                        id: bg
+                        source: albumImage.source
+                        anchors.fill: parent
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+                        visible: false
+                        z: 1
+                        onStatusChanged: bg.status == Image.Ready ? bgOverlay.opacity=0.7 : bgOverlay.opacity=1
+                    }
+
+                    GaussianBlur {
+                        anchors.fill: bg
+                        source: bg
+                        radius: 8
+                        samples: 16
+                    }
                 }
 
-                Rectangle{
-                    color: "#000"
-                    width: parent.width
-                    anchors.bottom: nav_wrapper.top
-                    height: units.gu(8)
-                    opacity: 0.4
-                }
-
-                Rectangle{
+                Rectangle {
                     id: tags
                     color: "transparent"
                     width: parent.width
                     anchors.bottom: nav_wrapper.top
                     height: units.gu(8)
-                    //opacity: 0.4
 
                     Column {
                         anchors {
-                            margins: units.gu(1)
+                            margins: units.gu(2)
                             left: parent.left
                             right: lyric_toggle.left
+                            verticalCenter: parent.verticalCenter
                         }
+                        spacing: units.gu(1)
 
                         Label {
                             id: lbl_artistaDetalle
                             width: parent.width
-                            fontSize: "x-large"
-                            color: "#fff"
-                            elide: Text.ElideRight
+                            fontSize: "large"
+                            elide: Label.ElideRight
                         }
 
                         Label {
                             id: lbl_albumDetalle
                             width: parent.width
-                            color: "#fff"
-                            elide: Text.ElideRight
+                            elide: Label.ElideRight
                         }
                     }
 
@@ -415,93 +382,75 @@ Item {
                         width: units.gu(5)
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
-                        opacity: settings.lyrics ? 1 : .4
                         onClicked: settings.lyrics = !settings.lyrics
 
                         Icon {
                             height: units.gu(3)
                             width: height
                             anchors.centerIn: parent
-                            color: "white"
-                            name: "note"
+                            name: "heart"
                             opacity: settings.lyrics ? 1 : .4
                         }
                     }
                 }
 
-                Rectangle{
-                    color: "#000"
-                    width: parent.width
-                    anchors.bottom: control_wrapper.top
-                    height: units.gu(3)
-                    opacity: 0.6
-                }
-
-                Rectangle{
+                Rectangle {
                     id: nav_wrapper
                     color: "transparent"
                     width: parent.width
                     anchors.bottom: control_wrapper.top
                     height: units.gu(3)
-                    //opacity: 0.75
 
                     Label {
                         id: current
                         text: Api.durationToString(seek.value)
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
-                        anchors.leftMargin: units.gu(1)
-                        color: "#fff"
+                        anchors.leftMargin: units.gu(2)
                         fontSize: "small"
                     }
 
                     Slider {
                         id: seek
                         anchors.left: current.right
-                        anchors.leftMargin: units.gu(1)
+                        anchors.leftMargin: units.gu(2)
                         anchors.right: total.left
-                        anchors.rightMargin: units.gu(1)
+                        anchors.rightMargin: units.gu(2)
                         anchors.verticalCenter: parent.verticalCenter
                         minimumValue: 0.00
                         value: media_player.position
                         live: true
-                        style: SliderStyle {}
+                        StyleHints { foregroundColor: "#e53446" }
 
                         function formatValue(v) {
                             return Api.durationToString(v)
                         }
 
                         onPressedChanged: {
-                            //playMusic.seek(seek.value)
                             media_player.seek(seek.value)
                         }
 
                         Connections {
                             target: media_player
                             onPlaybackStateChanged: {
-                                if(media_player.playbackState === 1){
+                                if (media_player.playbackState === 1) {
                                     playpause.name = "media-playback-pause"
-                                }else{
+                                } else {
                                     playpause.name = "media-playback-start"
                                 }
                             }
                             onPositionChanged: {
-                                //seek.value = playMusic.position
-                                if(settings.lyrics) {
-                                    for(var i = 0; i < lyric_model.count; i++){
-                                        if(lyric_model.get(i).position <= media_player.position){
-                                            //console.log("Model position: " + lyric_model.get(i).position)
-                                            //console.log("Player position: " + media_player.position)
-                                            //console.log("Wrap mode: " + lbl_lyric.wrapMode)
-                                            //console.log("Lyric line: " + lyric_model.get(i).line)
-                                            if(lyric_model.get(i).line != ""){
+                                if (settings.lyrics) {
+                                    for (var i = 0; i < lyric_model.count; i++) {
+                                        if (lyric_model.get(i).position <= media_player.position) {
+                                            if (lyric_model.get(i).line != "") {
                                                 lbl_lyric.text = lyric_model.get(i).line
-                                            }else{
+                                            } else {
                                                 lbl_lyric.text = "..."
                                             }
-                                            if(i + 1 < lyric_model.count && lyric_model.get(i + 1).line != ""){
+                                            if (i + 1 < lyric_model.count && lyric_model.get(i + 1).line != "") {
                                                 lbl_next.text = lyric_model.get(i + 1).line
-                                            }else{
+                                            } else {
                                                 lbl_next.text = "..."
                                             }
                                         }
@@ -510,7 +459,7 @@ Item {
                                 seek.value = media_player.position
                             }
                             onStopped: {
-                                seek.value=0.00
+                                seek.value = 0.00
                                 playpause.name = "media-playback-start"
                             }
                         }
@@ -521,18 +470,9 @@ Item {
                         text: Api.durationToString(media_player.duration)
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
-                        anchors.rightMargin: units.gu(1)
-                        color: "#fff"
+                        anchors.rightMargin: units.gu(2)
                         fontSize: "small"
                     }
-                }
-
-                Rectangle {
-                    color: "#000"
-                    width: parent.width
-                    anchors.bottom: parent.bottom
-                    height: units.gu(7)
-                    opacity: 0.6
                 }
 
                 Rectangle {
@@ -540,8 +480,8 @@ Item {
                     color: "transparent"
                     width: parent.width
                     anchors.bottom: parent.bottom
+                    anchors.margins: units.gu(1)
                     height: units.gu(7)
-                    //opacity: 0.8
 
                     Row {
                         spacing: units.gu(4)
@@ -552,15 +492,14 @@ Item {
                             id: player_repeat
                             height: units.gu(5)
                             width: height
-                            opacity: settings.repeat != 0 && media_player.queue > 1 ? 1 : .4
                             onClicked: {
-                                if(settings.repeat == 0){
+                                if (settings.repeat == 0) {
                                     settings.repeat = 1
                                     repeat_icon.name = "media-playlist-repeat"
-                                }else if(settings.repeat == 1){
+                                } else if (settings.repeat == 1) {
                                     settings.repeat = 2
                                     repeat_icon.name = "media-playlist-repeat-one"
-                                }else {
+                                } else {
                                     settings.repeat = 0
                                     repeat_icon.name = "media-playlist-repeat"
                                 }
@@ -571,7 +510,6 @@ Item {
                                 height: units.gu(3)
                                 width: height
                                 anchors.centerIn: parent
-                                color: "white"
                                 name: "media-playlist-repeat"
                                 opacity: settings.repeat != 0 && media_player.queue > 1 ? 1 : .4
                             }
@@ -579,18 +517,18 @@ Item {
 
                         Rectangle {
                             id: player_prev
-                            color: "#e53446";
+                            color: "transparent";
                             width: units.gu(5)
                             height: units.gu(5)
                             radius: units.gu(2.5)
                             anchors.verticalCenter: parent.verticalCenter
 
-                            Icon{
+                            Icon {
                                 id: prev
                                 width: units.gu(3)
                                 height: units.gu(3)
                                 name: "media-skip-backward"
-                                color: "#fff"
+                                color: "#e53446"
                                 anchors.centerIn: parent
                                 opacity: media_player.queue > 1 ? 1 : .4
                             }
@@ -598,41 +536,32 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    /*if(playMusic.queue>1){
-                                        playMusic.playSong(-1, true)
-                                    }*/
-                                    //media_player.pause();
                                     media_player.previuos();
-                                    //console.log("Indice: " + media_player.getIndex());
-                                    //getSongDetail(songs_list[media_player.getIndex()]);
                                 }
                             }
                         }
 
                         Rectangle {
                             id: player_control
-                            color: "#e53446";
+                            color: "transparent";
+                            border.color: "#e53446"
+                            border.width: 1
                             width: units.gu(6)
                             height: units.gu(6)
                             radius: units.gu(3)
 
-                            Icon{
+                            Icon {
                                 id: playpause
                                 width: units.gu(4)
                                 height: units.gu(4)
                                 name: "media-playback-start"
-                                color: "#fff"
+                                color: "#e53446"
                                 anchors.centerIn: parent
                             }
 
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    /*if(playMusic.playbackState === Audio.PlayingState){
-                                        playMusic.pause()
-                                    }else{
-                                        playMusic.play()
-                                    }*/
                                     media_player.togle()
                                 }
                             }
@@ -640,18 +569,18 @@ Item {
 
                         Rectangle {
                             id: player_next
-                            color: "#e53446";
+                            color: "transparent";
                             width: units.gu(5)
                             height: units.gu(5)
                             radius: units.gu(2.5)
                             anchors.verticalCenter: parent.verticalCenter
 
-                            Icon{
+                            Icon {
                                 id: next
                                 width: units.gu(3)
                                 height: units.gu(3)
                                 name: "media-skip-forward"
-                                color: "#fff"
+                                color: "#e53446"
                                 anchors.centerIn: parent
                                 opacity: media_player.queue > 1 ? 1 : .4
                             }
@@ -659,12 +588,6 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    /*if(playMusic.queue>1){
-                                        playMusic.playSong(1, true)
-                                    }*/
-                                    //console.log("Indice: " + media_player.getIndex());
-                                    //getSongDetail(songs_list[media_player.getIndex() + 1]);
-                                    //media_player.pause();
                                     media_player.next();
                                 }
                             }
@@ -674,14 +597,12 @@ Item {
                             id: player_shuffle
                             height: units.gu(5)
                             width: height
-                            opacity: settings.shuffle && media_player.queue > 1 ? 1 : .4
                             onClicked: settings.shuffle = !settings.shuffle
 
                             Icon {
                                 height: units.gu(3)
                                 width: height
                                 anchors.centerIn: parent
-                                color: "white"
                                 name: "media-playlist-shuffle"
                                 opacity: settings.shuffle && media_player.queue > 1 ? 1 : .4
                             }

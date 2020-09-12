@@ -29,6 +29,10 @@ Page {
             }
             // TRANSTORS: Credits as in the code and design contributors to the app
             model: [i18n.tr("About"), i18n.tr("Credits")]
+
+            StyleHints {
+                selectedSectionColor: cloudMusic.primaryColor
+            }
         }
     }
 

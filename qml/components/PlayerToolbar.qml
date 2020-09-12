@@ -1,18 +1,19 @@
 import QtQuick 2.4
 import QtMultimedia 5.0
 import Ubuntu.Components 1.3
+import Ubuntu.Components.ListItems 1.0 as UListItem
+import QtGraphicalEffects 1.0
 import "../ui"
 
 Rectangle {
     id: playerToolbar
-    //visible: media_player.playbackState != 0 && !playingPage.visible && !aboutLoader.visible && !settingsLoader.visible ? true : false
     visible: media_player.queue > 0 && !playingPage.visible && !aboutLoader.visible && !settingsLoader.visible ? true : false
     anchors {
         bottom: parent.bottom
         left: parent.left
         right: parent.right
     }
-    color: "#333333"
+    color: "transparent"
     height: units.gu(7.25)
 
     function cargar(name, artist, image){
@@ -40,7 +41,6 @@ Rectangle {
             id: lbl_toolbar_name
             width: parent.width
             elide: Text.ElideRight
-            color: "#fff"
             font.weight: Font.DemiBold
         }
 
@@ -49,7 +49,6 @@ Rectangle {
             width: parent.width
             elide: Text.ElideRight
             fontSize: "small"
-            color: "#fff"
             opacity: 0.4
         }
     }
@@ -60,7 +59,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: units.gu(1)
         anchors.verticalCenter: parent.verticalCenter
-        color: "#e53446";
+        color: "transparent"
+        border.color: "#e53446"
+        border.width: 1
         width: units.gu(5)
         height: units.gu(5)
         radius: units.gu(2.5)
@@ -69,7 +70,7 @@ Rectangle {
             width: units.gu(3)
             height: units.gu(3)
             name: media_player.playbackState === 1 ? "media-playback-pause" : "media-playback-start"
-            color: "#fff"
+            color: "#e53446"
             anchors.centerIn: parent
         }
 
@@ -87,35 +88,51 @@ Rectangle {
         }
     }
     /* Object which provides the progress bar when toolbar is minimized */
-    Rectangle {
-       id: progreso
-       anchors {
-           bottom: parent.top
-           left: parent.left
-           right: parent.right
-       }
-       color: "#333333"
-       height: units.gu(0.25)
+    Column {
+        anchors {
+            bottom: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: units.gu(0.1)
 
-       Rectangle {
-           id: progresoHint
-           anchors {
-               left: parent.left
-               top: parent.top
-           }
-           color: "#e53446"
+        UListItem.ThinDivider {
+            id: divider
+        }
+
+        Rectangle {
+           id: progreso
+           width: parent.width
            height: parent.height
-           width: media_player.duration > 0 ? (media_player.position / media_player.duration) * progreso.width : 0
+           color: "transparent"
 
-           Connections {
-               target: media_player
-               onPositionChanged: {
-                   progresoHint.width = (media_player.position / media_player.duration) * progreso.width
-               }
-               onStopped: {
-                   progresoHint.width = 0;
+           Rectangle {
+               id: progresoHint
+               color: "#e53446"
+               height: parent.height
+               width: media_player.duration > 0 ? (media_player.position / media_player.duration) * progreso.width : 0
+
+               Connections {
+                   target: media_player
+                   onPositionChanged: {
+                       progresoHint.width = (media_player.position / media_player.duration) * progreso.width
+                   }
+                   onStopped: {
+                       progresoHint.width = 0;
+                   }
                }
            }
-       }
+        }
+
+        /*DropShadow {
+            width: parent.width
+            height: parent.height
+            horizontalOffset: 0
+            verticalOffset: -1
+            radius: 4
+            samples: 17
+            color: cloudMusic.settings.theme == "Ambiance" ? Qt.rgba(0,0,0,0.2) : Qt.rgba(250,250,250,0.2)
+            source: divider
+        }*/
     }
 }

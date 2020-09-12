@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
-import Ubuntu.Content 1.1
+import Ubuntu.Content 1.3
 import UserMetrics 0.1
 import Ubuntu.DownloadManager 1.2
 import Qt.labs.settings 1.0
@@ -24,10 +24,12 @@ MainView {
 
     //automaticOrientation: true
 
-    width: units.gu(50)
+    width: units.gu(45)
     height: units.gu(75)
 
-    property string app_version: "1.6.2"
+    property string app_version: "1.7.1"
+
+    property string primaryColor: "#e53446"
 
     property var settings: Settings {
         property string download_quality: "96000"
@@ -47,7 +49,8 @@ MainView {
         domain: "apu.johangm90"
     }
 
-    property var server: "http://app.jgm90.com/cmapi/netease/";
+    property
+    var server: "http://app.jgm90.com/cmapi/netease/";
 
     Component {
         id: searchPage
@@ -83,74 +86,7 @@ MainView {
         }
     ]
 
-    ListModel {
-        id: migrationModel
-    }
-
-    Rectangle {
-         id: dialog
-         visible: false
-         color: "#333"
-         z: 9
-         anchors.fill: parent
-
-         Label {
-             id: dialog_label
-             anchors.top: parent.top
-             anchors.horizontalCenter: parent.horizontalCenter
-             anchors.topMargin: units.gu(15)
-             color: "#fff"
-             fontSize: "large"
-             text: i18n.tr("Migration required")
-         }
-
-         Label {
-             id: dialog_sub_label
-             anchors.top: dialog_label.bottom
-             anchors.left: parent.left
-             anchors.right: parent.right
-             anchors.margins: units.gu(2)
-             color: "#fff"
-             fontSize: "medium"
-             wrapMode: Label.WordWrap
-             horizontalAlignment: Label.AlignHCenter
-             verticalAlignment: Label.AlignVCenter
-             text: i18n.tr("This migration is to ensure your previous database works properly. If you haven't run CloudMusic before, click the button anyway and you'll have a fresh database")
-         }
-
-         ActivityIndicator {
-             id: dialog_loader
-             anchors.centerIn: parent
-             z: 99
-         }
-
-         Button {
-             id: dialog_button
-             text: i18n.tr("Migrate")
-             color: UbuntuColors.green
-             anchors.horizontalCenter: parent.horizontalCenter
-             anchors.bottom: parent.bottom
-             anchors.bottomMargin: units.gu(15)
-             onClicked: {
-                 Db.migrate()
-                 dialog_loader.running = true
-                 dialog_button.visible = false
-                 Api.migration()
-             }
-         }
-    }
-
-    function migrate(data){
-        Db.upgradesong(data)
-    }
-
-    function migrated(){
-        dialog.visible = false
-        settings.first_run = false
-        pagestack.push(searchLoader)
-    }
-
-    function setdialogtext(text){
+    function setdialogtext(text) {
         dialog_sub_label.text = text
     }
 
@@ -159,14 +95,10 @@ MainView {
 
         Component.onCompleted: {
             Db.init()
-            if(settings.current_version != app_version){
+            if (settings.current_version != app_version) {
                 PopupUtils.open(changelog_dialog)
             }
-            if(settings.first_run){
-                dialog.visible = true
-            }else{
-                push(searchLoader)
-            }
+            push(searchLoader)
         }
     }
 
@@ -337,7 +269,7 @@ MainView {
 
     Component {
         id: downloadDialog
-        DownloadDialog { }
+        DownloadDialog {}
     }
 
     //test
@@ -346,46 +278,50 @@ MainView {
     }
 
     Component {
-         id: ddialog
-         Dialog {
-             id: dialogue
-             title: "Downloading"
-             text: "please wait"
-             ProgressBar {
-                 width: parent.width
-                 minimumValue: 0
-                 maximumValue: 100
-                 value: downloader.progress
-             }
-             Connections {
-                 target: downloader
-                 onFinished: {
-                     PopupUtils.close(dialogue)
-                 }
-             }
-             Button {
-                 text: "Cancel"
-                 color: UbuntuColors.orange
-                 onClicked: {
-                     downloader.cancel()
-                     PopupUtils.close(dialogue)
-                 }
-             }
-         }
+        id: ddialog
+        Dialog {
+            id: dialogue
+            title: "Downloading"
+            text: "please wait"
+            ProgressBar {
+                width: parent.width
+                minimumValue: 0
+                maximumValue: 100
+                value: downloader.progress
+            }
+            Connections {
+                target: downloader
+                onFinished: {
+                    PopupUtils.close(dialogue)
+                }
+            }
+            Button {
+                text: "Cancel"
+                color: UbuntuColors.orange
+                onClicked: {
+                    downloader.cancel()
+                    PopupUtils.close(dialogue)
+                }
+            }
+        }
     }
 
     Component {
         id: downloadComponent
         SingleDownload {
             autoStart: false
-            property var contentType
+            property
+            var contentType
             property string name
             metadata: Metadata {
                 showInIndicator: true
                 title: name
             }
             onDownloadIdChanged: {
-                PopupUtils.open(downloadDialog, cloudMusic, {"contentType" : ContentType.Music, "downloadId" : downloadId})
+                PopupUtils.open(downloadDialog, cloudMusic, {
+                    "contentType": ContentType.Music,
+                    "downloadId": downloadId
+                })
             }
 
             onFinished: {
@@ -394,4 +330,3 @@ MainView {
         }
     }
 }
-

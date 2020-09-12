@@ -1,7 +1,7 @@
 {
     "name": "apu.johangm90",
     "description": "A music player for ubuntu touch",
-    "architecture": "@CLICK_ARCH@",
+    "architecture": "amd64",
     "title": "Cloud Music",
     "hooks": {
         "apu": {
@@ -9,7 +9,7 @@
             "desktop":  "apu.desktop"
         }
     },
-    "version": "1.7.1",
+    "version": "1.6.2",
     "maintainer": "Johan Guerreros <johangm90@gmail.com>",
-    "framework" : "ubuntu-sdk-16.04"
+    "framework" : "ubuntu-sdk-15.04.5"
 }

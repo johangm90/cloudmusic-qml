@@ -24,8 +24,9 @@ Component {
                 ChangeLogListItem {
                     app_version: cloudMusic.app_version
                     changesModel: [
-                        "[FIX] Small bugs fixs",
-                        "[NOTE] Enjoy it."
+                        "[NEW] Builds for amd64 and arm64 arch.",
+                        "[NEW] Some changes in design.",
+                        "[FIX] Smalls bugs fixed."
                     ]
                 }
             }

@@ -5,5 +5,5 @@
         "content_exchange_source",
         "usermetrics"
     ],
-    "policy_version": 1.3
+    "policy_version": 16.04
 }

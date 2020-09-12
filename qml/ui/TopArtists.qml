@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
+import QtGraphicalEffects 1.0
 import "../components"
 import "../logic/Api.js" as Api
 
@@ -26,7 +27,7 @@ Page {
     ListModel {
         id: artistsModel
         Component.onCompleted: {
-            getTopArtists(100)
+            getTopArtists(50)
         }
     }
 
@@ -70,37 +71,60 @@ Page {
         cellWidth: cloudMusic.width > units.gu(25) ? (parent.width/Math.ceil(parent.width/units.gu(25))) : (parent.width)
         cellHeight: cellWidth + units.gu(4)
         model: artistsModel
-        cacheBuffer: 10
+        cacheBuffer: 50
 
         delegate: MouseArea {
             width: artistsView.cellWidth
             height: artistsView.cellHeight
-            Column {
-                id: delegateitem
-                anchors.fill: parent
-                Image {
-                    id: wimage
-                    width: parent.width
-                    height: parent.height - units.gu(4)
-                    source: image
-                    clip: true
-                    cache: true
-                    fillMode: Image.PreserveAspectCrop
-                    //smooth: true
+
+            Rectangle {
+                id: item
+                color: "transparent"
+
+                anchors {
+                    fill: parent
+                    margins: units.gu(1)
                 }
-                Rectangle{
-                    color: "#333"
-                    width: artistsView.cellWidth
-                    height: units.gu(4)
+
+                border.color: cloudMusic.settings.theme == "Ambiance" ? Qt.rgba(0,0,0,0.2) : Qt.rgba(250,250,250,0.2)
+                border.width: 1
+                radius: units.gu(1.5)
+
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle {
+                        x: item.x; y: item.y
+                        width: item.width
+                        height: item.height
+                        radius: item.radius
+                    }
+                }
+
+                Column {
+                    anchors {
+                        fill: parent
+                        margins: 1
+                    }
+                    spacing: units.gu(1)
+
+                    Image {
+                        id: wimage
+                        width: parent.width
+                        height: parent.height - units.gu(4)
+                        source: image
+                        clip: true
+                        cache: true
+                        fillMode: Image.PreserveAspectCrop
+                        //smooth: true
+                    }
+
                     Label {
                         text: name
-                        width: artistsView.cellWidth
-                        anchors.margins: units.gu(2)
-                        horizontalAlignment: Text.AlignHCenter
-                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width
+                        horizontalAlignment: Label.AlignHCenter
+                        verticalAlignment: Label.AlignBottom
                         elide: Text.ElideRight
                         fontSize: "medium"
-                        color: "#fff"
                     }
                 }
             }

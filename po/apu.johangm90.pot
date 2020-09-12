@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the apu.johangm90 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apu.johangm90\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-07 00:42+0000\n"
+"POT-Creation-Date: 2020-09-12 17:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+#: ../qml/components/TabsList.qml:10 ../qml/Main.qml:73
+#: ../qml/ui/SearchHistory.qml:13 ../qml/ui/Search.qml:13
+#: ../qml/ui/Search.qml:17
+msgid "Search"
+msgstr ""
+
+#: ../qml/components/TabsList.qml:19 ../qml/ui/NewAlbums.qml:16
+msgid "New Albums"
+msgstr ""
+
+#: ../qml/components/TabsList.qml:28 ../qml/ui/TopArtists.qml:16
+msgid "Top Artists"
+msgstr ""
+
+#: ../qml/components/TabsList.qml:37 ../qml/ui/Playlists.qml:26
+msgid "Playlists"
+msgstr ""
+
+#: ../qml/components/TabsList.qml:46 ../qml/ui/SettingsPage.qml:14
+msgid "Settings"
+msgstr ""
+
+#: ../qml/components/TabsList.qml:55 ../qml/ui/About.qml:16
+#: ../qml/ui/About.qml:31
+msgid "About"
+msgstr ""
+
 #: ../qml/components/ChangeLogDialog.qml:11
 msgid "What's new?"
 msgstr ""
 
-#: ../qml/components/ChangeLogDialog.qml:39 ../qml/ui/About.qml:108
+#: ../qml/components/ChangeLogDialog.qml:39 ../qml/ui/About.qml:112
 msgid "Donate"
 msgstr ""
 
@@ -56,8 +83,8 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: ../qml/components/SongDialog.qml:95 ../qml/Main.qml:257
-#: ../qml/ui/Search.qml:259 ../qml/ui/Album.qml:238 ../qml/ui/Artist.qml:280
+#: ../qml/components/SongDialog.qml:95 ../qml/Main.qml:189
+#: ../qml/ui/Album.qml:238 ../qml/ui/Artist.qml:280 ../qml/ui/Search.qml:259
 msgid "Add to playlist"
 msgstr ""
 
@@ -73,158 +100,58 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: ../qml/components/TabsList.qml:10 ../qml/Main.qml:70
-#: ../qml/ui/Search.qml:13 ../qml/ui/Search.qml:17
-#: ../qml/ui/SearchHistory.qml:13
-msgid "Search"
-msgstr ""
-
-#: ../qml/components/TabsList.qml:19 ../qml/ui/NewAlbums.qml:15
-msgid "New Albums"
-msgstr ""
-
-#: ../qml/components/TabsList.qml:28 ../qml/ui/TopArtists.qml:15
-msgid "Top Artists"
-msgstr ""
-
-#: ../qml/components/TabsList.qml:37 ../qml/ui/Playlists.qml:26
-msgid "Playlists"
-msgstr ""
-
-#: ../qml/components/TabsList.qml:46 ../qml/ui/SettingsPage.qml:14
-msgid "Settings"
-msgstr ""
-
-#: ../qml/components/TabsList.qml:55 ../qml/ui/About.qml:16
-#: ../qml/ui/About.qml:31
-msgid "About"
-msgstr ""
-
-#: ../qml/Main.qml:45
+#: ../qml/Main.qml:47
 msgid "%1 songs played today"
 msgstr ""
 
-#: ../qml/Main.qml:46
+#: ../qml/Main.qml:48
 msgid "0 songs played today"
 msgstr ""
 
-#: ../qml/Main.qml:78 ../qml/ui/Search.qml:251 ../qml/ui/Album.qml:230
-#: ../qml/ui/Artist.qml:272 ../qml/ui/PlaylistDetail.qml:178
+#: ../qml/Main.qml:81 ../qml/ui/Album.qml:230 ../qml/ui/Artist.qml:272
+#: ../qml/ui/PlaylistDetail.qml:171 ../qml/ui/Search.qml:251
 msgid "Download"
 msgstr ""
 
-#: ../qml/Main.qml:104
-msgid "Migration required"
-msgstr ""
-
-#: ../qml/Main.qml:118
-msgid ""
-"This migration is to ensure your previous database works properly. If you "
-"haven't run CloudMusic before, click the button anyway and you'll have a "
-"fresh database"
-msgstr ""
-
-#: ../qml/Main.qml:129
-msgid "Migrate"
-msgstr ""
-
-#: ../qml/Main.qml:232 ../qml/logic/Api.js:150 ../qml/logic/Api.js:151
+#: ../qml/Main.qml:164 ../qml/logic/Api.js:183 ../qml/logic/Api.js:184
 msgid "Artist"
 msgstr ""
 
-#: ../qml/Main.qml:251
+#: ../qml/Main.qml:183
 msgid "Album"
 msgstr ""
 
-#: ../qml/Main.qml:283
+#: ../qml/Main.qml:215
 msgid "Playlist"
 msgstr ""
 
-#: ../qml/Main.qml:301 ../qml/logic/Api.js:251 ../qml/logic/Api.js:252
+#: ../qml/Main.qml:233 ../qml/logic/Api.js:307 ../qml/logic/Api.js:308
 msgid "Now Playing"
 msgstr ""
 
-#: ../qml/Main.qml:305 ../qml/ui/Queue.qml:9 ../qml/ui/NowPlaying.qml:145
+#: ../qml/Main.qml:237 ../qml/ui/Queue.qml:9 ../qml/ui/NowPlaying.qml:135
 msgid "Queue"
 msgstr ""
 
-#: ../qml/ui/Search.qml:209
-msgid "Songs"
-msgstr ""
-
-#: ../qml/ui/Search.qml:270 ../qml/ui/Album.qml:249 ../qml/ui/Artist.qml:291
-#: ../qml/ui/PlaylistDetail.qml:196
+#: ../qml/ui/Album.qml:249 ../qml/ui/Artist.qml:291
+#: ../qml/ui/PlaylistDetail.qml:189 ../qml/ui/Search.qml:270
 msgid "Add to queue"
 msgstr ""
 
-#: ../qml/ui/Search.qml:278 ../qml/ui/Album.qml:257 ../qml/ui/Artist.qml:299
-#: ../qml/ui/PlaylistDetail.qml:204
+#: ../qml/ui/Album.qml:257 ../qml/ui/Artist.qml:299
+#: ../qml/ui/PlaylistDetail.qml:197 ../qml/ui/Search.qml:278
 msgid "Song added to queue"
 msgstr ""
 
-#: ../qml/ui/Search.qml:282 ../qml/ui/Artist.qml:303
-#: ../qml/ui/PlaylistDetail.qml:208
-msgid "Go to album"
-msgstr ""
-
-#: ../qml/ui/Search.qml:291 ../qml/ui/Album.qml:261
-#: ../qml/ui/PlaylistDetail.qml:217
+#: ../qml/ui/Album.qml:261 ../qml/ui/PlaylistDetail.qml:210
+#: ../qml/ui/Search.qml:291
 msgid "Go to artist"
 msgstr ""
 
-#: ../qml/ui/Search.qml:423 ../qml/ui/Artist.qml:427
-msgid "Albums"
-msgstr ""
-
-#: ../qml/ui/Search.qml:513
-msgid "Artists"
-msgstr ""
-
-#: ../qml/ui/TopArtists.qml:45 ../qml/ui/NewAlbums.qml:45
+#: ../qml/ui/TopArtists.qml:46 ../qml/ui/NewAlbums.qml:46
 msgid ""
 "An error occurred\n"
 "Touch to retry"
-msgstr ""
-
-#: ../qml/ui/Artist.qml:226
-msgid "Top Songs"
-msgstr ""
-
-#. TRANSLATORS: %1 refers to the amount of songs in album
-#. TRANSLATORS: %1 refers to the amount of songs in playlist
-#: ../qml/ui/Artist.qml:498 ../qml/ui/Playlists.qml:211
-msgid "%1 song"
-msgid_plural "%1 songs"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../qml/ui/PlaylistDetail.qml:62
-msgid "Available offline"
-msgstr ""
-
-#: ../qml/ui/PlaylistDetail.qml:186
-msgid "Remove"
-msgstr ""
-
-#: ../qml/ui/PlaylistDetail.qml:192
-msgid "Song removed"
-msgstr ""
-
-#: ../qml/ui/About.qml:31
-msgid "Credits"
-msgstr ""
-
-#. TRANSLATORS: App version number e.g Version 1.0.0
-#: ../qml/ui/About.qml:80
-msgid "Version %1"
-msgstr ""
-
-#: ../qml/ui/About.qml:101
-msgid "Released under the terms of the GNU GPL v3"
-msgstr ""
-
-#: ../qml/ui/About.qml:118
-msgid "Report bugs on %1"
 msgstr ""
 
 #: ../qml/ui/SettingsPage.qml:31
@@ -257,6 +184,64 @@ msgstr ""
 
 #: ../qml/ui/SettingsPage.qml:104
 msgid "Theme"
+msgstr ""
+
+#: ../qml/ui/Artist.qml:226
+msgid "Top Songs"
+msgstr ""
+
+#: ../qml/ui/Artist.qml:303 ../qml/ui/PlaylistDetail.qml:201
+#: ../qml/ui/Search.qml:282
+msgid "Go to album"
+msgstr ""
+
+#: ../qml/ui/Artist.qml:427 ../qml/ui/Search.qml:423
+msgid "Albums"
+msgstr ""
+
+#. TRANSLATORS: %1 refers to the amount of songs in album
+#. TRANSLATORS: %1 refers to the amount of songs in playlist
+#: ../qml/ui/Artist.qml:498 ../qml/ui/Playlists.qml:211
+msgid "%1 song"
+msgid_plural "%1 songs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../qml/ui/PlaylistDetail.qml:56
+msgid "Available offline"
+msgstr ""
+
+#: ../qml/ui/PlaylistDetail.qml:179
+msgid "Remove"
+msgstr ""
+
+#: ../qml/ui/PlaylistDetail.qml:185
+msgid "Song removed"
+msgstr ""
+
+#: ../qml/ui/Search.qml:209
+msgid "Songs"
+msgstr ""
+
+#: ../qml/ui/Search.qml:513
+msgid "Artists"
+msgstr ""
+
+#: ../qml/ui/About.qml:31
+msgid "Credits"
+msgstr ""
+
+#. TRANSLATORS: App version number e.g Version 1.0.0
+#: ../qml/ui/About.qml:84
+msgid "Version %1"
+msgstr ""
+
+#: ../qml/ui/About.qml:105
+msgid "Released under the terms of the GNU GPL v3"
+msgstr ""
+
+#: ../qml/ui/About.qml:122
+msgid "Report bugs on %1"
 msgstr ""
 
 #: ../qml/ui/Credits.qml:12
@@ -299,11 +284,11 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: ../qml/logic/Api.js:231
+#: ../qml/logic/Api.js:279
 msgid "Release Date:"
 msgstr ""
 
-#: ../qml/logic/Api.js:444
+#: ../qml/logic/Api.js:458
 msgid "I'm sorry but I forgot that lyric :("
 msgstr ""
 

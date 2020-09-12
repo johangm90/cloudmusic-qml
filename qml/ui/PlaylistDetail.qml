@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
+import Ubuntu.Components.ListItems 1.0 as UListItem
 import Ubuntu.DownloadManager 1.2
 import Apu 1.0
 import "../components"
@@ -42,26 +43,18 @@ Item {
     }
 
     Rectangle {
-        color: "#333333"
-        opacity: 1
-        width: parent.width
-        height: units.gu(5)
-    }
-
-    Rectangle {
         id: offlineView
         color: "transparent"
         width: parent.width
         height: units.gu(5)
 
         Label {
-            id: lbl_offline
+            id: lblOffline
             anchors.left: parent.left
-            anchors.leftMargin: units.gu(1)
+            anchors.leftMargin: units.gu(2)
             anchors.verticalCenter: parent.verticalCenter
             text: i18n.tr("Available offline")
-            fontSize: "large"
-            color: "#fff"
+            fontSize: "medium"
         }
 
         SingleDownload {
@@ -236,6 +229,11 @@ Item {
             bottom: parent.bottom
         }
 
+        UListItem.ThinDivider {
+            anchors.top: lblOffline.botton
+            anchors.topMargin: units.gu(2)
+        }
+
         Item {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -334,8 +332,6 @@ Item {
                     onPressAndHold: ListView.view.ViewItems.dragMode = !ListView.view.ViewItems.dragMode
                 }
                 ViewItems.onDragUpdated: {
-                    console.log(event.status)
-                    console.log("---")
                     if (event.status == ListItemDrag.Moving) {
                         event.accept = false
                     }else if (event.status == ListItemDrag.Dropped) {

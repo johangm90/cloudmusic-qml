@@ -1,24 +1,17 @@
 .import QtQuick.LocalStorage 2.0 as Sql
 
-function db () {
+function db() {
     return Sql.LocalStorage.openDatabaseSync("apu", "", "Cloud Music DB", 1000000);
 }
 
 function init() {
-    try{
-        db().transaction( function(tx) {
-            create_tables(tx)
-            if(db().version!=="2"){
-                db().changeVersion(db().version, "2", function(tx) {
-                    //delete_tables(tx)
-                    //create_tables(tx)
-                    upgradedb(tx);
-                })
-            }
-            //console.log("Database version: " + db().version)
+    try {
+        db().transaction(function(tx) {
+            create_tables(tx);
+            console.log("Database version: " + db().version);
         })
-    }catch(e){
-        console.log(e)
+    } catch (e) {
+        console.log(e);
     }
 }
 
@@ -34,172 +27,157 @@ function delete_tables(tx) {
     tx.executeSql('DROP TABLE IF EXISTS search_history');
 }
 
-function upgradedb(tx) {
-    tx.executeSql('CREATE UNIQUE INDEX IF NOT EXISTS unique_name ON playlists(name)');
-    tx.executeSql('ALTER TABLE songs RENAME TO TempOldTable');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS songs(id INTEGER PRIMARY KEY, sid INTEGER, name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration TEXT, playlist INTEGER, song_order INTEGER, local TEXT, local_art TEXT, lyric TEXT);');
-    tx.executeSql('INSERT INTO songs (sid, name, artist, album, playlist) SELECT sid, name, artist, album, playlist FROM TempOldTable;');
-    tx.executeSql('DROP TABLE TempOldTable;');
-}
-
 function updateRecords() {
-    modelo_playlists.clear()
+    modelo_playlists.clear();
 
-    var records = getPlaylists()
+    var records = getPlaylists();
 
-    for ( var i = 0; i < records.length; i++) {
-        modelo_playlists.append({'playlistId': records[i].id, 'playlistName': records[i].name, 'playlistCount': records[i].count, 'isOffline': records[i].offline})
+    for (var i = 0; i < records.length; i++) {
+        modelo_playlists.append({
+            'playlistId': records[i].id,
+            'playlistName': records[i].name,
+            'playlistCount': records[i].count,
+            'isOffline': records[i].offline
+        })
     }
 }
 
 function getPlaylists() {
-    var records = []
+    var records = [];
 
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         var rs = tx.executeSql('SELECT p.id, p.name, count(s.id) as count, offline FROM playlists p LEFT JOIN songs s ON s.playlist = p.id GROUP BY p.id;');
         var offline;
         for (var i = 0; i < rs.rows.length; i++) {
-            if(rs.rows.item(i).offline === null){
+            if (rs.rows.item(i).offline === null) {
                 offline = 0;
-            }else{
+            } else {
                 offline = rs.rows.item(i).offline;
             }
             var record = {
-                id: rs.rows.item(i).id, name: rs.rows.item(i).name, count: rs.rows.item(i).count, offline: offline
+                id: rs.rows.item(i).id,
+                name: rs.rows.item(i).name,
+                count: rs.rows.item(i).count,
+                offline: offline
             }
-            records.push(record)
+            records.push(record);
         }
-    });
-    return records
+    })
+    return records;
 }
 
 function getLastPlaylist() {
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         var rs = tx.executeSql('SELECT MAX(id) AS id FROM playlists;');
-        song_dialog.add_song(rs.rows.item(0).id)
-        //return rs.rows.item(0).id
-    });
+        song_dialog.add_song(rs.rows.item(0).id);
+    })
 }
 
 function insertPlaylist(content) {
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         try {
             tx.executeSql('INSERT INTO playlists VALUES(NULL, ?, 0);', [content]);
-        }catch(e) {
-            console.log(e)
-            messager.show_message(e.message, 3)
+        } catch (e) {
+            console.log(e);
+            messager.show_message(e.message, 3);
         }
-    });
+    })
 }
 
-function updatePlaylist(id, name){
-    db().transaction( function(tx) {
-       tx.executeSql('UPDATE playlists SET name="' + name + '" WHERE id=' + id);
-    });
+function updatePlaylist(id, name) {
+    db().transaction(function(tx) {
+        tx.executeSql('UPDATE playlists SET name="' + name + '" WHERE id=' + id);
+    })
 }
 
 function removePlaylist(id) {
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         tx.executeSql('DELETE FROM playlists WHERE id=?;', [id]);
         tx.executeSql('DELETE FROM songs WHERE playlist=?;', [id]);
-    });
+    })
 }
 
 //song table
-
-function insertSong(content){
-    console.log("Attemp to insert: " + content[0])
-    db().transaction( function(tx) {
+function insertSong(content) {
+    console.log("Attemp to insert: " + content[0]);
+    db().transaction(function(tx) {
         try {
             tx.executeSql('INSERT INTO songs VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL);', content);
-        }catch(e) {
-            console.log(e)
-            messager.show_message(e.message, 3)
+        } catch (e) {
+            console.log(e);
+            messager.show_message(e.message, 3);
         }
-    });
+    })
 }
 
-function updateSong(order, id){
-    db().transaction( function(tx) {
-       tx.executeSql('UPDATE songs SET song_order=' + order + ' WHERE id=' + id);
-    });
+function updateSong(order, id) {
+    db().transaction(function(tx) {
+        tx.executeSql('UPDATE songs SET song_order=' + order + ' WHERE id=' + id);
+    })
 }
 
-function setlocal(ruta, id){
-    db().transaction( function(tx) {
-       tx.executeSql('UPDATE songs SET local=? WHERE sid=?', [ruta, id]);
-    });
+function setlocal(ruta, id) {
+    db().transaction(function(tx) {
+        tx.executeSql('UPDATE songs SET local=? WHERE sid=?', [ruta, id]);
+    })
 }
 
-function setlocalArt(ruta, id){
-    db().transaction( function(tx) {
+function setlocalArt(ruta, id) {
+    db().transaction(function(tx) {
         tx.executeSql('UPDATE songs SET local_art=? WHERE sid=?', [ruta, id]);
-    });
+    })
 }
 
-function setLyric(lyric, id){
-    db().transaction( function(tx) {
+function setLyric(lyric, id) {
+    db().transaction(function(tx) {
         tx.executeSql('UPDATE songs SET lyric=? WHERE sid=?', [lyric, id]);
-    });
+    })
 }
 
 function removeSong(id) {
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         tx.executeSql('DELETE FROM songs WHERE id=?;', [id]);
-    });
+    })
 }
 
 //playlist
 
 function getPlaylist(id) {
     songsModel.clear()
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         var rs = tx.executeSql('SELECT * FROM songs WHERE playlist=? ORDER BY song_order;', [id]);
         for (var i = 0; i < rs.rows.length; i++) {
-            songsModel.append({'id': rs.rows.item(i).id, 'song_id': rs.rows.item(i).sid, 'name': rs.rows.item(i).name, 'artist_id': rs.rows.item(i).artist_id, 'artist': rs.rows.item(i).artist, 'album_id': rs.rows.item(i).album_id, 'album': rs.rows.item(i).album, 'duration': rs.rows.item(i).duration, 'local': rs.rows.item(i).local, 'playlist_id': rs.rows.item(i).playlist})
+            songsModel.append({
+                'id': rs.rows.item(i).id,
+                'song_id': rs.rows.item(i).sid,
+                'name': rs.rows.item(i).name,
+                'artist_id': rs.rows.item(i).artist_id,
+                'artist': rs.rows.item(i).artist,
+                'album_id': rs.rows.item(i).album_id,
+                'album': rs.rows.item(i).album,
+                'duration': rs.rows.item(i).duration,
+                'local': rs.rows.item(i).local,
+                'playlist_id': rs.rows.item(i).playlist
+            })
         }
-    });
+    })
 }
 
 function getOffline(id) {
-    db().transaction( function(tx) {
+    db().transaction(function(tx) {
         var rs = tx.executeSql('SELECT offline FROM playlists WHERE id=?;', [id]);
         for (var i = 0; i < rs.rows.length; i++) {
-            if(rs.rows.item(i).offline){
+            if (rs.rows.item(i).offline) {
                 swdownload.isOffline = rs.rows.item(i).offline;
-            }else{
+            } else {
                 swdownload.isOffline = 0;
             }
         }
-    });
+    })
 }
 
 function setOffline(id, value) {
-    db().transaction( function(tx) {
-       tx.executeSql('UPDATE playlists SET offline=' + value + ' WHERE id=' + id);
-    });
-}
-
-//migration
-function migrate(){
-    try{
-        db().transaction( function(tx) {
-            var rs = tx.executeSql('SELECT * FROM songs;');
-            for (var i = 0; i < rs.rows.length; i++) {
-                migrationModel.append({'song_id': rs.rows.item(i).sid, 'artist_id': rs.rows.item(i).artist_id})
-            }
-        });
-    }catch(e){
-        console.log(e)
-    }
-}
-
-function upgradesong(data){
-    try{
-        db().transaction( function(tx) {
-           tx.executeSql('UPDATE songs SET artist_id=?, album_id=?, duration=? WHERE sid=?;', data);
-        });
-    }catch(e){
-        console.log(e)
-    }
+    db().transaction(function(tx) {
+        tx.executeSql('UPDATE playlists SET offline=' + value + ' WHERE id=' + id);
+    })
 }
