@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apu.johangm90\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-12 17:55+0000\n"
+"POT-Creation-Date: 2020-09-13 16:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -288,7 +288,7 @@ msgstr ""
 msgid "Release Date:"
 msgstr ""
 
-#: ../qml/logic/Api.js:458
+#: ../qml/logic/Api.js:461
 msgid "I'm sorry but I forgot that lyric :("
 msgstr ""
 

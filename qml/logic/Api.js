@@ -314,10 +314,13 @@ function getSongDetail(id) {
     }
     playing_loader.running = true;
     var cn = new XMLHttpRequest();
-    cn.open('GET', server + '?action=getSongDetail&id=' + id);
+    var url = server + '?action=getSongDetail&id=' + id;
+    console.log(url);
+    cn.open('GET', url);
     cn.onreadystatechange = function() {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
+            console.log(data);
             data = JSON.parse(data);
             try {
                 playingPage.title = data.name;
