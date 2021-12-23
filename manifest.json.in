@@ -6,10 +6,11 @@
     "hooks": {
         "apu": {
             "apparmor": "apu.apparmor",
+            "content-hub": "apu-app-content.json",
             "desktop":  "apu.desktop"
         }
     },
-    "version": "1.7.1",
+    "version": "1.7.2",
     "maintainer": "Johan Guerreros <johangm90@gmail.com>",
-    "framework" : "ubuntu-sdk-16.04"
+    "framework" : "ubuntu-sdk-16.04.5"
 }
