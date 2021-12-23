@@ -27,10 +27,10 @@ MainView {
     width: units.gu(45)
     height: units.gu(75)
 
-    property string app_version: "1.7.1"
+    property string app_version: "1.7.2"
 
     property string primaryColor: "#e53446"
-
+    
     property var settings: Settings {
         property string download_quality: "96000"
         property string streaming_quality: "96000"
@@ -51,6 +51,10 @@ MainView {
 
     property
     var server: "http://app.jgm90.com/cmapi/netease/";
+    
+    Component.onCompleted: {
+      Theme.name = "Ubuntu.Components.Themes." + settings.theme
+    }
 
     Component {
         id: searchPage
@@ -272,6 +276,11 @@ MainView {
         DownloadDialog {}
     }
 
+    Component {
+        id: transferFileDialog
+        TransferFileDialog {}
+    }
+
     //test
     SingleDownload {
         id: downloader
@@ -313,20 +322,39 @@ MainView {
             property
             var contentType
             property string name
+            property string nameArtist
+            property var activeTransfer
             metadata: Metadata {
                 showInIndicator: true
-                title: name
+                title: nameArtist + "-" + name
             }
             onDownloadIdChanged: {
-                PopupUtils.open(downloadDialog, cloudMusic, {
-                    "contentType": ContentType.Music,
-                    "downloadId": downloadId
-                })
+                activeTransfer = contentPeer.request()
+                activeTransfer.downloadId = downloadId
+                activeTransfer.state = ContentTransfer.Downloading
             }
 
             onFinished: {
+                var nameComb = nameArtist + "-" + name + ".mp3"
+                var fileDir = Api.splitFileName(path)
+                contentItemTransfer.url = fileDir[0] + fileDir[1]
+                var resultMove = contentItemTransfer.move(fileDir[0], nameComb)
+                contentItemTransfer.url = fileDir[0] + nameComb
+                PopupUtils.open(transferFileDialog, cloudMusic, {
+                                    "contentType": ContentType.Music,
+                                    "fileUrl": contentItemTransfer.url
+                })
                 destroy()
             }
         }
+    }
+    ContentPeer {
+      id: contentPeer
+      contentType: ContentType.Music
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Single
+    }
+    ContentItem {
+      id: contentItemTransfer
     }
 }
