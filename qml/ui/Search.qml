@@ -1,13 +1,18 @@
 import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
-import Ubuntu.Layouts 1.0
+import QtQuick.Layouts 1.2
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
 import "../components"
+import QtQuick.LocalStorage 2.0
+import "StorageSearchKey.js" as StorageSearchKey
 
 Page {
     id: searchPage
+    property var searchModel: refineDataModel()
+    property int numKeys : StorageSearchKey.doesExistKeyStorage() ? StorageSearchKey.getSize() : 0
+    property var showPopup : true
 
     header: PageHeader {
         title: i18n.tr("Search")
@@ -15,6 +20,9 @@ Page {
             id: search_query
             inputMethodHints: Qt.ImhNoPredictiveText
             placeholderText: i18n.tr("Search")
+            
+            signal closePopover()
+            
             onVisibleChanged: {
                 if (visible) {
                     forceActiveFocus()
@@ -24,23 +32,90 @@ Page {
             anchors.rightMargin: units.gu(2)
             anchors.topMargin: units.gu(1)
             anchors.bottomMargin: units.gu(1)
+            onTextChanged: {
+                      closePopover();
+                      if (numKeys>0) {
+                            if (length>0) {
+                                  searchModel = refineDataModel();
+                                  var properties = {
+                                      "model": searchModel,
+                                      "itemHeight": search_query.height,
+                                      "itemMargins": units.gu(0.5),
+                                      "contentWidth": search_query.width,
+                                      "textRole": "searchkey",
+                                  }
+                                  if (refDataModel.count==1) {
+                                        var str1 = refDataModel.get(0).searchkey;
+                                        var str1b = str1.toLowerCase();
+                                        var str2 = search_query.text;
+                                        var str2b = str2.toLowerCase();
+                                        if (str1b == str2b) {
+                                          showPopup = false;
+                                        }
+                                  } else {
+                                    if (refDataModel.count==0) {
+                                      showPopup = false;
+                                    }
+                                  }
+                            } else {
+                                  var properties = {
+                                      "model": dataModel,
+                                      "itemHeight": search_query.height,
+                                      "itemMargins": units.gu(0.5),
+                                      "contentWidth": search_query.width,
+                                      "textRole": "searchkey",
+                                  }
+                            }
+                      } else {
+                         showPopup = false
+                      }
+                      if (showPopup) {
+                        PopupUtils.open(comboBoxPopup, search_query , properties);
+                        forceActiveFocus()
+                      } else {
+                        search_query.cursorVisible = false
+                      }
+                      showPopup = true;
+            }
             Keys.onReturnPressed: {
                 if(search_query.text!=''){
+                    StorageSearchKey.insertKeyData(search_query.text, numKeys)
+                    numKeys = StorageSearchKey.getSize()
+                    populateDataModel()
                     Api.apiSearch(search_query.text, 0, 50)
-                    search_query.focus=false
-                }else{
-                    console.log('parametro de busqueda vacio')
+                    search_query.cursorVisible = false
+                } else {
+                    console.log('search parameter is empty')
                 }
             }
         }
     }
 
-    Component.onCompleted: is_visible(false);
+    Component.onCompleted: { is_visible(false);
+              populateDataModel()
+              var properties = {
+                  "model": dataModel,
+                  "itemHeight": search_query.height,
+                  "itemMargins": units.gu(0.5),
+                  "contentWidth": search_query.width,
+                  "textRole": "searchkey",
+              }
+              PopupUtils.open(comboBoxPopup, search_query, properties); 
+              search_query.cursorVisible = true
+    }
 
     function is_visible(value){
         songs_layout.visible = value;
         albums_layout.visible = value;
         artists_layout.visible = value;
+    }
+
+    ListModel {
+        id: dataModel
+    }
+
+    ListModel {
+        id: refDataModel
     }
 
     SongDialog {
@@ -75,6 +150,112 @@ Page {
         id: searchArtistsModel
     }
 
+    Component {
+        id: comboBoxPopup
+        Popover {
+              id: comboBoxPopOver
+          
+              implicitHeight: (numKeys * itemHeight <= searchPage.height - searchPage.header.height*2) ? numKeys * itemHeight : (numKeys - Math.floor((numKeys * itemHeight - searchPage.height + searchPage.header.height*2)/itemHeight)) * itemHeight
+              contentHeight: Math.min(implicitHeight, listView.count * itemHeight)
+              callerMargin: -units.gu(1)
+          
+              property var model
+              property real itemHeight
+              property real itemMargins
+              property string textRole
+              
+          
+              ScrollView {
+                  width: comboBoxPopOver.contentWidth
+                  height: comboBoxPopOver.contentHeight
+          
+                  ListView {
+                      id: listView
+                      width: comboBoxPopOver.contentWidth
+                      height: comboBoxPopOver.contentHeight
+                      model: comboBoxPopOver.model
+                      clip: true
+                      delegate: MouseArea {
+                          id: mouseArea
+                          anchors {
+                              left: parent.left
+                              right: parent.right
+                          }
+                          height: comboBoxPopOver.itemHeight
+                          onClicked: {
+                              showPopup = false;
+                              search_query.text = comboBoxPopOver.model.get(index)[textRole];
+                              Api.apiSearch(search_query.text, 0, 50);
+                              PopupUtils.close(comboBoxPopOver);
+                          }
+                          onPressAndHold: {
+                            PopupUtils.open(dialog);
+                          }
+          
+                          hoverEnabled: true
+                          
+                          Component {
+                                 id: dialog
+                                 Dialog {
+                                     id: dialogue
+                                     title: i18n.tr("Item deletion")
+                                     text: i18n.tr("The selected element to be deleted from the search list is: ") + " " + comboBoxPopOver.model.get(index)[textRole]
+                                     Button {
+                                          text: i18n.tr("Delete")
+                                          color: UbuntuColors.red
+                                          onClicked: {
+                                             StorageSearchKey.deleteKeyword(comboBoxPopOver.model.get(index)[textRole])
+                                             numKeys = numKeys - 1
+                                             populateDataModel()
+                                             search_query.textChanged()
+                                             PopupUtils.close(dialogue)
+                                          }
+                                     }
+                                     Button {
+                                          text: i18n.tr("Return")
+                                          color: UbuntuColors.graphite
+                                          onClicked: PopupUtils.close(dialogue)
+                                     }
+                                 }
+                          }
+                          
+                          Rectangle {
+                            anchors.fill: parent
+                            color: cloudMusic.settings.theme == "SuruDark" ? "black" : "white"
+                            Rectangle {
+                                visible: mouseArea.containsMouse
+                                anchors.fill: parent
+                                color: "red"
+                                border.width: units.dp(1)
+                                border.color: Qt.darker(color, 1.02)
+                                antialiasing: true
+                            }
+          
+                            Label {
+                                id: label
+                                anchors {
+                                    fill: parent
+                                    leftMargin: comboBoxPopOver.itemMargins
+                                    rightMargin: comboBoxPopOver.itemMargins
+                                }
+                                text: model[textRole]
+                                color: cloudMusic.settings.theme == "SuruDark" ? "white" : "black"
+                                elide: Text.ElideRight
+                                verticalAlignment: Text.AlignVCenter
+          
+                            }
+                          }
+                      }
+                  }
+              }
+
+              Connections {
+                  target: pointerTarget
+                  onClosePopover: PopupUtils.close(comboBoxPopOver)
+              }
+        }
+    }
+
     Rectangle {
         color: "transparent"
         anchors {
@@ -84,122 +265,32 @@ Page {
             bottom: parent.bottom
             bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
         }
+        
+        Flickable {
+          clip: true
+          anchors.fill: parent
+          contentWidth: width
+          contentHeight: units.gu(150)
 
-        Layouts {
+        GridLayout {
             id: layouts
             anchors.fill: parent
-
-            layouts: [
-                ConditionalLayout {
-                    name: "column"
-                    when: layouts.width <= units.gu(50)
-
-                    Flickable {
-                        clip: true
-                        anchors.fill: parent
-                        contentWidth: width
-                        contentHeight: units.gu(150)
-
-                        Column {
-                            anchors.fill: parent
-
-                            ItemLayout {
-                                item: "layout_songs"
-                                width: parent.width
-                                height: units.gu(50)
-                            }
-
-                            ItemLayout {
-                                item: "layout_albums"
-                                width: parent.width
-                                height: units.gu(50)
-                            }
-
-                            ItemLayout {
-                                item: "layout_artists"
-                                width: parent.width
-                                height: units.gu(50)
-                            }
-                        }
-                    }
-                },
-                ConditionalLayout {
-                    name: "row-small"
-                    when: layouts.width > units.gu(50) && layouts.width < units.gu(100)
-
-                    Row {
-                        anchors.fill: parent
-
-                        Flickable {
-                            clip: true
-                            width: (parent.width/3)*2
-                            height: parent.height
-                            contentWidth: width
-                            contentHeight: units.gu(100)
-
-                            Column {
-                                anchors.fill: parent
-
-                                ItemLayout {
-                                    item: "layout_songs"
-                                    width: parent.width
-                                    height: units.gu(50)
-                                }
-
-                                ItemLayout {
-                                    item: "layout_albums"
-                                    width: parent.width
-                                    height: units.gu(50)
-                                }
-                            }
-                        }
-
-                        ItemLayout {
-                            item: "layout_artists"
-                            width: parent.width/3
-                            height: parent.height
-                        }
-                    }
-                },
-                ConditionalLayout {
-                    name: "row"
-                    when: layouts.width >= units.gu(100)
-
-                    Row {
-                        anchors.fill: parent
-
-                        ItemLayout {
-                            item: "layout_songs"
-                            width: parent.width/3
-                            height: parent.height
-                        }
-
-                        ItemLayout {
-                            item: "layout_albums"
-                            width: parent.width/3
-                            height: parent.height
-                        }
-
-                        ItemLayout {
-                            item: "layout_artists"
-                            width: parent.width/3
-                            height: parent.height
-                        }
-                    }
-                }
-            ]
+            columns: layouts.width <= units.gu(70) ? 1 : (layouts.width > units.gu(70) && layouts.width < units.gu(100)) ? 2 : 3
+            columnSpacing: 1
+            rowSpacing: 1
 
             Rectangle {
                 id: songs_layout
                 color: "transparent"
-                Layouts.item: "layout_songs"
-                width: parent.width
-                height: parent.height
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.row: 0
+                Layout.column: 0
+                Layout.rowSpan: layouts.columns == 1 ? 1 : layouts.columns == 2 ? 2 : 1
 
                 Rectangle {
                     id: songs_title
                     color: "#333"
-                    //anchors.top: parent.top
                     width: parent.width
                     height: units.gu(5)
                     Label{
@@ -251,7 +342,7 @@ Page {
                             text: i18n.tr("Download")
                             name: "save"
                             onTriggered: {
-                                Api.download(searchSongsModel.get(songsList.index).id, searchSongsModel.get(songsList.index).name)
+                                Api.download(searchSongsModel.get(songsList.index).id, searchSongsModel.get(songsList.index).name, searchSongsModel.get(songsList.index).artist)
                                 context_menu.close()
                             }
                         }
@@ -272,7 +363,6 @@ Page {
                             onTriggered: {
                                 playing_page.songs_list.push(searchSongsModel.get(songsList.index).id)
                                 media_player.additem(cloudMusic.server + 'play/' + searchSongsModel.get(songsList.index).id + '/' + cloudMusic.settings.streaming_quality)
-                                //media_player.additem(cloudMusic.server1 + 'url?id=' + searchSongsModel.get(songsList.index).id + '&br=' + cloudMusic.settings.streaming_quality + '&raw')
                                 playing_page.model_queue.append(searchSongsModel.get(songsList.index))
                                 context_menu.close()
                                 messager.show_message(i18n.tr("Song added to queue"), 3)
@@ -385,7 +475,6 @@ Page {
                                     playing_page.model_queue.clear()
                                     for(var i = 0; i < searchSongsModel.count; i++) {
                                         songs.push(cloudMusic.server + 'play/' + searchSongsModel.get(i).id + '/' + cloudMusic.settings.streaming_quality);
-                                        //songs.push(cloudMusic.server1 + 'url?id=' + searchSongsModel.get(i).id + '&br=' + cloudMusic.settings.streaming_quality + '&raw');
                                         songs_ids.push(searchSongsModel.get(i).id);
                                         playing_page.model_queue.append(searchSongsModel.get(i));
                                     }
@@ -406,14 +495,14 @@ Page {
             Rectangle {
                 id: albums_layout
                 color: "transparent"
-                Layouts.item: "layout_albums"
-                width: parent.width
-                height: parent.height
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.row: layouts.columns == 1 ? 1 : layouts.columns == 2 ? 0 : 0
+                Layout.column: layouts.columns == 1 ? 0 : layouts.columns == 2 ? 1 : 1
 
                 Rectangle {
                     id: albums_title
                     color: "#333"
-                    //anchors.top: songs_view.bottom
                     width: parent.width
                     height: units.gu(5)
                     Label{
@@ -496,14 +585,14 @@ Page {
             Rectangle {
                 id: artists_layout
                 color: "transparent"
-                Layouts.item: "layout_artists"
-                width: parent.width
-                height: parent.height
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.row: layouts.columns == 1 ? 2 : layouts.columns == 2 ? 1 : 0
+                Layout.column: layouts.columns == 1 ? 0 : layouts.columns == 2 ? 1 : 2
 
                 Rectangle {
                     id: artists_title
                     color: "#333"
-                    //anchors.top: albums_view.bottom
                     width: parent.width
                     height: units.gu(5)
                     Label{
@@ -556,7 +645,6 @@ Page {
                                     clip: true
                                     cache: true
                                     fillMode: Image.PreserveAspectCrop
-                                    //smooth: true
                                 }
                                 Rectangle{
                                     color: "#333"
@@ -584,5 +672,33 @@ Page {
                 }
             }
         }
+      }
+    }
+    function populateDataModel() {
+        dataModel.clear()
+        for (var i=numKeys-1; i >= 0; i--) {
+            var keyWord = StorageSearchKey.getValueFromPos(i)
+            dataModel.append({"searchkey": keyWord})
+        }
+    }
+
+    function refineDataModel() {
+      refDataModel.clear()
+      if (search_query.text != "") {
+          for (var i=0; i < dataModel.count; i++) {
+              var keyWord = dataModel.get(i).searchkey
+              var keyWordApp = keyWord.toLowerCase();
+              var checkStr = search_query.text.toLowerCase();
+              var resultStr = keyWordApp.indexOf(checkStr);
+              if (resultStr == 0) {
+                refDataModel.append({"searchkey": keyWord})
+              }
+          }
+      }
+      if (search_query.text == null) {
+        return dataModel
+      } else {
+        return refDataModel
+      }
     }
 }
