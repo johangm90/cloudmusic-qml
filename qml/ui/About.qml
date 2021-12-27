@@ -81,7 +81,7 @@ Page {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
                             // TRANSLATORS: App version number e.g Version 1.0.0
-                            text: i18n.tr("Version %1").arg(cloudMusic.app_version)
+                            text: i18n.tr("Version %1").arg(Qt.application.version)  //.arg(cloudMusic.app_version)
                         }
                     }
 

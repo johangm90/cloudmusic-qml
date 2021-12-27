@@ -2,7 +2,7 @@ import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
 import QtGraphicalEffects 1.0
-import Ubuntu.Layouts 1.0
+import QtQuick.Layouts 1.2
 import "../logic/Api.js" as Api
 import "../components"
 
@@ -43,67 +43,29 @@ Item {
         }
         song_dialog.open_dialog()
     }
+    
+    Flickable {
+          clip: true
+          anchors.fill: parent
+          contentWidth: width
+          contentHeight: units.gu(150)
 
-    Layouts {
+    GridLayout {
         id: layouts
         anchors.fill: parent
-
-        layouts: [
-            ConditionalLayout {
-                name: "column"
-                when: layouts.width <= units.gu(50)
-
-                Flickable {
-                    clip: true
-                    anchors.fill: parent
-                    contentWidth: width
-                    contentHeight: units.gu(80)
-
-                    Column {
-                        anchors.fill: parent
-
-                        ItemLayout {
-                            item: "layout_image"
-                            width: parent.width
-                            height: units.gu(25)
-                        }
-
-                        ItemLayout {
-                            item: "layout_songs"
-                            width: parent.width
-                            height: parent.height - units.gu(25)
-                        }
-                    }
-                }
-            },
-            ConditionalLayout {
-                name: "row"
-                when: layouts.width > units.gu(50)
-
-                Row {
-                    anchors.fill: parent
-
-                    ItemLayout {
-                        item: "layout_image"
-                        width: parent.width/3
-                        height: parent.height
-                    }
-
-                    ItemLayout {
-                        item: "layout_songs"
-                        width: (parent.width/3)*2
-                        height: parent.height
-                    }
-                }
-            }
-        ]
+        columns: layouts.width <= units.gu(50) ? 1 : 2
+        columnSpacing: 1
+        rowSpacing: 1
 
         Rectangle {
             id: image_layout
             color: "transparent"
-            Layouts.item: "layout_image"
-            width: parent.width
-            height: parent.height
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.row: 0
+            Layout.column: 0
+            Layout.preferredWidth: layouts.columns == 1 ? parent.width : parent.width/3
+            Layout.preferredHeight: layouts.columns == 1 ? units.gu(25) : parent.height
 
             Rectangle {
                 id: photo_overlay
@@ -156,14 +118,16 @@ Item {
         Rectangle {
             id: songs_layout
             color: "transparent"
-            Layouts.item: "layout_songs"
-            width: parent.width
-            height: parent.height
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.row: layouts.columns == 1 ? 1 : 0
+            Layout.column: layouts.columns == 1 ? 0 : 1
+            Layout.preferredWidth: layouts.columns == 1 ? parent.width : (parent.width/3)*2
+            Layout.preferredHeight: layouts.columns == 1 ? parent.height - units.gu(25) : parent.height
 
             Rectangle {
                 id: album_title
                 color: "#333333"
-                //anchors.top: photo.bottom
                 width: parent.width
                 height: units.gu(5)
                 Label{
@@ -180,7 +144,6 @@ Item {
                 Label{
                     id: lbl_album_date
                     width: parent.width
-                    //height: units.gu(2.5)
                     anchors.top: lbl_album_title.bottom
                     anchors.bottomMargin: units.gu(2)
                     horizontalAlignment: Label.AlignHCenter
@@ -230,7 +193,7 @@ Item {
                         text: i18n.tr("Download")
                         name: "save"
                         onTriggered: {
-                            Api.download(albumModel.get(albumList.index).id, albumModel.get(albumList.index).name)
+                            Api.download(albumModel.get(albumList.index).id, albumModel.get(albumList.index).name, albumModel.get(albumList.index).artist)
                             context_menu.close()
                         }
                     }
@@ -251,7 +214,6 @@ Item {
                         onTriggered: {
                             playing_page.songs_list.push(albumModel.get(albumList.index).id)
                             media_player.additem(cloudMusic.server + 'play/' + albumModel.get(albumList.index).id + '/' + cloudMusic.settings.streaming_quality)
-                            //media_player.additem(cloudMusic.server1 + 'url?id=' + albumModel.get(albumList.index).id + '&br=' + cloudMusic.settings.streaming_quality + '&raw')
                             playing_page.model_queue.append(albumModel.get(albumList.index))
                             context_menu.close()
                             messager.show_message(i18n.tr("Song added to queue"), 3)
@@ -348,7 +310,6 @@ Item {
                                 playing_page.model_queue.clear()
                                 for(var i = 0; i < albumModel.count; i++) {
                                     songs.push(cloudMusic.server + 'play/' + albumModel.get(i).id + '/' + cloudMusic.settings.streaming_quality);
-                                    //songs.push(cloudMusic.server1 + 'url?id=' + albumModel.get(i).id + '&br=' + cloudMusic.settings.streaming_quality + '&raw');
                                     songs_ids.push(albumModel.get(i).id);
                                     playing_page.model_queue.append(albumModel.get(i));
                                 }
@@ -363,8 +324,16 @@ Item {
                         align: Qt.AlignTrailing
                     }
                 }
+                Label {
+                    id: zero_songs_info
+                    visible: albumList.count == 0 ? true : false
+                    text: i18n.tr("I'm sorry, list is empty because none of the songs included in this album are of a supported format :(")
+                    width: parent.width
+                    horizontalAlignment: Text.AlignLeft
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                }
             }
         }
     }
+    }
 }
-

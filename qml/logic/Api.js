@@ -18,6 +18,7 @@ function apiSearch(query, type, limit) {
             data = JSON.parse(data);
             for (var i = 0; i < data.result.songs.length; i++) {
                 var song = data.result.songs[i];
+                if (song.fee != 1) {
                 searchSongsModel.append({
                     'id': song.id,
                     'name': song.name,
@@ -27,7 +28,7 @@ function apiSearch(query, type, limit) {
                     'artist': song.artists[0].name,
                     'duration': song.duration
                 });
-                //console.log("Song: " + song.name);
+                }
             }
             search_songs_loader.running = false;
         } else {
@@ -55,7 +56,6 @@ function apiSearch(query, type, limit) {
                     'image': album.picUrl + '?param=200y200',
                     'big_image': album.picUrl
                 });
-                //console.log("Album: " + album.name);
             }
             search_albums_loader.running = false;
         } else {
@@ -85,7 +85,6 @@ function apiSearch(query, type, limit) {
                         'image': image,
                         'big_image': bigimage
                     });
-                    //console.log("Artist: " + artist.name);
                 }
                 search_artists_loader.running = false;
             } catch (e) {
@@ -101,13 +100,11 @@ function apiSearch(query, type, limit) {
 
 function getNewAlbums(limit) {
     new_albums_error.visible = false;
-    //console.log("Obteniendo nuevos albums")
     newAlbumsModel.clear();
     new_albums_loader.running = true;
     var cn = new XMLHttpRequest();
     cn.open("GET", server + '?action=getNewAlbums&limit=' + limit);
     cn.onreadystatechange = function() {
-        //console.log("Request: " + cn.readyState + " - Status: " + cn.status)
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -124,7 +121,6 @@ function getNewAlbums(limit) {
                         'image': album.picUrl + '?param=200y200',
                         'big_image': album.picUrl
                     });
-                    //console.log(album.name);
                 }
                 new_albums_loader.running = false;
             } catch (e) {
@@ -133,7 +129,6 @@ function getNewAlbums(limit) {
                 new_albums_loader.running = false;
             }
         } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            //console.log(cn.responseText)
             new_albums_error.visible = true;
             new_albums_loader.running = false;
         }
@@ -143,13 +138,11 @@ function getNewAlbums(limit) {
 
 function getTopArtists(limit) {
     top_artists_error.visible = false;
-    //console.log("Obteniendo artistas populares")
     artistsModel.clear();
     top_artists_loader.running = true;
     var cn = new XMLHttpRequest();
     cn.open("GET", server + '?action=getTopArtists&limit=' + limit);
     cn.onreadystatechange = function() {
-        //console.log("Request: " + cn.readyState + " - Status: " + cn.status)
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -162,7 +155,6 @@ function getTopArtists(limit) {
                         'image': artist.picUrl + '?param=200y200',
                         'big_image': artist.picUrl
                     })
-                    //console.log(artist.name);
                 }
                 top_artists_loader.running = false;
             } catch (e) {
@@ -171,7 +163,6 @@ function getTopArtists(limit) {
                 top_artists_loader.running = false;
             }
         } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            //console.log(cn.responseText)
             top_artists_error.visible = true;
             top_artists_loader.running = false;
         }
@@ -182,7 +173,6 @@ function getTopArtists(limit) {
 function getArtistTopSongs(id) {
     artistPage.title = i18n.tr("Artist");
     artistPage.header.title = i18n.tr("Artist");
-    //console.log("Artista: " + id)
     photo.source = "../graphics/default.png";
     is_visible(false);
     songsModel.clear();
@@ -196,6 +186,7 @@ function getArtistTopSongs(id) {
             try {
                 for (var i = 0; i < data.hotSongs.length; i++) {
                     var song = data.hotSongs[i];
+                    if (song.fee != 1) {
                     songsModel.append({
                         'id': song.id,
                         'name': song.name,
@@ -205,7 +196,7 @@ function getArtistTopSongs(id) {
                         'artist': song.artists[0].name,
                         'duration': song.duration
                     })
-                    //console.log(song.name);
+                    }
                 }
             } catch (e) {
                 console.log(e);
@@ -243,7 +234,6 @@ function getArtistAlbums(id) {
                         'image': album.picUrl + '?param=200y200',
                         'big_image': album.picUrl
                     })
-                    //console.log(album.name);
                 }
             } catch (e) {
                 console.log(e);
@@ -251,7 +241,6 @@ function getArtistAlbums(id) {
             artist_albums_loader.running = false;
             is_visible(true);
         } else {
-            //console.log(cn.responseText)
             artist_albums_loader.running = false;
         }
     }
@@ -259,7 +248,6 @@ function getArtistAlbums(id) {
 }
 
 function getAlbumDetail(id) {
-    //console.log("Album: " + id)
     photo.source = "../graphics/default.png";
     lbl_album_title.text = "";
     is_visible(false);
@@ -279,6 +267,7 @@ function getAlbumDetail(id) {
                 lbl_album_date.text = i18n.tr('Release Date:') + ' ' + release_date;
                 for (var i = 0; i < data.album.songs.length; i++) {
                     var song = data.album.songs[i];
+                    if (song.fee != 1) {
                     albumModel.append({
                         'id': song.id,
                         'name': song.name,
@@ -288,7 +277,7 @@ function getAlbumDetail(id) {
                         'artist': song.artists[0].name,
                         'duration': song.duration
                     })
-                    //console.log(song.name);
+                    }
                 }
                 album_loader.running = false;
             } catch (e) {
@@ -349,23 +338,15 @@ function stream(id) {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
-            //bg.source = data.img
-            //albumImage.source = data.img
             console.log(data.mp3);
             media_player.source = data.mp3;
-            //lbl_artistaDetalle.text = data.artista
-            //lbl_albumDetalle.text = data.album
-            //seek.maximumValue = data.duracion
-            //apu.apu_id = id
-            //detalle_wrapper.visible = true
-            //cargador_detalle.running=false
             media_player.play();
         }
     };
     cn.send();
 }
 
-function download(id, name) {
+function download(id, name, nameArt) {
     var cn = new XMLHttpRequest();
     cn.open('GET', api2 + 'url/' + id + '/' + cloudMusic.settings.download_quality);
     cn.onreadystatechange = function() {
@@ -373,12 +354,11 @@ function download(id, name) {
             var data = cn.responseText;
             data = JSON.parse(data);
             var singleDownload = downloadComponent.createObject(cloudMusic);
-            //singleDownload.contentType = ContentType.Music
             singleDownload.name = name;
+            var nameArtMod = nameArt.replace(" ", "_")
+            singleDownload.nameArtist = nameArtMod;
             singleDownload.download(data.url);
             console.log(data.url);
-            //PopupUtils.open(ddialog)
-            //downloader.download(data)
         }
     };
     cn.send();
@@ -445,7 +425,6 @@ function getLyric(id) {
     playing_page.model_lyric.clear();
     lbl_lyric.text = "";
     lbl_next.text = "";
-    //console.log("Obteniendo lyric");
     var cn = new XMLHttpRequest();
     cn.open('GET', server + '?lyric=' + id);
     cn.onreadystatechange = function() {
@@ -453,8 +432,6 @@ function getLyric(id) {
             var data = cn.responseText;
             data = JSON.parse(data);
             try {
-                //console.log("LyricId: " + id);
-                //console.log("Lyric: " + data.lyric);
                 parseLyric(data.lyric);
             } catch (e) {
                 console.log(e);
@@ -482,7 +459,6 @@ function next(lines) {
             line = lines[i].match(/^(\[)(\d*)(:)(.*)(\])(.*)/i);
             tim[i] = (parseInt(line[2]) * 60) + parseInt(line[4]); // will give seconds
             lyrics[i] = line[6]; //will give lyrics
-            //console.log(tim[i]*1000 + "->" +lyrics[i]);
             playing_page.model_lyric.append({
                 'position': tim[i] * 1000,
                 'line': lyrics[i]
@@ -508,4 +484,14 @@ function formatDate(date) {
     var m = date.getMonth() + 1;
     var d = date.getDate();
     return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d);
+}
+
+function splitFileName(urlFile) {
+   var list = urlFile.split("/")
+   var nameFile = list[list.length-1]
+   var localDirectory = urlFile.split(nameFile)
+   var listFin = []
+   listFin[0] = localDirectory[0]
+   listFin[1] = nameFile.replace(/%/g, "%25")
+   return listFin
 }

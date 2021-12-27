@@ -5,7 +5,7 @@ import QtMultimedia 5.6
 import Ubuntu.DownloadManager 1.2
 import Ubuntu.Content 1.1
 import Qt.labs.settings 1.0
-import Ubuntu.Layouts 1.0
+import QtQuick.Layouts 1.2
 import "../components"
 import "../graphics"
 import "../themes"
@@ -71,57 +71,22 @@ Item {
         id: lyric_model
     }
 
-    Layouts {
+    GridLayout {
         id: layouts
         anchors.fill: parent
-
-        layouts: [
-            ConditionalLayout {
-                name: "column"
-                when: layouts.width <= units.gu(50)
-
-                Column {
-                    anchors.fill: parent
-
-                    ItemLayout {
-                        item: "layout_player"
-                        width: parent.width
-                        height: parent.height
-                    }
-                }
-            },
-            ConditionalLayout {
-                name: "small"
-                when: layouts.width > units.gu(50) && layouts.width < units.gu(100)
-
-                Column {
-                    anchors.fill: parent
-
-                    ItemLayout {
-                        item: "layout_player"
-                        width: parent.width
-                        height: parent.height
-                    }
-                }
-            },
-            ConditionalLayout {
-                name: "row"
-                when: layouts.width >= units.gu(100)
-
-                Row {
-                    anchors.fill: parent
-
-                    ItemLayout {
-                        item: "layout_player"
-                        width: (parent.width / 3) * 2
-                        height: parent.height
-                    }
+        columns: layouts.width < units.gu(100) ? 1 : 2
+        columnSpacing: 1
+        rowSpacing: 1
 
                     Rectangle {
                         id: queue_layout
                         color: "transparent"
-                        width: parent.width / 3
-                        height: parent.height
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.row: layouts.columns == 1 ? 1 : 0
+                        Layout.column: layouts.columns == 1 ? 0 : 1
+                        Layout.preferredWidth: layouts.columns == 1 ? 0 : parent.width / 3
+                        Layout.preferredHeight: layouts.columns == 1 ? 0 : parent.height
 
                         Rectangle {
                             id: queue_title
@@ -207,16 +172,16 @@ Item {
                             }
                         }
                     }
-                }
-            }
-        ]
 
         Rectangle {
             id: player_layout
-            Layouts.item: "layout_player"
-            width: parent.width
-            height: parent.height
             color: "transparent"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.row: 0
+            Layout.column: 0
+            Layout.preferredWidth: layouts.columns == 1 ? parent.width : (parent.width / 3) * 2
+            Layout.preferredHeight: layouts.columns == 1 ? parent.height : parent.height
 
             Rectangle {
                 id: detalle_wrapper
@@ -388,7 +353,7 @@ Item {
                             height: units.gu(3)
                             width: height
                             anchors.centerIn: parent
-                            name: "heart"
+                            name: "note"
                             opacity: settings.lyrics ? 1 : .4
                         }
                     }

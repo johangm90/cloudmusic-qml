@@ -10,7 +10,7 @@ public:
     Apu();
     ~Apu() = default;
 
-    Q_INVOKABLE void speak();
+    Q_INVOKABLE void changeFileName(const QString urlFile, const QString fileName, const QString nameSong);
 };
 
 #endif
