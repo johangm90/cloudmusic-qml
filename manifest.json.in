@@ -6,7 +6,6 @@
     "hooks": {
         "apu": {
             "apparmor": "apu.apparmor",
-            "content-hub": "apu-app-content.json",
             "desktop":  "apu.desktop"
         }
     },
