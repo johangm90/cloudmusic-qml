@@ -75,7 +75,7 @@ MainView {
         Action {
             id: searchAction
             text: i18n.tr("Search")
-            iconName: "search"
+            iconName: "find"
             onTriggered: {
                 pagestack.push(searchPage)
             }

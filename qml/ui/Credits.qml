@@ -9,7 +9,8 @@ Item {
         id: creditsModel
         Component.onCompleted: initialize()
         function initialize() {
-            creditsModel.append({ name: "Johan Guerreros", title: i18n.tr("Developers"), url: "https://launchpad.net/~johangm90" })
+            creditsModel.append({ name: "Johan Guerreros", title: i18n.tr("Developers"), url: "https://gitlab.com/johangm90" })
+            creditsModel.append({ name: "Matteo", title: i18n.tr("Developers"), url: "https://gitlab.com/mattbel10" })
             creditsModel.append({ name: "Sam Hewitt", title: i18n.tr("Icon"), url: "https://plus.google.com/+SamHewitt" })
             creditsModel.append({ name: "Ubuntu Translators Community", title: i18n.tr("Translators"), url: "http://community.ubuntu.com/contribute/translations" })
         }
