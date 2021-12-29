@@ -7,9 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-12 17:55+0000\n"
-"PO-Revision-Date: 2020-09-13 13:53+0200\n"
+"POT-Creation-Date: 2021-12-28 18:08+0000\n"
+"PO-Revision-Date: 2021-12-29 21:18+0100\n"
 "Last-Translator: Anne017 <anneonyme017@openmailbox.org>\n"
+"Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +18,87 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Launchpad-Export-Date: 2017-03-19 06:51+0000\n"
 
-#: ../qml/components/TabsList.qml:10 ../qml/Main.qml:73
-#: ../qml/ui/SearchHistory.qml:13 ../qml/ui/Search.qml:13
-#: ../qml/ui/Search.qml:17
+#: ../qml/Main.qml:47
+msgid "%1 songs played today"
+msgstr "%1 morceaux lus aujourd'hui"
+
+#: ../qml/Main.qml:48
+msgid "0 songs played today"
+msgstr "Pas de morceau lu aujourd'hui"
+
+#: ../qml/Main.qml:77 ../qml/components/TabsList.qml:10
+#: ../qml/ui/SearchHistory.qml:13 ../qml/ui/Search.qml:18
+#: ../qml/ui/Search.qml:22
 msgid "Search"
 msgstr "Rechercher"
+
+#: ../qml/Main.qml:85 ../qml/ui/Artist.qml:183 ../qml/ui/Search.qml:342
+#: ../qml/ui/PlaylistDetail.qml:171 ../qml/ui/Album.qml:193
+msgid "Download"
+msgstr "Télécharger"
+
+#: ../qml/Main.qml:168 ../qml/logic/Api.js:174 ../qml/logic/Api.js:175
+msgid "Artist"
+msgstr "Artiste"
+
+#: ../qml/Main.qml:187
+msgid "Album"
+msgstr "Album"
+
+#: ../qml/Main.qml:193 ../qml/components/SongDialog.qml:95
+#: ../qml/ui/Artist.qml:191 ../qml/ui/Search.qml:350 ../qml/ui/Album.qml:201
+msgid "Add to playlist"
+msgstr "Ajouter à la liste de lecture"
+
+#: ../qml/Main.qml:219
+msgid "Playlist"
+msgstr "Liste de lecture"
+
+#: ../qml/Main.qml:237 ../qml/logic/Api.js:296 ../qml/logic/Api.js:297
+msgid "Now Playing"
+msgstr "Lecture en cours"
+
+#: ../qml/Main.qml:241 ../qml/ui/Queue.qml:9 ../qml/ui/NowPlaying.qml:100
+msgid "Queue"
+msgstr "File d’attente"
+
+#: ../qml/components/SongDialog.qml:36
+msgid "Album added to playlist"
+msgstr "Album ajouté à la liste de lecture"
+
+#: ../qml/components/SongDialog.qml:39
+msgid "Song added to playlist"
+msgstr "Morceau ajouté à la liste de lecture"
+
+#: ../qml/components/SongDialog.qml:57 ../qml/ui/Playlists.qml:49
+msgid "New playlist"
+msgstr "Nouvelle liste de lecture"
+
+#: ../qml/components/SongDialog.qml:61 ../qml/ui/Playlists.qml:53
+msgid "Enter playlist name"
+msgstr "Saisir un nom de liste de lecture"
+
+#: ../qml/components/SongDialog.qml:71 ../qml/ui/Playlists.qml:62
+msgid "Create"
+msgstr "Créer"
+
+#: ../qml/components/SongDialog.qml:81 ../qml/components/SongDialog.qml:147
+#: ../qml/ui/Playlists.qml:72 ../qml/ui/Playlists.qml:110
+#: ../qml/ui/Playlists.qml:138
+msgid "Cancel"
+msgstr "Annuler"
+
+#: ../qml/components/SongDialog.qml:96
+msgid "Select one playlist to add"
+msgstr "Sélectionner une liste de lecture à ajouter"
+
+#: ../qml/components/SongDialog.qml:110
+msgid "Create new playlist"
+msgstr "Créer une nouvelle liste de lecture"
+
+#: ../qml/components/SongDialog.qml:137
+msgid "Add"
+msgstr "Ajouter"
 
 #: ../qml/components/TabsList.qml:19 ../qml/ui/NewAlbums.qml:16
 msgid "New Albums"
@@ -56,104 +133,146 @@ msgstr "Faire un don"
 msgid "Close"
 msgstr "Fermer"
 
-#: ../qml/components/SongDialog.qml:36
-msgid "Album added to playlist"
-msgstr "Album ajouté à la liste de lecture"
-
-#: ../qml/components/SongDialog.qml:39
-msgid "Song added to playlist"
-msgstr "Morceau ajouté à la liste de lecture"
-
-#: ../qml/components/SongDialog.qml:57 ../qml/ui/Playlists.qml:49
-msgid "New playlist"
-msgstr "Nouvelle liste de lecture"
-
-#: ../qml/components/SongDialog.qml:61 ../qml/ui/Playlists.qml:53
-msgid "Enter playlist name"
-msgstr "Saisir un nom de liste de lecture"
-
-#: ../qml/components/SongDialog.qml:71 ../qml/ui/Playlists.qml:62
-msgid "Create"
-msgstr "Créer"
-
-#: ../qml/components/SongDialog.qml:81 ../qml/components/SongDialog.qml:147
-#: ../qml/ui/Playlists.qml:72 ../qml/ui/Playlists.qml:110
-#: ../qml/ui/Playlists.qml:138
-msgid "Cancel"
-msgstr "Annuler"
-
-#: ../qml/components/SongDialog.qml:95 ../qml/Main.qml:189
-#: ../qml/ui/Album.qml:238 ../qml/ui/Artist.qml:280 ../qml/ui/Search.qml:259
-msgid "Add to playlist"
-msgstr "Ajouter à la liste de lecture"
-
-#: ../qml/components/SongDialog.qml:96
-msgid "Select one playlist to add"
-msgstr "Sélectionner une liste de lecture à ajouter"
-
-#: ../qml/components/SongDialog.qml:110
-msgid "Create new playlist"
-msgstr "Créer une nouvelle liste de lecture"
-
-#: ../qml/components/SongDialog.qml:137
-msgid "Add"
-msgstr "Ajouter"
-
-#: ../qml/Main.qml:47
-msgid "%1 songs played today"
-msgstr "%1 morceaux lus aujourd'hui"
-
-#: ../qml/Main.qml:48
-msgid "0 songs played today"
-msgstr "Pas de morceau lu aujourd'hui"
-
-#: ../qml/Main.qml:81 ../qml/ui/Album.qml:230 ../qml/ui/Artist.qml:272
-#: ../qml/ui/PlaylistDetail.qml:171 ../qml/ui/Search.qml:251
-msgid "Download"
-msgstr "Télécharger"
-
-#: ../qml/Main.qml:164 ../qml/logic/Api.js:183 ../qml/logic/Api.js:184
-msgid "Artist"
-msgstr "Artiste"
-
-#: ../qml/Main.qml:183
-msgid "Album"
-msgstr "Album"
-
-#: ../qml/Main.qml:215
-msgid "Playlist"
-msgstr "Liste de lecture"
-
-#: ../qml/Main.qml:233 ../qml/logic/Api.js:307 ../qml/logic/Api.js:308
-msgid "Now Playing"
-msgstr "Lecture en cours"
-
-#: ../qml/Main.qml:237 ../qml/ui/Queue.qml:9 ../qml/ui/NowPlaying.qml:135
-msgid "Queue"
-msgstr "File d’attente"
-
-#: ../qml/ui/Album.qml:249 ../qml/ui/Artist.qml:291
-#: ../qml/ui/PlaylistDetail.qml:189 ../qml/ui/Search.qml:270
-msgid "Add to queue"
-msgstr "Ajouter à la file d'attente"
-
-#: ../qml/ui/Album.qml:257 ../qml/ui/Artist.qml:299
-#: ../qml/ui/PlaylistDetail.qml:197 ../qml/ui/Search.qml:278
-msgid "Song added to queue"
-msgstr "Morceau ajouté à la file d'attente"
-
-#: ../qml/ui/Album.qml:261 ../qml/ui/PlaylistDetail.qml:210
-#: ../qml/ui/Search.qml:291
-msgid "Go to artist"
-msgstr "Aller à l'artiste"
-
-#: ../qml/ui/TopArtists.qml:46 ../qml/ui/NewAlbums.qml:46
+#: ../qml/ui/NewAlbums.qml:46 ../qml/ui/TopArtists.qml:46
 msgid ""
 "An error occurred\n"
 "Touch to retry"
 msgstr ""
 "Une erreur s'est produite\n"
 "Appuyez pour réessayer"
+
+#: ../qml/ui/About.qml:31
+msgid "Credits"
+msgstr "À propos"
+
+#. TRANSLATORS: App version number e.g Version 1.0.0
+#: ../qml/ui/About.qml:84
+msgid "Version %1"
+msgstr "Version %1"
+
+#: ../qml/ui/About.qml:105
+msgid "Released under the terms of the GNU GPL v3"
+msgstr "Distribuée sous les termes de la licence GNU GPL v3"
+
+#: ../qml/ui/About.qml:122
+msgid "Report bugs on %1"
+msgstr "Signalez les problèmes sur %1"
+
+#: ../qml/ui/Artist.qml:137
+msgid "Top Songs"
+msgstr "Meilleurs morceaux"
+
+#: ../qml/ui/Artist.qml:202 ../qml/ui/Search.qml:361
+#: ../qml/ui/PlaylistDetail.qml:189 ../qml/ui/Album.qml:212
+msgid "Add to queue"
+msgstr "Ajouter à la file d'attente"
+
+#: ../qml/ui/Artist.qml:209 ../qml/ui/Search.qml:368
+#: ../qml/ui/PlaylistDetail.qml:197 ../qml/ui/Album.qml:219
+msgid "Song added to queue"
+msgstr "Morceau ajouté à la file d'attente"
+
+#: ../qml/ui/Artist.qml:213 ../qml/ui/Search.qml:372
+#: ../qml/ui/PlaylistDetail.qml:201
+msgid "Go to album"
+msgstr "Aller à l'album"
+
+#: ../qml/ui/Artist.qml:340 ../qml/ui/Search.qml:512
+msgid "Albums"
+msgstr "Albums"
+
+#. TRANSLATORS: %1 refers to the amount of songs in album
+#. TRANSLATORS: %1 refers to the amount of songs in playlist
+#: ../qml/ui/Artist.qml:411 ../qml/ui/Playlists.qml:211
+msgid "%1 song"
+msgid_plural "%1 songs"
+msgstr[0] "%1 morceau"
+msgstr[1] "%1 morceaux"
+
+#: ../qml/ui/Credits.qml:12 ../qml/ui/Credits.qml:13
+msgid "Developers"
+msgstr "Développeurs/euses"
+
+#: ../qml/ui/Credits.qml:14
+msgid "Icon"
+msgstr "Icône"
+
+#: ../qml/ui/Credits.qml:15
+msgid "Translators"
+msgstr "Traducteurs/trices"
+
+#: ../qml/ui/Search.qml:201
+msgid "Item deletion"
+msgstr "Suppression de l'élément"
+
+#: ../qml/ui/Search.qml:202
+msgid "The selected element to be deleted from the search list is: "
+msgstr "L'élément sélectionné à supprimer de la liste de recherche est : "
+
+#: ../qml/ui/Search.qml:204 ../qml/ui/Playlists.qml:128
+msgid "Delete"
+msgstr "Supprimer"
+
+#: ../qml/ui/Search.qml:215
+msgid "Return"
+msgstr "Retour"
+
+#: ../qml/ui/Search.qml:300
+msgid "Songs"
+msgstr "Morceaux"
+
+#: ../qml/ui/Search.qml:381 ../qml/ui/PlaylistDetail.qml:210
+#: ../qml/ui/Album.qml:223
+msgid "Go to artist"
+msgstr "Aller à l'artiste"
+
+#: ../qml/ui/Search.qml:602
+msgid "Artists"
+msgstr "Artistes"
+
+#: ../qml/ui/PlaylistDetail.qml:56
+msgid "Available offline"
+msgstr "Disponible hors connexion"
+
+#: ../qml/ui/PlaylistDetail.qml:179
+msgid "Remove"
+msgstr "Enlever"
+
+#: ../qml/ui/PlaylistDetail.qml:185
+msgid "Song removed"
+msgstr "Morceau enlevé"
+
+#: ../qml/ui/Playlists.qml:34
+msgid "Add Playlist"
+msgstr "Ajouter une liste de lecture"
+
+#: ../qml/ui/Playlists.qml:85
+msgid "Edit playlist"
+msgstr "Modifier la liste de lecture"
+
+#: ../qml/ui/Playlists.qml:90
+msgid "Edit playlist name"
+msgstr "Modifier le nom de la liste de lecture"
+
+#: ../qml/ui/Playlists.qml:100
+msgid "Save"
+msgstr "Enregistrer"
+
+#: ../qml/ui/Playlists.qml:124
+msgid "Delete playlist"
+msgstr "Supprimer la liste de lecture"
+
+#: ../qml/ui/Playlists.qml:125
+msgid "This cannot be undone"
+msgstr "Ceci ne peut pas être annulé"
+
+#: ../qml/ui/Album.qml:330
+msgid ""
+"I'm sorry, list is empty because none of the songs included in this album "
+"are of a supported format :("
+msgstr ""
+"Je suis désolé, la liste est vide car aucun des morceaux inclus dans cet "
+"album n'a un format pris en charge :("
 
 #: ../qml/ui/SettingsPage.qml:31
 msgid "Download quality"
@@ -187,109 +306,11 @@ msgstr "Suru Sombre"
 msgid "Theme"
 msgstr "Thème"
 
-#: ../qml/ui/Artist.qml:226
-msgid "Top Songs"
-msgstr "Meilleurs morceaux"
-
-#: ../qml/ui/Artist.qml:303 ../qml/ui/PlaylistDetail.qml:201
-#: ../qml/ui/Search.qml:282
-msgid "Go to album"
-msgstr "Aller à l'album"
-
-#: ../qml/ui/Artist.qml:427 ../qml/ui/Search.qml:423
-msgid "Albums"
-msgstr "Albums"
-
-#. TRANSLATORS: %1 refers to the amount of songs in album
-#. TRANSLATORS: %1 refers to the amount of songs in playlist
-#: ../qml/ui/Artist.qml:498 ../qml/ui/Playlists.qml:211
-msgid "%1 song"
-msgid_plural "%1 songs"
-msgstr[0] "%1 morceau"
-msgstr[1] "%1 morceaux"
-
-#: ../qml/ui/PlaylistDetail.qml:56
-msgid "Available offline"
-msgstr "Disponible hors connexion"
-
-#: ../qml/ui/PlaylistDetail.qml:179
-msgid "Remove"
-msgstr "Enlever"
-
-#: ../qml/ui/PlaylistDetail.qml:185
-msgid "Song removed"
-msgstr "Morceau enlevé"
-
-#: ../qml/ui/Search.qml:209
-msgid "Songs"
-msgstr "Morceaux"
-
-#: ../qml/ui/Search.qml:513
-msgid "Artists"
-msgstr "Artistes"
-
-#: ../qml/ui/About.qml:31
-msgid "Credits"
-msgstr "À propos"
-
-#. TRANSLATORS: App version number e.g Version 1.0.0
-#: ../qml/ui/About.qml:84
-msgid "Version %1"
-msgstr "Version %1"
-
-#: ../qml/ui/About.qml:105
-msgid "Released under the terms of the GNU GPL v3"
-msgstr "Distribuée sous les termes de la licence GNU GPL v3"
-
-#: ../qml/ui/About.qml:122
-msgid "Report bugs on %1"
-msgstr "Signalez les problèmes sur %1"
-
-#: ../qml/ui/Credits.qml:12
-msgid "Developers"
-msgstr "Développeurs/euses"
-
-#: ../qml/ui/Credits.qml:13
-msgid "Icon"
-msgstr "Icône"
-
-#: ../qml/ui/Credits.qml:14
-msgid "Translators"
-msgstr "Traducteurs/trices"
-
-#: ../qml/ui/Playlists.qml:34
-msgid "Add Playlist"
-msgstr "Ajouter une liste de lecture"
-
-#: ../qml/ui/Playlists.qml:85
-msgid "Edit playlist"
-msgstr "Modifier la liste de lecture"
-
-#: ../qml/ui/Playlists.qml:90
-msgid "Edit playlist name"
-msgstr "Modifier le nom de la liste de lecture"
-
-#: ../qml/ui/Playlists.qml:100
-msgid "Save"
-msgstr "Enregistrer"
-
-#: ../qml/ui/Playlists.qml:124
-msgid "Delete playlist"
-msgstr "Supprimer la liste de lecture"
-
-#: ../qml/ui/Playlists.qml:125
-msgid "This cannot be undone"
-msgstr "Ceci ne peut pas être annulé"
-
-#: ../qml/ui/Playlists.qml:128
-msgid "Delete"
-msgstr "Supprimer"
-
-#: ../qml/logic/Api.js:279
+#: ../qml/logic/Api.js:267
 msgid "Release Date:"
 msgstr "Date de sortie :"
 
-#: ../qml/logic/Api.js:458
+#: ../qml/logic/Api.js:438
 msgid "I'm sorry but I forgot that lyric :("
 msgstr "Je suis désolé, mais j'ai oublié ces paroles :("
 
@@ -300,8 +321,15 @@ msgstr "Cloud Music"
 #~ msgid "Migration required"
 #~ msgstr "Migration requise"
 
-#~ msgid "This migration is to ensure your previous database works properly. If you haven't run CloudMusic before, click the button anyway and you'll have a fresh database"
-#~ msgstr "Cette migration permet de s'assurer que votre base de données précédente fonctionne correctement. Si vous n'aviez pas lancé CloudMusic auparavant, cliquez tout de même sur le bouton et vous aurez une nouvelle base de données."
+#~ msgid ""
+#~ "This migration is to ensure your previous database works properly. If you "
+#~ "haven't run CloudMusic before, click the button anyway and you'll have a "
+#~ "fresh database"
+#~ msgstr ""
+#~ "Cette migration permet de s'assurer que votre base de données précédente "
+#~ "fonctionne correctement. Si vous n'aviez pas lancé CloudMusic auparavant, "
+#~ "cliquez tout de même sur le bouton et vous aurez une nouvelle base de "
+#~ "données."
 
 #~ msgid "Migrate"
 #~ msgstr "Migrer"
