@@ -2,6 +2,7 @@
     "policy_groups": [
         "networking",
         "audio",
+        "content_exchange",
         "content_exchange_source",
         "usermetrics"
     ],
