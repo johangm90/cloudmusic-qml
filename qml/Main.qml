@@ -27,10 +27,10 @@ MainView {
     width: units.gu(45)
     height: units.gu(75)
 
-    property string app_version: "1.7.3"
+    property string app_version: "1.7.4"
 
     property string primaryColor: "#e53446"
-    
+
     property var settings: Settings {
         property string download_quality: "96000"
         property string streaming_quality: "96000"
@@ -51,7 +51,7 @@ MainView {
 
     property
     var server: "http://app.jgm90.com/cmapi/netease/";
-    
+
     Component.onCompleted: {
       Theme.name = "Ubuntu.Components.Themes." + settings.theme
     }

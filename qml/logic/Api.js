@@ -1,4 +1,4 @@
-var server = "http://www.vulgry.com/rapsody/api.php";
+var server = "http://vulgry.innves.com/rapsody/api.php";
 var api2 = "http://app.jgm90.com/cmapi/netease/";
 
 function apiSearch(query, type, limit) {
