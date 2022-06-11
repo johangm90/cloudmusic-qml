@@ -27,7 +27,7 @@ MainView {
     width: units.gu(45)
     height: units.gu(75)
 
-    property string app_version: "1.7.5"
+    property string app_version: "1.7.6"
 
     property string primaryColor: "#e53446"
 
@@ -50,7 +50,7 @@ MainView {
     }
 
     property
-    var server: "http://app.jgm90.com/cmapi/netease/";
+    var server: "https://app.jgm90.com/cmapi/netease/";
 
     Component.onCompleted: {
       Theme.name = "Ubuntu.Components.Themes." + settings.theme

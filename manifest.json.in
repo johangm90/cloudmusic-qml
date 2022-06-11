@@ -9,7 +9,7 @@
             "desktop":  "apu.desktop"
         }
     },
-    "version": "1.7.5",
+    "version": "1.7.6",
     "maintainer": "Johan Guerreros <johangm90@gmail.com>",
     "framework" : "@CLICK_FRAMEWORK@"
 }
