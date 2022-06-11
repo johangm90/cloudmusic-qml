@@ -9,7 +9,7 @@
             "desktop":  "apu.desktop"
         }
     },
-    "version": "1.7.4",
+    "version": "1.7.5",
     "maintainer": "Johan Guerreros <johangm90@gmail.com>",
-    "framework" : "ubuntu-sdk-16.04"
+    "framework" : "@CLICK_FRAMEWORK@"
 }

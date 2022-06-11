@@ -27,7 +27,7 @@ MainView {
     width: units.gu(45)
     height: units.gu(75)
 
-    property string app_version: "1.7.4"
+    property string app_version: "1.7.5"
 
     property string primaryColor: "#e53446"
 

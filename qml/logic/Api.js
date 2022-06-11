@@ -1,5 +1,5 @@
-var server = "http://vulgry.innves.com/rapsody/api.php";
-var api2 = "http://app.jgm90.com/cmapi/netease/";
+var server = "https://vulgry.innves.com/rapsody/api.php";
+var api2 = "https://app.jgm90.com/cmapi/netease/";
 
 function apiSearch(query, type, limit) {
     is_visible(false);
@@ -11,23 +11,24 @@ function apiSearch(query, type, limit) {
     var album_type = '10';
     var artist_type = '100';
     var cn1 = new XMLHttpRequest();
-    cn1.open("GET", server + '?action=search&query=' + query + '&type=' + song_type + '&limit=' + limit);
-    cn1.onreadystatechange = function() {
+    var searchSongsUrl = server + '?action=search&query=' + query + '&type=' + song_type + '&limit=' + limit;
+    cn1.open("GET", searchSongsUrl);
+    cn1.onreadystatechange = function () {
         if (cn1.readyState == XMLHttpRequest.DONE && cn1.status == 200) {
             var data = cn1.responseText;
             data = JSON.parse(data);
             for (var i = 0; i < data.result.songs.length; i++) {
                 var song = data.result.songs[i];
                 if (song.fee != 1) {
-                searchSongsModel.append({
-                    'id': song.id,
-                    'name': song.name,
-                    'album_id': song.album.id,
-                    'album': song.album.name,
-                    'artist_id': song.artists[0].id,
-                    'artist': song.artists[0].name,
-                    'duration': song.duration
-                });
+                    searchSongsModel.append({
+                        'id': song.id,
+                        'name': song.name,
+                        'album_id': song.album.id,
+                        'album': song.album.name,
+                        'artist_id': song.artists[0].id,
+                        'artist': song.artists[0].name,
+                        'duration': song.duration
+                    });
                 }
             }
             search_songs_loader.running = false;
@@ -38,8 +39,9 @@ function apiSearch(query, type, limit) {
     cn1.send();
     search_albums_loader.running = true;
     var cn2 = new XMLHttpRequest();
-    cn2.open("GET", server + '?action=search&query=' + query + '&type=' + album_type + '&limit=' + limit);
-    cn2.onreadystatechange = function() {
+    var searchAlbumsUrl = server + '?action=search&query=' + query + '&type=' + album_type + '&limit=' + limit;
+    cn2.open("GET", searchAlbumsUrl);
+    cn2.onreadystatechange = function () {
         if (cn2.readyState == XMLHttpRequest.DONE && cn2.status == 200) {
             var data = cn2.responseText;
             data = JSON.parse(data);
@@ -65,8 +67,9 @@ function apiSearch(query, type, limit) {
     cn2.send();
     search_artists_loader.running = true;
     var cn3 = new XMLHttpRequest();
-    cn3.open("GET", server + '?action=search&query=' + query + '&type=' + artist_type + '&limit=' + limit);
-    cn3.onreadystatechange = function() {
+    var searchArtistsUrl = server + '?action=search&query=' + query + '&type=' + artist_type + '&limit=' + limit;
+    cn3.open("GET", searchArtistsUrl);
+    cn3.onreadystatechange = function () {
         if (cn3.readyState == XMLHttpRequest.DONE && cn3.status == 200) {
             var data = cn3.responseText;
             data = JSON.parse(data);
@@ -104,7 +107,7 @@ function getNewAlbums(limit) {
     new_albums_loader.running = true;
     var cn = new XMLHttpRequest();
     cn.open("GET", server + '?action=getNewAlbums&limit=' + limit);
-    cn.onreadystatechange = function() {
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -141,8 +144,9 @@ function getTopArtists(limit) {
     artistsModel.clear();
     top_artists_loader.running = true;
     var cn = new XMLHttpRequest();
-    cn.open("GET", server + '?action=getTopArtists&limit=' + limit);
-    cn.onreadystatechange = function() {
+    var url = server + '?action=getTopArtists&limit=' + limit;
+    cn.open("GET", url);
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -178,8 +182,9 @@ function getArtistTopSongs(id) {
     songsModel.clear();
     artist_songs_loader.running = true;
     var cn = new XMLHttpRequest();
-    cn.open("GET", server + '?action=getArtistTopSongs&id=' + id);
-    cn.onreadystatechange = function() {
+    var url = server + '?action=getArtistTopSongs&id=' + id;
+    cn.open("GET", url);
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -187,15 +192,15 @@ function getArtistTopSongs(id) {
                 for (var i = 0; i < data.hotSongs.length; i++) {
                     var song = data.hotSongs[i];
                     if (song.fee != 1) {
-                    songsModel.append({
-                        'id': song.id,
-                        'name': song.name,
-                        'album_id': song.album.id,
-                        'album': song.album.name,
-                        'artist_id': song.artists[0].id,
-                        'artist': song.artists[0].name,
-                        'duration': song.duration
-                    })
+                        songsModel.append({
+                            'id': song.id,
+                            'name': song.name,
+                            'album_id': song.album.id,
+                            'album': song.album.name,
+                            'artist_id': song.artists[0].id,
+                            'artist': song.artists[0].name,
+                            'duration': song.duration
+                        })
                     }
                 }
             } catch (e) {
@@ -213,8 +218,9 @@ function getArtistAlbums(id) {
     albumsModel.clear();
     artist_albums_loader.running = true;
     var cn = new XMLHttpRequest();
-    cn.open("GET", server + '?action=getArtistAlbums&id=' + id);
-    cn.onreadystatechange = function() {
+    var url = server + '?action=getArtistAlbums&id=' + id;
+    cn.open("GET", url);
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -255,7 +261,7 @@ function getAlbumDetail(id) {
     album_loader.running = true;
     var cn = new XMLHttpRequest();
     cn.open("GET", server + '?action=getAlbumDetail&id=' + id);
-    cn.onreadystatechange = function() {
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -268,15 +274,15 @@ function getAlbumDetail(id) {
                 for (var i = 0; i < data.album.songs.length; i++) {
                     var song = data.album.songs[i];
                     if (song.fee != 1) {
-                    albumModel.append({
-                        'id': song.id,
-                        'name': song.name,
-                        'album_id': song.album.id,
-                        'album': song.album.name,
-                        'artist_id': song.artists[0].id,
-                        'artist': song.artists[0].name,
-                        'duration': song.duration
-                    })
+                        albumModel.append({
+                            'id': song.id,
+                            'name': song.name,
+                            'album_id': song.album.id,
+                            'album': song.album.name,
+                            'artist_id': song.artists[0].id,
+                            'artist': song.artists[0].name,
+                            'duration': song.duration
+                        })
                     }
                 }
                 album_loader.running = false;
@@ -304,12 +310,10 @@ function getSongDetail(id) {
     playing_loader.running = true;
     var cn = new XMLHttpRequest();
     var url = server + '?action=getSongDetail&id=' + id;
-    console.log(url);
     cn.open('GET', url);
-    cn.onreadystatechange = function() {
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
-            console.log(data);
             data = JSON.parse(data);
             try {
                 playingPage.title = data.name;
@@ -334,11 +338,10 @@ function getSongDetail(id) {
 function stream(id) {
     var cn = new XMLHttpRequest();
     cn.open('GET', server + '?stream=' + id + '&quality=lMusic');
-    cn.onreadystatechange = function() {
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
-            console.log(data.mp3);
             media_player.source = data.mp3;
             media_player.play();
         }
@@ -349,7 +352,7 @@ function stream(id) {
 function download(id, name, nameArt) {
     var cn = new XMLHttpRequest();
     cn.open('GET', api2 + 'url/' + id + '/' + cloudMusic.settings.download_quality);
-    cn.onreadystatechange = function() {
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -358,7 +361,6 @@ function download(id, name, nameArt) {
             var nameArtMod = nameArt.replace(" ", "_")
             singleDownload.nameArtist = nameArtMod;
             singleDownload.download(data.url);
-            console.log(data.url);
         }
     };
     cn.send();
@@ -368,10 +370,9 @@ function download(id, name, nameArt) {
 function adddownloads() {
     var counter = 0;
     var helper = 0;
-    console.log("Count: " + modelo_playlist.count);
     var xhr = [];
     for (var i = 0; i < modelo_playlist.count; i++) {
-        (function(i) {
+        (function (i) {
             if (!modelo_playlist.get(i).local) {
                 helper = helper + 1;
                 var id = modelo_playlist.get(i).songId;
@@ -380,7 +381,7 @@ function adddownloads() {
                 xhr[i] = new XMLHttpRequest();
                 var url = server + '?offline=' + id + '&quality=' + quality;
                 xhr[i].open("GET", url, true);
-                xhr[i].onreadystatechange = function() {
+                xhr[i].onreadystatechange = function () {
                     if (xhr[i].readyState == 4 && xhr[i].status == 200) {
                         counter = counter + 1;
                         var data = xhr[i].responseText;
@@ -391,11 +392,6 @@ function adddownloads() {
                             url: data.mp3,
                             img: data.img
                         });
-                        console.log("songId: " + id);
-                        console.log("title: " + title);
-                        console.log("url: " + data.mp3);
-                        console.log("img: " + data.img);
-                        console.log("dq count: " + downloadqueue.count);
                         if (counter == helper) {
                             downloadSong(0);
                             downloadImage(0);
@@ -427,7 +423,7 @@ function getLyric(id) {
     lbl_next.text = "";
     var cn = new XMLHttpRequest();
     cn.open('GET', server + '?lyric=' + id);
-    cn.onreadystatechange = function() {
+    cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
@@ -487,11 +483,11 @@ function formatDate(date) {
 }
 
 function splitFileName(urlFile) {
-   var list = urlFile.split("/")
-   var nameFile = list[list.length-1]
-   var localDirectory = urlFile.split(nameFile)
-   var listFin = []
-   listFin[0] = localDirectory[0]
-   listFin[1] = nameFile.replace(/%/g, "%25")
-   return listFin
+    var list = urlFile.split("/")
+    var nameFile = list[list.length - 1]
+    var localDirectory = urlFile.split(nameFile)
+    var listFin = []
+    listFin[0] = localDirectory[0]
+    listFin[1] = nameFile.replace(/%/g, "%25")
+    return listFin
 }
