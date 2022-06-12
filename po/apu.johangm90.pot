@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apu.johangm90\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-11 20:00+0000\n"
+"POT-Creation-Date: 2022-06-11 20:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: ../qml/Main.qml:168 ../qml/logic/Api.js:183 ../qml/logic/Api.js:184
+#: ../qml/Main.qml:168 ../qml/logic/Api.js:178 ../qml/logic/Api.js:179
 msgid "Artist"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Playlist"
 msgstr ""
 
-#: ../qml/Main.qml:237 ../qml/logic/Api.js:309 ../qml/logic/Api.js:310
+#: ../qml/Main.qml:237 ../qml/logic/Api.js:302 ../qml/logic/Api.js:303
 msgid "Now Playing"
 msgstr ""
 
@@ -302,11 +302,11 @@ msgstr ""
 msgid "This cannot be undone"
 msgstr ""
 
-#: ../qml/logic/Api.js:280
+#: ../qml/logic/Api.js:273
 msgid "Release Date:"
 msgstr ""
 
-#: ../qml/logic/Api.js:451
+#: ../qml/logic/Api.js:434
 msgid "I'm sorry but I forgot that lyric :("
 msgstr ""
 

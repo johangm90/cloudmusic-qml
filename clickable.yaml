@@ -1,0 +1,6 @@
+clickable_minimum_required: 7.1.2
+builder: cmake
+kill: cloudmusic
+dependencies_target: 
+  - fonts-wqy-zenhei
+  - gstreamer1.0-fluendo-mp3

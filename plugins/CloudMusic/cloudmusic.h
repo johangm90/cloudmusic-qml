@@ -1,14 +1,14 @@
-#ifndef APU_H
-#define APU_H
+#ifndef CloudMusic_H
+#define CloudMusic_H
 
 #include <QObject>
 
-class Apu: public QObject {
+class CloudMusic: public QObject {
     Q_OBJECT
 
 public:
-    Apu();
-    ~Apu() = default;
+    CloudMusic();
+    ~CloudMusic() = default;
 
     Q_INVOKABLE void changeFileName(const QString urlFile, const QString fileName, const QString nameSong);
 };

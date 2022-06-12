@@ -1,12 +1,12 @@
 {
-    "name": "apu.johangm90",
-    "description": "A music player for ubuntu touch",
+    "name": "cloudmusic.jgm90.com",
+    "description": "A cloud based music player",
     "architecture": "@CLICK_ARCH@",
     "title": "Cloud Music",
     "hooks": {
-        "apu": {
-            "apparmor": "apu.apparmor",
-            "desktop":  "apu.desktop"
+        "cloudmusic": {
+            "apparmor": "cloudmusic.apparmor",
+            "desktop":  "cloudmusic.desktop"
         }
     },
     "version": "1.7.6",

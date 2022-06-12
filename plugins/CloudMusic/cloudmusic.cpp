@@ -2,15 +2,15 @@
 #include <QString>
 #include <QProcess>
 
-#include "apu.h"
+#include "cloudmusic.h"
 
 using namespace std;
 
-Apu::Apu() {
+CloudMusic::CloudMusic() {
 
 }
 
-void Apu::changeFileName(QString urlFile, QString fileDir,QString nameSong) {
+void CloudMusic::changeFileName(QString urlFile, QString fileDir,QString nameSong) {
   array<char, 128> buffer;
   QString QSresult;
   string result;

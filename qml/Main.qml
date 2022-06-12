@@ -1,14 +1,13 @@
-import QtQuick 2.4
+import QtQuick 2.7
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
 import Ubuntu.Content 1.3
 import UserMetrics 0.1
 import Ubuntu.DownloadManager 1.2
 import Qt.labs.settings 1.0
-import Apu 1.0
+import CloudMusic 1.0
 import "components"
 import "graphics"
-import "themes"
 import "ui"
 import "logic/Api.js" as Api
 import "logic/Database.js" as Db
@@ -20,7 +19,7 @@ MainView {
     objectName: "mainView"
 
     // Note! applicationName needs to match the "name" field of the click manifest
-    applicationName: "apu.johangm90"
+    applicationName: "cloudmusic.jgm90.com"
 
     //automaticOrientation: true
 
@@ -46,7 +45,7 @@ MainView {
         name: "Cloud Music"
         format: i18n.tr("%1 songs played today") + " - Cloud Music"
         emptyFormat: i18n.tr("0 songs played today") + " - Cloud Music"
-        domain: "apu.johangm90"
+        domain: "cloudmusic.jgm90.com"
     }
 
     property

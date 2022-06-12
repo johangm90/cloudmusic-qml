@@ -1,9 +1,9 @@
-import QtQuick 2.4
+import QtQuick 2.7
 import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
 import Ubuntu.Components.ListItems 1.0 as UListItem
 import Ubuntu.DownloadManager 1.2
-import Apu 1.0
+import CloudMusic 1.0
 import "../components"
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
@@ -11,32 +11,14 @@ import "../logic/Database.js" as Db
 Item {
     id: playlist
 
-    /*head.actions: [
-        Action {
-            id: playall
-            text: i18n.tr("Play")
-            iconName: "media-playlist"
-            onTriggered: {
-                stack.push(detalle)
-                playMusic.queue = songsModel.count
-                playMusic.index = -1
-                playMusic.playSong(1, false)
-            }
-        }
-    ]*/
-
-    function cargar(id){
+    function cargar(id) {
         Db.getPlaylist(id);
         songsList.currentId = id
     }
 
-    function setStatus(status){
+    function setStatus(status) {
         swdownload.isOffline = status
     }
-
-    /*FileManager {
-        id: fileManager
-    }*/
 
     ListModel {
         id: songsModel
@@ -88,9 +70,9 @@ Item {
                 var finalLocation = fileManager.saveDownload(path);
                 Db.setlocal(finalLocation, songId);
                 console.log("Download Queue: " + downloadqueue.count);
-                if(downloadqueue.count>counter){
+                if (downloadqueue.count>counter) {
                     Api.downloadSong(counter);
-                }else{
+                } else {
                     //progreso.value=0;
                     //progreso.visible=false;
                 }
@@ -109,27 +91,16 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             checked: (isOffline == 1) ? true : false
             onCheckedChanged: {
-                if(swdownload.checked==true){
+                if (swdownload.checked==true) {
                     Db.setOffline(songsList.currentId, 1)
                     musicDownloader.counter=0;
                     Api.adddownloads();
-                }else{
+                } else {
                     Db.setOffline(songsList.currentId, 0)
                 }
                 console.log("Offline: " + isOffline)
             }
         }
-
-        /*ProgressBar {
-            id: progreso
-            minimumValue: 0
-            maximumValue: 100
-            value: musicDownloader.progress
-            showProgressPercentage: false
-            width: parent.width
-            height: units.gu(1)
-            visible: false
-        }*/
     }
 
     ActionSelectionPopover {
@@ -166,7 +137,6 @@ Item {
         }
 
         actions: ActionList {
-
             Action {
                 text: i18n.tr("Download")
                 name: "save"
@@ -218,7 +188,7 @@ Item {
         }
     }
 
-    Column{
+    Column {
         id: playlist_wrapper
         spacing: units.gu(1)
         anchors {
@@ -290,9 +260,9 @@ Item {
                         height: parent.height
                         anchors.right: parent.right
                         onClicked: {
-                            if(songsList.index == index) {
+                            if (songsList.index == index) {
                                 context_menu.close()
-                            }else {
+                            } else {
                                 songsList.index = index
                             }
 
@@ -314,10 +284,10 @@ Item {
                         var songs = [];
                         var songs_ids = [];
                         playing_page.model_queue.clear();
-                        for(var i = 0; i < songsModel.count; i++) {
-                            if(songsModel.get(index).local){
+                        for (var i = 0; i < songsModel.count; i++) {
+                            if (songsModel.get(index).local) {
                                 songs.push(Qt.resolvedUrl(songsModel.get(i).local))
-                            }else{
+                            } else {
                                 songs.push(cloudMusic.server + 'play/' + songsModel.get(i).song_id + '/' + cloudMusic.settings.streaming_quality);
                                 //songs.push(cloudMusic.server1 + 'url?id=' + songsModel.get(i).song_id + '&br=' + cloudMusic.settings.streaming_quality + '&raw');
                             }
@@ -334,9 +304,9 @@ Item {
                 ViewItems.onDragUpdated: {
                     if (event.status == ListItemDrag.Moving) {
                         event.accept = false
-                    }else if (event.status == ListItemDrag.Dropped) {
+                    } else if (event.status == ListItemDrag.Dropped) {
                         model.move(event.from, event.to, 1);
-                        for (var i = 0; i < songsModel.count; i++){
+                        for (var i = 0; i < songsModel.count; i++) {
                             Db.updateSong(i+1, songsModel.get(i).id)
                             console.log("Reordering: " + i)
                         }

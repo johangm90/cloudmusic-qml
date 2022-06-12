@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.7
 import Ubuntu.Components 1.3
 import QtGraphicalEffects 1.0
 import QtMultimedia 5.6
@@ -8,7 +8,6 @@ import Qt.labs.settings 1.0
 import QtQuick.Layouts 1.2
 import "../components"
 import "../graphics"
-import "../themes"
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
 

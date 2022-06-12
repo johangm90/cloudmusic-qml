@@ -1,9 +1,9 @@
-#ifndef APUPLUGIN_H
-#define APUPLUGIN_H
+#ifndef CLOUDMUSICPLUGIN_H
+#define CLOUDMUSICPLUGIN_H
 
 #include <QQmlExtensionPlugin>
 
-class ApuPlugin : public QQmlExtensionPlugin {
+class CloudMusicPlugin : public QQmlExtensionPlugin {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 

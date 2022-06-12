@@ -1,6 +1,6 @@
 [Desktop Entry]
 _Name=Cloud Music
-Exec=qmlscene qml/Main.qml
+Exec=cloudmusic %U
 Icon=assets/logo.svg
 Terminal=false
 Type=Application

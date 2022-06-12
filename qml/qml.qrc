@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Main.qml</file>
+        <file>components</file>
+        <file>graphics</file>
+        <file>logic</file>
+        <file>ui</file>
+    </qresource>
+</RCC>

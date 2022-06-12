@@ -1,10 +1,10 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(PLUGIN "Apu")
+set(PLUGIN "CloudMusic")
 
 set(
     SRC
     plugin.cpp
-    apu.cpp
+    cloudmusic.cpp
 )
 
 set(CMAKE_AUTOMOC ON)
