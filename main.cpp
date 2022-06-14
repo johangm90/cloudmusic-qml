@@ -18,6 +18,7 @@
 #include <QCoreApplication>
 #include <QUrl>
 #include <QString>
+#include <QQuickStyle>
 #include <QQuickView>
 
 int main (int argc, char *argv[])
@@ -26,6 +27,8 @@ int main (int argc, char *argv[])
     app->setApplicationName("cloudmusic.jgm90.com");
 
     qDebug() << "Starting app from main.cpp";
+
+    QQuickStyle::setStyle("Material");
 
     QQuickView *view = new QQuickView();
     view->setSource(QUrl("qrc:/Main.qml"));

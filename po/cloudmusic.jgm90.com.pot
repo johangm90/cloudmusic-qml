@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic.jgm90.com\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-12 17:11+0000\n"
+"POT-Creation-Date: 2022-06-14 15:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +65,7 @@ msgstr ""
 msgid "What's new?"
 msgstr ""
 
-#: ../qml/components/ChangeLogDialog.qml:39 ../qml/ui/About.qml:112
+#: ../qml/components/ChangeLogDialog.qml:39 ../qml/ui/About.qml:113
 msgid "Donate"
 msgstr ""
 
@@ -127,8 +127,8 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../qml/components/TabsList.qml:55 ../qml/ui/About.qml:16
-#: ../qml/ui/About.qml:31
+#: ../qml/components/TabsList.qml:55 ../qml/ui/About.qml:17
+#: ../qml/ui/About.qml:32
 msgid "About"
 msgstr ""
 
@@ -140,20 +140,20 @@ msgstr ""
 msgid "I'm sorry but I forgot that lyric :("
 msgstr ""
 
-#: ../qml/ui/About.qml:31
+#: ../qml/ui/About.qml:32
 msgid "Credits"
 msgstr ""
 
 #. TRANSLATORS: App version number e.g Version 1.0.0
-#: ../qml/ui/About.qml:84
+#: ../qml/ui/About.qml:85
 msgid "Version %1"
 msgstr ""
 
-#: ../qml/ui/About.qml:105
+#: ../qml/ui/About.qml:106
 msgid "Released under the terms of the GNU GPL v3"
 msgstr ""
 
-#: ../qml/ui/About.qml:122
+#: ../qml/ui/About.qml:123
 msgid "Report bugs on %1"
 msgstr ""
 

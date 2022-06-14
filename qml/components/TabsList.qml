@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import Ubuntu.Components 1.3
 
 ActionList {
@@ -6,7 +6,7 @@ ActionList {
 
     children: [
         Action {
-            iconName: "search"
+            iconName: "find"
             text: i18n.tr("Search")
             enabled: pagestack.currentPage !== searchLoader
             onTriggered: {

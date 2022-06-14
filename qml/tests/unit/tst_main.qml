@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import QtTest 1.0
 import Ubuntu.Test 1.0
 import "../../"
