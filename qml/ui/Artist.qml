@@ -1,9 +1,9 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
-import Ubuntu.Components.ListItems 1.3 as ListItems
+import Lomiri.Components.ListItems 1.3 as ListItems
 import "../logic/Api.js" as Api
 import "../components"
 

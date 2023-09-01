@@ -1,9 +1,9 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
-import Ubuntu.Content 1.3
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
+import Lomiri.Content 1.3
 import UserMetrics 0.1
-import Ubuntu.DownloadManager 1.2
+import Lomiri.DownloadManager 1.2
 import Qt.labs.settings 1.0
 import CloudMusic 1.0
 import "components"
@@ -36,7 +36,7 @@ MainView {
         property string theme: "Ambiance"
         property bool first_run: true
         property string current_version: ""
-        onThemeChanged: Theme.name = "Ubuntu.Components.Themes." + settings.theme
+        onThemeChanged: Theme.name = "Lomiri.Components.Themes." + settings.theme
     }
 
     // TRANSLATORS: %1 refers to the amount of songs played in the day
@@ -52,7 +52,7 @@ MainView {
     var server: "https://app.jgm90.com/cmapi/netease/";
 
     Component.onCompleted: {
-      Theme.name = "Ubuntu.Components.Themes." + settings.theme
+      Theme.name = "Lomiri.Components.Themes." + settings.theme
     }
 
     Component {
@@ -305,7 +305,7 @@ MainView {
             }
             Button {
                 text: "Cancel"
-                color: UbuntuColors.orange
+                color: LomiriColors.orange
                 onClicked: {
                     downloader.cancel()
                     PopupUtils.close(dialogue)

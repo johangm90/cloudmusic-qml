@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import Ubuntu.Components 1.3
+import Lomiri.Components 1.3
 import "../components"
 
 Page {
@@ -59,7 +59,7 @@ Page {
                         top: parent.top; left: parent.left; right: parent.right; topMargin: units.gu(5)
                     }
 
-                    UbuntuShape {
+                    LomiriShape {
                         width: Math.min(parent.width/2, parent.height/2)
                         height: width
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -119,7 +119,7 @@ Page {
                         wrapMode: Text.WordWrap
                         fontSize: "small"
                         horizontalAlignment: Text.AlignHCenter
-                        linkColor: UbuntuColors.blue
+                        linkColor: LomiriColors.blue
                         text: i18n.tr("Report bugs on %1").arg("<a href=\"https://gitlab.com/johangm90/cloudmusic-qml/issues\">gitlab.com</a>")
                         onLinkActivated: Qt.openUrlExternally(link)
                     }
@@ -148,6 +148,6 @@ Page {
         orientation: Qt.Horizontal
         snapMode: ListView.SnapOneItem
         currentIndex: aboutPageHeaderSections.selectedIndex
-        highlightMoveDuration: UbuntuAnimation.SlowDuration
+        highlightMoveDuration: LomiriAnimation.SlowDuration
     }
 }

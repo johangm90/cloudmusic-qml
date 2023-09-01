@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtMultimedia 5.0
-import Ubuntu.Components 1.3
-import Ubuntu.Components.ListItems 1.0 as UListItem
+import Lomiri.Components 1.3
+import Lomiri.Components.ListItems 1.0 as UListItem
 import QtGraphicalEffects 1.0
 import "../ui"
 

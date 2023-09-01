@@ -9,7 +9,7 @@ FileManager::FileManager(QObject *parent):
     QObject(parent)
 {
     // Remove any downloads that haven't been collected previously (because we were closed before they finished)
-    QString downloadManagerPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QDir::separator() + "ubuntu-download-manager" + QDir::separator() + "apu.johangm90";
+    QString downloadManagerPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QDir::separator() + "lomiri-download-manager" + QDir::separator() + "apu.johangm90";
     QDir downloadDir(downloadManagerPath);
     if (downloadDir.exists()) {
         downloadDir.removeRecursively();

@@ -1,8 +1,8 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
-import Ubuntu.Components.ListItems 1.0 as UListItem
-import Ubuntu.DownloadManager 1.2
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
+import Lomiri.Components.ListItems 1.0 as UListItem
+import Lomiri.DownloadManager 1.2
 import CloudMusic 1.0
 import "../components"
 import "../logic/Api.js" as Api
@@ -315,7 +315,7 @@ Item {
                 }
 
                 moveDisplaced: Transition {
-                    UbuntuNumberAnimation {
+                    LomiriNumberAnimation {
                         property: "y"
                     }
                 }
