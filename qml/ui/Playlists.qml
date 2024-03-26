@@ -1,6 +1,6 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
 import "../components"
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
@@ -60,7 +60,7 @@ Page {
             }
             Button {
                 text: i18n.tr("Create")
-                color: UbuntuColors.green
+                color: LomiriColors.green
                 onClicked: {
                     Db.insertPlaylist(txt_playlist.text)
                     Db.updateRecords()
@@ -70,7 +70,7 @@ Page {
 
             Button {
                 text: i18n.tr("Cancel")
-                color: UbuntuColors.darkGrey
+                color: LomiriColors.darkGrey
                 onClicked: {
                     PopupUtils.close(create_playlist)
                 }
@@ -98,7 +98,7 @@ Page {
             }
             Button {
                 text: i18n.tr("Save")
-                color: UbuntuColors.green
+                color: LomiriColors.green
                 onClicked: {
                     Db.updatePlaylist(playlist_lista.currentId, txt_name.text)
                     Db.updateRecords()
@@ -108,7 +108,7 @@ Page {
 
             Button {
                 text: i18n.tr("Cancel")
-                color: UbuntuColors.darkGrey
+                color: LomiriColors.darkGrey
                 onClicked: {
                     PopupUtils.close(edit_playlist)
                 }
@@ -126,7 +126,7 @@ Page {
 
             Button {
                 text: i18n.tr("Delete")
-                color: UbuntuColors.red
+                color: LomiriColors.red
                 onClicked: {
                     Db.removePlaylist(playlist_lista.currentId)
                     Db.updateRecords()
@@ -136,7 +136,7 @@ Page {
 
             Button {
                 text: i18n.tr("Cancel")
-                color: UbuntuColors.darkGrey
+                color: LomiriColors.darkGrey
                 onClicked: {
                     PopupUtils.close(delete_playlist)
                 }

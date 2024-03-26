@@ -1,6 +1,6 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
 import QtQuick.Layouts 1.2
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
@@ -202,7 +202,7 @@ Page {
                                      text: i18n.tr("The selected element to be deleted from the search list is: ") + " " + comboBoxPopOver.model.get(index)[textRole]
                                      Button {
                                           text: i18n.tr("Delete")
-                                          color: UbuntuColors.red
+                                          color: LomiriColors.red
                                           onClicked: {
                                              StorageSearchKey.deleteKeyword(comboBoxPopOver.model.get(index)[textRole])
                                              numKeys = numKeys - 1
@@ -213,7 +213,7 @@ Page {
                                      }
                                      Button {
                                           text: i18n.tr("Return")
-                                          color: UbuntuColors.graphite
+                                          color: LomiriColors.graphite
                                           onClicked: PopupUtils.close(dialogue)
                                      }
                                  }

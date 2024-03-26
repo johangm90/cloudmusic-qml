@@ -1,6 +1,6 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
 import "../components"
 
 Component {
@@ -44,7 +44,7 @@ Component {
             id: button2
             width: parent.width - units.gu(3)
             text: i18n.tr("Close")
-            color: UbuntuColors.red
+            color: LomiriColors.red
             onClicked: {
                 PopupUtils.close(dialogue)
                 cloudMusic.settings.current_version = cloudMusic.app_version

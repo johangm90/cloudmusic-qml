@@ -1,7 +1,7 @@
 import QtQuick 2.12
-import Ubuntu.Components 1.3
-import Ubuntu.Components.Popups 1.3
-import Ubuntu.Layouts 1.0
+import Lomiri.Components 1.3
+import Lomiri.Components.Popups 1.3
+import Lomiri.Layouts 1.0
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
 
@@ -69,7 +69,7 @@ Item {
             }
             Button {
                 text: i18n.tr("Create")
-                color: UbuntuColors.green
+                color: LomiriColors.green
                 onClicked: {
                     Db.insertPlaylist(txt_playlist.text)
                     Db.getLastPlaylist()
@@ -79,7 +79,7 @@ Item {
 
             Button {
                 text: i18n.tr("Cancel")
-                color: UbuntuColors.darkGrey
+                color: LomiriColors.darkGrey
                 onClicked: {
                     PopupUtils.close(create_playlist)
                 }
@@ -135,7 +135,7 @@ Item {
 
             Button {
                 text: i18n.tr("Add")
-                color: UbuntuColors.green
+                color: LomiriColors.green
                 onClicked: {
                     var pid = modelo_playlists.get(playlistSelector.selectedIndex).playlistId
                     add_song(pid)
@@ -145,7 +145,7 @@ Item {
 
             Button {
                 text: i18n.tr("Cancel")
-                color: UbuntuColors.darkGrey
+                color: LomiriColors.darkGrey
                 onClicked: {
                     PopupUtils.close(addto)
                 }
