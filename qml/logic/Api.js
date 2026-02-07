@@ -1,5 +1,5 @@
 var server = "https://vulgry.innves.com/rapsody/api.php";
-var api2 = "https://app.jgm90.com/cmapi/netease/";
+var api2 = "https://cloudmusicapi.nubit.io/netease/";
 
 function apiSearch(query, type, limit) {
     is_visible(false);

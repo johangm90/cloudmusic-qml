@@ -49,7 +49,7 @@ MainView {
     }
 
     property
-    var server: "https://app.jgm90.com/cmapi/netease/";
+    var server: "https://cloudmusicapi.nubit.io/netease/";
 
     Component.onCompleted: {
       Theme.name = "Lomiri.Components.Themes." + settings.theme
