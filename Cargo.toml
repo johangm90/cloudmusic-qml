@@ -1,0 +1,15 @@
+[package]
+name = "cloudmusic"
+version = "1.7.6"
+authors = ["Johan  Guerreros <johangm90@gmail.com>"]
+edition = "2024"
+build = "src/build.rs"
+
+[dependencies]
+qmetaobject = "0.2.9"
+gettext-rs = "0.7"
+cstr = "0.2.11"
+cpp = "0.5"
+
+[build-dependencies]
+cpp_build = "0.5"

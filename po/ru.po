@@ -6,350 +6,305 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2017-02-04 03:42+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 12:08+0000\n"
 "PO-Revision-Date: 2016-11-15 13:41+0000\n"
 "Last-Translator: leonidy-85 <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Launchpad-Export-Date: 2017-03-19 06:51+0000\n"
 "X-Generator: Launchpad (build 18332)\n"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:45
-#, qt-format
+#: qml/Main.qml:46
 msgid "%1 songs played today"
 msgstr "%1 композиций проиграно сегодня"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:46
+#: qml/Main.qml:47
 msgid "0 songs played today"
 msgstr "0 композиций воспроизведено сегодня"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:71
-#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:10
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:13
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:17
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SearchHistory.qml:13
+#: qml/Main.qml:76 qml/components/TabsList.qml:10 qml/ui/Search.qml:18
+#: qml/ui/Search.qml:22 qml/ui/SearchHistory.qml:13
 msgid "Search"
 msgstr "Найти"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:79
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:230
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:272
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:178
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:251
+#: qml/Main.qml:84 qml/ui/Album.qml:193 qml/ui/Artist.qml:183
+#: qml/ui/PlaylistDetail.qml:141 qml/ui/Search.qml:342
 msgid "Download"
 msgstr "Скачать"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:105
-msgid "Migration required"
-msgstr "Требуется перенос"
-
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:119
-msgid ""
-"This migration is to ensure your previous database works properly. If you "
-"haven't run CloudMusic before, click the button anyway and you'll have a "
-"fresh database"
-msgstr ""
-
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:130
-msgid "Migrate"
-msgstr "Перенести"
-
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:233
-#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:150
-#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:151
+#: qml/Main.qml:167
 msgid "Artist"
 msgstr "Исполнитель"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:252
+#: qml/Main.qml:186
 msgid "Album"
 msgstr "Альбом"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:258
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:95
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:238
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:280
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:259
+#: qml/Main.qml:192 qml/components/SongDialog.qml:95 qml/ui/Album.qml:201
+#: qml/ui/Artist.qml:191 qml/ui/Search.qml:350
 msgid "Add to playlist"
 msgstr "Добавить в плейлист"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:284
+#: qml/Main.qml:218
 msgid "Playlist"
 msgstr "Список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:302
-#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:251
-#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:252
+#: qml/Main.qml:236
 msgid "Now Playing"
 msgstr "Сейчас воспроизводится"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/Main.qml:306
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/NowPlaying.qml:145
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Queue.qml:9
+#: qml/Main.qml:240 qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9
 msgid "Queue"
 msgstr "Очередь"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:11
+#: qml/components/ChangeLogDialog.qml:11
 msgid "What's new?"
 msgstr "Что нового?"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:38
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:107
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:113
 msgid "Donate"
 msgstr "Помочь проекту"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:47
-msgid "Rate this app!"
-msgstr "Оцените это приложение!"
-
-#: /home/johan/Develop/qml/cloudmusic/apu/components/ChangeLogDialog.qml:54
+#: qml/components/ChangeLogDialog.qml:46
 msgid "Close"
 msgstr "Закрыть"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:36
+#: qml/components/SongDialog.qml:36
 msgid "Album added to playlist"
 msgstr "Альбом добавлен в список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:39
+#: qml/components/SongDialog.qml:39
 msgid "Song added to playlist"
 msgstr "Композиция добавлена в список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:57
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:49
+#: qml/components/SongDialog.qml:57 qml/ui/Playlists.qml:49
 msgid "New playlist"
 msgstr "Новый список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:61
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:53
+#: qml/components/SongDialog.qml:61 qml/ui/Playlists.qml:53
 msgid "Enter playlist name"
 msgstr "Введите название списка воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:71
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:62
+#: qml/components/SongDialog.qml:71 qml/ui/Playlists.qml:62
 msgid "Create"
 msgstr "Создать"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:81
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:147
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:72
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:110
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:138
+#: qml/components/SongDialog.qml:81 qml/components/SongDialog.qml:147
+#: qml/ui/Playlists.qml:72 qml/ui/Playlists.qml:110 qml/ui/Playlists.qml:138
 msgid "Cancel"
 msgstr "Отмена"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:96
+#: qml/components/SongDialog.qml:96
 msgid "Select one playlist to add"
 msgstr "Чтобы добавить, выберите один список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:110
+#: qml/components/SongDialog.qml:110
 msgid "Create new playlist"
 msgstr "Создать новый список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/SongDialog.qml:137
+#: qml/components/SongDialog.qml:137
 msgid "Add"
 msgstr "Добавить"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:19
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/NewAlbums.qml:15
+#: qml/components/TabsList.qml:19 qml/ui/NewAlbums.qml:16
 msgid "New Albums"
 msgstr "Новые альбомы"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:28
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/TopArtists.qml:15
+#: qml/components/TabsList.qml:28 qml/ui/TopArtists.qml:16
 msgid "Top Artists"
 msgstr "Лучшие исполнители"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:37
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:26
+#: qml/components/TabsList.qml:37 qml/ui/Playlists.qml:26
 msgid "Playlists"
 msgstr "Списки воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:46
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:14
+#: qml/components/TabsList.qml:46 qml/ui/SettingsPage.qml:14
 msgid "Settings"
 msgstr "Параметры"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/components/TabsList.qml:55
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:15
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:30
+#: qml/components/TabsList.qml:55 qml/ui/About.qml:17 qml/ui/About.qml:32
 msgid "About"
 msgstr "О Программе"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:30
+#: qml/ui/About.qml:32
 msgid "Credits"
 msgstr "Участники"
 
-#. TRANSLATORS: App version number e.g Version 1.0.0
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:79
-#, qt-format
+#: qml/ui/About.qml:85
 msgid "Version %1"
 msgstr "Версия %1"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:100
+#: qml/ui/About.qml:106
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "Выпущено в соответствии с лицензией GNU GPL v3"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/About.qml:117
-#, qt-format
+#: qml/ui/About.qml:123
 msgid "Report bugs on %1"
 msgstr ""
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:249
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:291
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:196
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:270
+#: qml/ui/Album.qml:212 qml/ui/Artist.qml:202 qml/ui/PlaylistDetail.qml:159
+#: qml/ui/Search.qml:361
 msgid "Add to queue"
 msgstr "Добавить в очередь"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:257
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:299
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:204
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:278
+#: qml/ui/Album.qml:219 qml/ui/Artist.qml:209 qml/ui/PlaylistDetail.qml:167
+#: qml/ui/Search.qml:368
 msgid "Song added to queue"
 msgstr "Композиция добавлена в очередь"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Album.qml:261
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:217
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:291
+#: qml/ui/Album.qml:223 qml/ui/PlaylistDetail.qml:180 qml/ui/Search.qml:381
 msgid "Go to artist"
 msgstr "Перейти к исполнителю"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:226
+#: qml/ui/Album.qml:330
+msgid ""
+"I'm sorry, list is empty because none of the songs included in this album "
+"are of a supported format :("
+msgstr ""
+
+#: qml/ui/Artist.qml:137
 msgid "Top Songs"
 msgstr "Лучшие композиции"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:303
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:208
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:282
+#: qml/ui/Artist.qml:213 qml/ui/PlaylistDetail.qml:171 qml/ui/Search.qml:372
 msgid "Go to album"
 msgstr "Перейти к альбому"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:427
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:423
+#: qml/ui/Artist.qml:340 qml/ui/Search.qml:512
 msgid "Albums"
 msgstr "Альбомы"
 
-#. TRANSLATORS: %1 refers to the amount of songs in album
-#. TRANSLATORS: %1 refers to the amount of songs in playlist
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Artist.qml:498
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:211
-#, qt-format
+#: qml/ui/Artist.qml:411 qml/ui/Playlists.qml:211
 msgid "%1 song"
 msgid_plural "%1 songs"
 msgstr[0] "%1 композиция"
 msgstr[1] "%1 композиции"
 msgstr[2] "%1 композиций"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Credits.qml:12
+#: qml/ui/Credits.qml:12 qml/ui/Credits.qml:13
 msgid "Developers"
 msgstr "Разработчики"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Credits.qml:13
+#: qml/ui/Credits.qml:14
 msgid "Icon"
 msgstr ""
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Credits.qml:14
+#: qml/ui/Credits.qml:15
 msgid "Translators"
 msgstr "Переводчики"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/NewAlbums.qml:45
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/TopArtists.qml:45
+#: qml/ui/NewAlbums.qml:46 qml/ui/TopArtists.qml:46
 msgid ""
 "An error occurred\n"
 "Touch to retry"
 msgstr ""
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:62
+#: qml/ui/PlaylistDetail.qml:38
 msgid "Available offline"
 msgstr "Доступно в автономном режиме"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:186
+#: qml/ui/PlaylistDetail.qml:149
 msgid "Remove"
 msgstr "Удалить"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/PlaylistDetail.qml:192
+#: qml/ui/PlaylistDetail.qml:155
 msgid "Song removed"
 msgstr "Композиция удалена"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:34
+#: qml/ui/Playlists.qml:34
 msgid "Add Playlist"
 msgstr "Добавить список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:85
+#: qml/ui/Playlists.qml:85
 msgid "Edit playlist"
 msgstr "Свойства списка воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:90
+#: qml/ui/Playlists.qml:90
 msgid "Edit playlist name"
 msgstr "Изменить название списка воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:100
+#: qml/ui/Playlists.qml:100
 msgid "Save"
 msgstr "Сохранить"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:124
+#: qml/ui/Playlists.qml:124
 msgid "Delete playlist"
 msgstr "Удалить список воспроизведения"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:125
+#: qml/ui/Playlists.qml:125
 msgid "This cannot be undone"
 msgstr "Данное действие не может быть отменено"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Playlists.qml:128
+#: qml/ui/Playlists.qml:128 qml/ui/Search.qml:204
 msgid "Delete"
 msgstr "Удалить"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:209
+#: qml/ui/Search.qml:201
+msgid "Item deletion"
+msgstr ""
+
+#: qml/ui/Search.qml:202
+msgid "The selected element to be deleted from the search list is: "
+msgstr ""
+
+#: qml/ui/Search.qml:215
+msgid "Return"
+msgstr ""
+
+#: qml/ui/Search.qml:300
 msgid "Songs"
 msgstr "Композиции"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/Search.qml:513
+#: qml/ui/Search.qml:602
 msgid "Artists"
 msgstr "Исполнители"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:31
+#: qml/ui/SettingsPage.qml:31
 msgid "Download quality"
 msgstr "Качество скачиваемого материала"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:37
+#: qml/ui/SettingsPage.qml:37
 msgid "Streaming quality"
 msgstr "Качество потока"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:54
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:84
+#: qml/ui/SettingsPage.qml:54 qml/ui/SettingsPage.qml:84
 msgid "Normal"
 msgstr "Обычное"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:54
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:84
+#: qml/ui/SettingsPage.qml:54 qml/ui/SettingsPage.qml:84
 msgid "High"
 msgstr "Высокое"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:54
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:84
+#: qml/ui/SettingsPage.qml:54 qml/ui/SettingsPage.qml:84
 msgid "Extreme"
 msgstr "Экстремальное"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:102
+#: qml/ui/SettingsPage.qml:102
 msgid "Ambiance"
 msgstr ""
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:102
+#: qml/ui/SettingsPage.qml:102
 msgid "SuruDark"
 msgstr ""
 
-#: /home/johan/Develop/qml/cloudmusic/apu/ui/SettingsPage.qml:104
+#: qml/ui/SettingsPage.qml:104
 msgid "Theme"
 msgstr "Тема"
 
-#: /home/johan/Develop/qml/cloudmusic/apu/logic/Api.js:443
-msgid "I'm sorry but I forgot that lyric :("
-msgstr ""
+#~ msgid "Migration required"
+#~ msgstr "Требуется перенос"
 
-#: /home/johan/Develop/qml/build-CloudMusic-UbuntuSDK_for_desktop_GCC_amd64_ubuntu_sdk_16_04-Debug/apu/apu.desktop.h:1
-msgid "Cloud Music"
-msgstr "Облачная музка"
+#~ msgid "Migrate"
+#~ msgstr "Перенести"
+
+#~ msgid "Rate this app!"
+#~ msgstr "Оцените это приложение!"
+
+#~ msgid "Cloud Music"
+#~ msgstr "Облачная музка"

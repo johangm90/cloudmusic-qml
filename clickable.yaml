@@ -1,7 +1,8 @@
 clickable_minimum_required: 8.0.0
-builder: cmake
+builder: rust
 kill: cloudmusic
-framework: ubuntu-sdk-20.04
-dependencies_target:
-  - fonts-wqy-zenhei
-#  - gstreamer1.0-fluendo-mp3
+install_root_data:
+  - manifest.json
+  - cloudmusic.apparmor
+  - cloudmusic.desktop
+  - assets

@@ -1,5 +1,5 @@
 [Desktop Entry]
-_Name=Cloud Music
+Name=Cloud Music
 Exec=cloudmusic %U
 Icon=assets/logo.svg
 Terminal=false

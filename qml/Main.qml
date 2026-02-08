@@ -5,7 +5,7 @@ import Lomiri.Content 1.3
 import UserMetrics 0.1
 import Lomiri.DownloadManager 1.2
 import Qt.labs.settings 1.0
-import CloudMusic 1.0
+import FileManager 1.0
 import "components"
 import "graphics"
 import "ui"

@@ -1,0 +1,36 @@
+qrc!(qml_resources,
+    "/" {
+        "qml/Main.qml",
+        "qml/components/ChangeLogDialog.qml",
+        "qml/components/ChangeLogListItem.qml",
+        "qml/components/DownloadDialog.qml",
+        "qml/components/HeaderListItem.qml",
+        "qml/components/Messager.qml",
+        "qml/components/Player.qml",
+        "qml/components/PlayerToolbar.qml",
+        "qml/components/SongDialog.qml",
+        "qml/components/TabsList.qml",
+        "qml/components/TransferFileDialog.qml",
+        "qml/graphics/default.png",
+        "qml/logic/Api.js",
+        "qml/logic/Database.js",
+        "qml/ui/About.qml",
+        "qml/ui/Album.qml",
+        "qml/ui/Artist.qml",
+        "qml/ui/Credits.qml",
+        "qml/ui/NewAlbums.qml",
+        "qml/ui/NowPlaying.qml",
+        "qml/ui/PlaylistDetail.qml",
+        "qml/ui/Playlists.qml",
+        "qml/ui/Queue.qml",
+        "qml/ui/Search.qml",
+        "qml/ui/SearchHistory.qml",
+        "qml/ui/SettingsPage.qml",
+        "qml/ui/StorageSearchKey.js",
+        "qml/ui/TopArtists.qml",
+    },
+);
+
+pub fn load() {
+    qml_resources();
+}
