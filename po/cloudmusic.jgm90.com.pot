@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-08 11:37-0500\n"
+"POT-Creation-Date: 2026-02-15 21:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,46 +18,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: qml/Main.qml:46
+#: qml/Main.qml:56
 msgid "%1 songs played today"
 msgstr ""
 
-#: qml/Main.qml:47
+#: qml/Main.qml:57
 msgid "0 songs played today"
 msgstr ""
 
-#: qml/Main.qml:76 qml/components/TabsList.qml:10 qml/ui/Search.qml:18
+#: qml/Main.qml:86 qml/components/TabsList.qml:10 qml/ui/Search.qml:18
 #: qml/ui/Search.qml:22 qml/ui/SearchHistory.qml:13
 msgid "Search"
 msgstr ""
 
-#: qml/Main.qml:84 qml/ui/Album.qml:193 qml/ui/Artist.qml:183
+#: qml/Main.qml:94 qml/ui/Album.qml:193 qml/ui/Artist.qml:183
 #: qml/ui/PlaylistDetail.qml:141 qml/ui/Search.qml:342
 msgid "Download"
 msgstr ""
 
-#: qml/Main.qml:167
+#: qml/Main.qml:177
 msgid "Artist"
 msgstr ""
 
-#: qml/Main.qml:186
+#: qml/Main.qml:196
 msgid "Album"
 msgstr ""
 
-#: qml/Main.qml:192 qml/components/SongDialog.qml:95 qml/ui/Album.qml:201
+#: qml/Main.qml:202 qml/components/SongDialog.qml:95 qml/ui/Album.qml:201
 #: qml/ui/Artist.qml:191 qml/ui/Search.qml:350
 msgid "Add to playlist"
 msgstr ""
 
-#: qml/Main.qml:218
+#: qml/Main.qml:228
 msgid "Playlist"
 msgstr ""
 
-#: qml/Main.qml:236
+#: qml/Main.qml:246
 msgid "Now Playing"
 msgstr ""
 
-#: qml/Main.qml:240 qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9
+#: qml/Main.qml:250 qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9
 msgid "Queue"
 msgstr ""
 
