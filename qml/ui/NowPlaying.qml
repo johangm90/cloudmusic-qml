@@ -112,35 +112,33 @@ Item {
                             width: parent.width
                             height: units.gu(6)
 
-                            Row {
-                                anchors.fill: parent
+                            Rectangle {
+                                width: units.gu(0.6)
+                                height: units.gu(3.2)
+                                radius: width / 2
+                                color: accentColor
+                                anchors.left: parent.left
                                 anchors.leftMargin: units.gu(1.6)
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Label {
+                                anchors.left: parent.left
+                                anchors.leftMargin: units.gu(3)
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: i18n.tr("Queue")
+                                fontSize: "medium"
+                                font.weight: Font.DemiBold
+                                color: textColor
+                            }
+
+                            Label {
+                                anchors.right: parent.right
                                 anchors.rightMargin: units.gu(1.6)
-                                spacing: units.gu(1)
-
-                                Rectangle {
-                                    width: units.gu(0.6)
-                                    height: units.gu(3.2)
-                                    radius: width / 2
-                                    color: accentColor
-                                    anchors.verticalCenter: parent.verticalCenter
-                                }
-
-                                Label {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: i18n.tr("Queue")
-                                    fontSize: "medium"
-                                    font.weight: Font.DemiBold
-                                    color: textColor
-                                }
-
-                                Label {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.right: parent.right
-                                    text: i18n.tr("%1 total").arg(queue_model.count)
-                                    fontSize: "small"
-                                    color: secondaryTextColor
-                                }
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: i18n.tr("%1 total").arg(queue_model.count)
+                                fontSize: "small"
+                                color: secondaryTextColor
                             }
                         }
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 02:50+0000\n"
+"POT-Creation-Date: 2026-02-16 04:41+0000\n"
 "PO-Revision-Date: 2016-11-15 13:41+0000\n"
 "Last-Translator: leonidy-85 <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "What's new?"
 msgstr "Что нового?"
 
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:120
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:108
 msgid "Donate"
 msgstr "Помочь проекту"
 
@@ -57,7 +57,7 @@ msgstr "Создать"
 msgid "Cancel"
 msgstr "Отмена"
 
-#: qml/components/SongDialog.qml:95 qml/ui/Search.qml:412 qml/ui/Artist.qml:104
+#: qml/components/SongDialog.qml:95 qml/ui/Search.qml:446 qml/ui/Artist.qml:105
 #: qml/ui/Album.qml:100 qml/Main.qml:278
 msgid "Add to playlist"
 msgstr "Добавить в плейлист"
@@ -74,56 +74,56 @@ msgstr "Создать новый список воспроизведения"
 msgid "Add"
 msgstr "Добавить"
 
-#: qml/components/TabsList.qml:10 qml/ui/SearchHistory.qml:13
-#: qml/ui/Search.qml:25 qml/ui/Search.qml:29 qml/Main.qml:131
+#: qml/components/TabsList.qml:21 qml/ui/SearchHistory.qml:13
+#: qml/ui/Search.qml:28 qml/ui/Search.qml:32 qml/Main.qml:131
 msgid "Search"
 msgstr "Найти"
 
-#: qml/components/TabsList.qml:19 qml/ui/NewAlbums.qml:21
+#: qml/components/TabsList.qml:30 qml/ui/NewAlbums.qml:21
 msgid "New Albums"
 msgstr "Новые альбомы"
 
-#: qml/components/TabsList.qml:28 qml/ui/TopArtists.qml:20
+#: qml/components/TabsList.qml:39 qml/ui/TopArtists.qml:20
 msgid "Top Artists"
 msgstr "Лучшие исполнители"
 
-#: qml/components/TabsList.qml:37 qml/ui/Playlists.qml:29
+#: qml/components/TabsList.qml:48 qml/ui/Playlists.qml:29
 msgid "Playlists"
 msgstr "Списки воспроизведения"
 
-#: qml/components/TabsList.qml:46 qml/ui/SettingsPage.qml:15
+#: qml/components/TabsList.qml:57 qml/ui/SettingsPage.qml:15
 msgid "Settings"
 msgstr "Параметры"
 
-#: qml/components/TabsList.qml:55 qml/ui/About.qml:20 qml/ui/About.qml:35
+#: qml/components/TabsList.qml:66 qml/ui/About.qml:28 qml/ui/About.qml:178
 msgid "About"
 msgstr "О Программе"
 
-#: qml/ui/About.qml:35
-msgid "Credits"
-msgstr "Участники"
-
-#: qml/ui/About.qml:89
+#: qml/ui/About.qml:77
 msgid "Version %1"
 msgstr "Версия %1"
 
-#: qml/ui/About.qml:112
+#: qml/ui/About.qml:100
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "Выпущено в соответствии с лицензией GNU GPL v3"
 
-#: qml/ui/About.qml:130
+#: qml/ui/About.qml:118
 msgid "Report bugs on %1"
 msgstr ""
 
-#: qml/ui/Credits.qml:12 qml/ui/Credits.qml:13
+#: qml/ui/About.qml:200
+msgid "Credits"
+msgstr "Участники"
+
+#: qml/ui/Credits.qml:19 qml/ui/Credits.qml:20
 msgid "Developers"
 msgstr "Разработчики"
 
-#: qml/ui/Credits.qml:14
+#: qml/ui/Credits.qml:21
 msgid "Icon"
 msgstr ""
 
-#: qml/ui/Credits.qml:15
+#: qml/ui/Credits.qml:22
 msgid "Translators"
 msgstr "Переводчики"
 
@@ -133,15 +133,20 @@ msgid ""
 "Touch to retry"
 msgstr ""
 
-#: qml/ui/NowPlaying.qml:106 qml/ui/Queue.qml:13 qml/Main.qml:328
+#: qml/ui/NowPlaying.qml:129 qml/ui/Queue.qml:13 qml/Main.qml:328
 msgid "Queue"
 msgstr "Очередь"
+
+#: qml/ui/NowPlaying.qml:139 qml/ui/Artist.qml:402 qml/ui/Artist.qml:572
+#: qml/ui/Album.qml:294
+msgid "%1 total"
+msgstr ""
 
 #: qml/ui/PlaylistDetail.qml:42
 msgid "Available offline"
 msgstr "Доступно в автономном режиме"
 
-#: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:404 qml/ui/Artist.qml:96
+#: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:438 qml/ui/Artist.qml:97
 #: qml/ui/Album.qml:92 qml/Main.qml:139
 msgid "Download"
 msgstr "Скачать"
@@ -154,21 +159,21 @@ msgstr "Удалить"
 msgid "Song removed"
 msgstr "Композиция удалена"
 
-#: qml/ui/PlaylistDetail.qml:163 qml/ui/Search.qml:423 qml/ui/Artist.qml:115
+#: qml/ui/PlaylistDetail.qml:163 qml/ui/Search.qml:457 qml/ui/Artist.qml:116
 #: qml/ui/Album.qml:111
 msgid "Add to queue"
 msgstr "Добавить в очередь"
 
-#: qml/ui/PlaylistDetail.qml:173 qml/ui/Search.qml:430 qml/ui/Artist.qml:124
+#: qml/ui/PlaylistDetail.qml:173 qml/ui/Search.qml:464 qml/ui/Artist.qml:125
 #: qml/ui/Album.qml:120
 msgid "Song added to queue"
 msgstr "Композиция добавлена в очередь"
 
-#: qml/ui/PlaylistDetail.qml:177 qml/ui/Search.qml:434 qml/ui/Artist.qml:128
+#: qml/ui/PlaylistDetail.qml:177 qml/ui/Search.qml:468 qml/ui/Artist.qml:129
 msgid "Go to album"
 msgstr "Перейти к альбому"
 
-#: qml/ui/PlaylistDetail.qml:186 qml/ui/Search.qml:443 qml/ui/Album.qml:124
+#: qml/ui/PlaylistDetail.qml:186 qml/ui/Search.qml:477 qml/ui/Album.qml:124
 msgid "Go to artist"
 msgstr "Перейти к исполнителю"
 
@@ -196,11 +201,11 @@ msgstr "Удалить список воспроизведения"
 msgid "This cannot be undone"
 msgstr "Данное действие не может быть отменено"
 
-#: qml/ui/Playlists.qml:131 qml/ui/Search.qml:213
+#: qml/ui/Playlists.qml:131 qml/ui/Search.qml:216
 msgid "Delete"
 msgstr "Удалить"
 
-#: qml/ui/Playlists.qml:215 qml/ui/Artist.qml:619 qml/ui/Album.qml:237
+#: qml/ui/Playlists.qml:215 qml/ui/Artist.qml:635 qml/ui/Album.qml:248
 msgid "%1 song"
 msgid_plural "%1 songs"
 msgstr[0] "%1 композиция"
@@ -231,58 +236,54 @@ msgstr "Экстремальное"
 msgid "Theme"
 msgstr "Тема"
 
-#: qml/ui/Search.qml:210
+#: qml/ui/Search.qml:213
 msgid "Item deletion"
 msgstr ""
 
-#: qml/ui/Search.qml:211
+#: qml/ui/Search.qml:214
 msgid "The selected element to be deleted from the search list is: "
 msgstr ""
 
-#: qml/ui/Search.qml:224
+#: qml/ui/Search.qml:227
 msgid "Return"
 msgstr ""
 
-#: qml/ui/Search.qml:299 qml/ui/Search.qml:362
+#: qml/ui/Search.qml:313 qml/ui/Search.qml:396
 msgid "Songs"
 msgstr "Композиции"
 
-#: qml/ui/Search.qml:315 qml/ui/Search.qml:573 qml/ui/Artist.qml:327
-#: qml/ui/Artist.qml:548
+#: qml/ui/Search.qml:334 qml/ui/Search.qml:612 qml/ui/Artist.qml:339
+#: qml/ui/Artist.qml:562
 msgid "Albums"
 msgstr "Альбомы"
 
-#: qml/ui/Search.qml:331 qml/ui/Search.qml:662
+#: qml/ui/Search.qml:355 qml/ui/Search.qml:706
 msgid "Artists"
 msgstr "Исполнители"
 
-#: qml/ui/Artist.qml:236
+#: qml/ui/Artist.qml:248
 #, fuzzy
 msgid "Artist profile"
 msgstr "Исполнитель"
 
-#: qml/ui/Artist.qml:254
+#: qml/ui/Artist.qml:266
 msgid "%1 tracks"
 msgstr ""
 
-#: qml/ui/Artist.qml:268
+#: qml/ui/Artist.qml:280
 #, fuzzy
 msgid "%1 albums"
 msgstr "Альбомы"
 
-#: qml/ui/Artist.qml:305 qml/ui/Artist.qml:380
+#: qml/ui/Artist.qml:317 qml/ui/Artist.qml:392
 msgid "Top Songs"
 msgstr "Лучшие композиции"
 
-#: qml/ui/Artist.qml:388 qml/ui/Artist.qml:556 qml/ui/Album.qml:285
-msgid "%1 total"
-msgstr ""
-
-#: qml/ui/Album.qml:277
+#: qml/ui/Album.qml:284
 msgid "Tracks"
 msgstr ""
 
-#: qml/ui/Album.qml:412
+#: qml/ui/Album.qml:421
 msgid ""
 "I'm sorry, list is empty because none of the songs included in this album "
 "are of a supported format :("

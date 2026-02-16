@@ -378,35 +378,33 @@ Item {
                         height: units.gu(6)
                         color: sectionColor
 
-                        Row {
-                            anchors.fill: parent
+                        Rectangle {
+                            width: units.gu(0.6)
+                            height: units.gu(3.2)
+                            radius: width / 2
+                            color: accentColor
+                            anchors.left: parent.left
                             anchors.leftMargin: units.gu(2)
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Label {
+                            text: i18n.tr("Top Songs")
+                            anchors.left: parent.left
+                            anchors.leftMargin: units.gu(3.4)
+                            anchors.verticalCenter: parent.verticalCenter
+                            fontSize: "medium"
+                            font.weight: Font.DemiBold
+                            color: primaryTextColor
+                        }
+
+                        Label {
+                            text: i18n.tr("%1 total").arg(songsModel.count)
+                            anchors.right: parent.right
                             anchors.rightMargin: units.gu(2)
-                            spacing: units.gu(1)
-
-                            Rectangle {
-                                width: units.gu(0.6)
-                                height: units.gu(3.2)
-                                radius: width / 2
-                                color: accentColor
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-
-                            Label {
-                                text: i18n.tr("Top Songs")
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSize: "medium"
-                                font.weight: Font.DemiBold
-                                color: primaryTextColor
-                            }
-
-                            Label {
-                                text: i18n.tr("%1 total").arg(songsModel.count)
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: parent.right
-                                fontSize: "small"
-                                color: mutedTextColor
-                            }
+                            anchors.verticalCenter: parent.verticalCenter
+                            fontSize: "small"
+                            color: mutedTextColor
                         }
                     }
 
@@ -550,35 +548,33 @@ Item {
                         height: units.gu(6)
                         color: sectionColor
 
-                        Row {
-                            anchors.fill: parent
+                        Rectangle {
+                            width: units.gu(0.6)
+                            height: units.gu(3.2)
+                            radius: width / 2
+                            color: accentColor
+                            anchors.left: parent.left
                             anchors.leftMargin: units.gu(2)
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Label {
+                            text: i18n.tr("Albums")
+                            anchors.left: parent.left
+                            anchors.leftMargin: units.gu(3.4)
+                            anchors.verticalCenter: parent.verticalCenter
+                            fontSize: "medium"
+                            font.weight: Font.DemiBold
+                            color: primaryTextColor
+                        }
+
+                        Label {
+                            text: i18n.tr("%1 total").arg(albumsModel.count)
+                            anchors.right: parent.right
                             anchors.rightMargin: units.gu(2)
-                            spacing: units.gu(1)
-
-                            Rectangle {
-                                width: units.gu(0.6)
-                                height: units.gu(3.2)
-                                radius: width / 2
-                                color: accentColor
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-
-                            Label {
-                                text: i18n.tr("Albums")
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSize: "medium"
-                                font.weight: Font.DemiBold
-                                color: primaryTextColor
-                            }
-
-                            Label {
-                                text: i18n.tr("%1 total").arg(albumsModel.count)
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: parent.right
-                                fontSize: "small"
-                                color: mutedTextColor
-                            }
+                            anchors.verticalCenter: parent.verticalCenter
+                            fontSize: "small"
+                            color: mutedTextColor
                         }
                     }
 

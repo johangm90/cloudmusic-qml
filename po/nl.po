@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 02:50+0000\n"
+"POT-Creation-Date: 2026-02-16 04:41+0000\n"
 "PO-Revision-Date: 2017-02-13 16:44+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "What's new?"
 msgstr "Wat is er nieuw?"
 
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:120
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:108
 msgid "Donate"
 msgstr "Doneren"
 
@@ -56,7 +56,7 @@ msgstr "Creëren"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: qml/components/SongDialog.qml:95 qml/ui/Search.qml:412 qml/ui/Artist.qml:104
+#: qml/components/SongDialog.qml:95 qml/ui/Search.qml:446 qml/ui/Artist.qml:105
 #: qml/ui/Album.qml:100 qml/Main.qml:278
 msgid "Add to playlist"
 msgstr "Toevoegen aan afspeellijst"
@@ -73,56 +73,56 @@ msgstr "Nieuwe afspeellijst creëren"
 msgid "Add"
 msgstr "Toevoegen"
 
-#: qml/components/TabsList.qml:10 qml/ui/SearchHistory.qml:13
-#: qml/ui/Search.qml:25 qml/ui/Search.qml:29 qml/Main.qml:131
+#: qml/components/TabsList.qml:21 qml/ui/SearchHistory.qml:13
+#: qml/ui/Search.qml:28 qml/ui/Search.qml:32 qml/Main.qml:131
 msgid "Search"
 msgstr "Zoeken"
 
-#: qml/components/TabsList.qml:19 qml/ui/NewAlbums.qml:21
+#: qml/components/TabsList.qml:30 qml/ui/NewAlbums.qml:21
 msgid "New Albums"
 msgstr "Nieuwe albums"
 
-#: qml/components/TabsList.qml:28 qml/ui/TopArtists.qml:20
+#: qml/components/TabsList.qml:39 qml/ui/TopArtists.qml:20
 msgid "Top Artists"
 msgstr "Topartiesten"
 
-#: qml/components/TabsList.qml:37 qml/ui/Playlists.qml:29
+#: qml/components/TabsList.qml:48 qml/ui/Playlists.qml:29
 msgid "Playlists"
 msgstr "Afspeellijsten"
 
-#: qml/components/TabsList.qml:46 qml/ui/SettingsPage.qml:15
+#: qml/components/TabsList.qml:57 qml/ui/SettingsPage.qml:15
 msgid "Settings"
 msgstr "Instellingen"
 
-#: qml/components/TabsList.qml:55 qml/ui/About.qml:20 qml/ui/About.qml:35
+#: qml/components/TabsList.qml:66 qml/ui/About.qml:28 qml/ui/About.qml:178
 msgid "About"
 msgstr "Over"
 
-#: qml/ui/About.qml:35
-msgid "Credits"
-msgstr "Met dank aan"
-
-#: qml/ui/About.qml:89
+#: qml/ui/About.qml:77
 msgid "Version %1"
 msgstr "Versie %1"
 
-#: qml/ui/About.qml:112
+#: qml/ui/About.qml:100
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "Uitgebracht onder de voorwaarden van de GNU GPL v3"
 
-#: qml/ui/About.qml:130
+#: qml/ui/About.qml:118
 msgid "Report bugs on %1"
 msgstr "Rapporteer bugs op %1"
 
-#: qml/ui/Credits.qml:12 qml/ui/Credits.qml:13
+#: qml/ui/About.qml:200
+msgid "Credits"
+msgstr "Met dank aan"
+
+#: qml/ui/Credits.qml:19 qml/ui/Credits.qml:20
 msgid "Developers"
 msgstr "Ontwikkelaars"
 
-#: qml/ui/Credits.qml:14
+#: qml/ui/Credits.qml:21
 msgid "Icon"
 msgstr "Pictogram"
 
-#: qml/ui/Credits.qml:15
+#: qml/ui/Credits.qml:22
 msgid "Translators"
 msgstr "Vertalers"
 
@@ -134,15 +134,20 @@ msgstr ""
 "Er is een fout opgetreden\n"
 "Raak aan om opnieuw te proberen"
 
-#: qml/ui/NowPlaying.qml:106 qml/ui/Queue.qml:13 qml/Main.qml:328
+#: qml/ui/NowPlaying.qml:129 qml/ui/Queue.qml:13 qml/Main.qml:328
 msgid "Queue"
 msgstr "Wachtrij"
+
+#: qml/ui/NowPlaying.qml:139 qml/ui/Artist.qml:402 qml/ui/Artist.qml:572
+#: qml/ui/Album.qml:294
+msgid "%1 total"
+msgstr ""
 
 #: qml/ui/PlaylistDetail.qml:42
 msgid "Available offline"
 msgstr "Offline beschikbaar"
 
-#: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:404 qml/ui/Artist.qml:96
+#: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:438 qml/ui/Artist.qml:97
 #: qml/ui/Album.qml:92 qml/Main.qml:139
 msgid "Download"
 msgstr "Downloaden"
@@ -155,21 +160,21 @@ msgstr "Verwijderen"
 msgid "Song removed"
 msgstr "Het nummer is verwijderd"
 
-#: qml/ui/PlaylistDetail.qml:163 qml/ui/Search.qml:423 qml/ui/Artist.qml:115
+#: qml/ui/PlaylistDetail.qml:163 qml/ui/Search.qml:457 qml/ui/Artist.qml:116
 #: qml/ui/Album.qml:111
 msgid "Add to queue"
 msgstr "Toevoegen aan wachtrij"
 
-#: qml/ui/PlaylistDetail.qml:173 qml/ui/Search.qml:430 qml/ui/Artist.qml:124
+#: qml/ui/PlaylistDetail.qml:173 qml/ui/Search.qml:464 qml/ui/Artist.qml:125
 #: qml/ui/Album.qml:120
 msgid "Song added to queue"
 msgstr "Nummer is toegevoegd aan wachtrij"
 
-#: qml/ui/PlaylistDetail.qml:177 qml/ui/Search.qml:434 qml/ui/Artist.qml:128
+#: qml/ui/PlaylistDetail.qml:177 qml/ui/Search.qml:468 qml/ui/Artist.qml:129
 msgid "Go to album"
 msgstr "Ga naar album"
 
-#: qml/ui/PlaylistDetail.qml:186 qml/ui/Search.qml:443 qml/ui/Album.qml:124
+#: qml/ui/PlaylistDetail.qml:186 qml/ui/Search.qml:477 qml/ui/Album.qml:124
 msgid "Go to artist"
 msgstr "Ga naar artiest"
 
@@ -197,11 +202,11 @@ msgstr "Afspeellijst verwijderen"
 msgid "This cannot be undone"
 msgstr "Dit kan niet ongedaan gemaakt worden"
 
-#: qml/ui/Playlists.qml:131 qml/ui/Search.qml:213
+#: qml/ui/Playlists.qml:131 qml/ui/Search.qml:216
 msgid "Delete"
 msgstr "Verwijderen"
 
-#: qml/ui/Playlists.qml:215 qml/ui/Artist.qml:619 qml/ui/Album.qml:237
+#: qml/ui/Playlists.qml:215 qml/ui/Artist.qml:635 qml/ui/Album.qml:248
 msgid "%1 song"
 msgid_plural "%1 songs"
 msgstr[0] "%1 nummer"
@@ -231,58 +236,54 @@ msgstr "Extreem"
 msgid "Theme"
 msgstr "Thema"
 
-#: qml/ui/Search.qml:210
+#: qml/ui/Search.qml:213
 msgid "Item deletion"
 msgstr ""
 
-#: qml/ui/Search.qml:211
+#: qml/ui/Search.qml:214
 msgid "The selected element to be deleted from the search list is: "
 msgstr ""
 
-#: qml/ui/Search.qml:224
+#: qml/ui/Search.qml:227
 msgid "Return"
 msgstr ""
 
-#: qml/ui/Search.qml:299 qml/ui/Search.qml:362
+#: qml/ui/Search.qml:313 qml/ui/Search.qml:396
 msgid "Songs"
 msgstr "Nummers"
 
-#: qml/ui/Search.qml:315 qml/ui/Search.qml:573 qml/ui/Artist.qml:327
-#: qml/ui/Artist.qml:548
+#: qml/ui/Search.qml:334 qml/ui/Search.qml:612 qml/ui/Artist.qml:339
+#: qml/ui/Artist.qml:562
 msgid "Albums"
 msgstr "Albums"
 
-#: qml/ui/Search.qml:331 qml/ui/Search.qml:662
+#: qml/ui/Search.qml:355 qml/ui/Search.qml:706
 msgid "Artists"
 msgstr "Artiesten"
 
-#: qml/ui/Artist.qml:236
+#: qml/ui/Artist.qml:248
 #, fuzzy
 msgid "Artist profile"
 msgstr "Artiest"
 
-#: qml/ui/Artist.qml:254
+#: qml/ui/Artist.qml:266
 msgid "%1 tracks"
 msgstr ""
 
-#: qml/ui/Artist.qml:268
+#: qml/ui/Artist.qml:280
 #, fuzzy
 msgid "%1 albums"
 msgstr "Albums"
 
-#: qml/ui/Artist.qml:305 qml/ui/Artist.qml:380
+#: qml/ui/Artist.qml:317 qml/ui/Artist.qml:392
 msgid "Top Songs"
 msgstr "Topnummers"
 
-#: qml/ui/Artist.qml:388 qml/ui/Artist.qml:556 qml/ui/Album.qml:285
-msgid "%1 total"
-msgstr ""
-
-#: qml/ui/Album.qml:277
+#: qml/ui/Album.qml:284
 msgid "Tracks"
 msgstr ""
 
-#: qml/ui/Album.qml:412
+#: qml/ui/Album.qml:421
 msgid ""
 "I'm sorry, list is empty because none of the songs included in this album "
 "are of a supported format :("

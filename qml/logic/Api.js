@@ -312,11 +312,11 @@ function getSongDetail(id) {
             try {
                 playingPage.title = data.name;
                 playingPage.header.title = data.name;
-                albumImage.source = data.picUrl;
+                albumImage.source = data.picUrl ? data.picUrl : "../graphics/default.png";
                 lbl_artistaDetalle.text = data.artist;
                 lbl_albumDetalle.text = data.album;
                 seek.maximumValue = data.duration;
-                player_toolbar.cargar(data.name, data.artist, data.picUrl);
+                player_toolbar.cargar(data.name, data.artist, data.picUrl ? data.picUrl : "../graphics/default.png");
                 current_id = id;
             } catch (e) {
                 console.log(e);
@@ -435,8 +435,13 @@ function getLyric(id) {
 }
 
 function parseLyric(lyric) {
-    var lines = " ";
-    lines = lyric.split(/\r\n|\n/);
+    if (!lyric || typeof lyric !== "string") {
+        playing_page.model_lyric.clear()
+        lbl_lyric.text = i18n.tr("No lyrics available")
+        lbl_next.text = ""
+        return
+    }
+    var lines = lyric.split(/\r\n|\n/);
     next(lines);
 }
 
@@ -477,6 +482,9 @@ function formatDate(date) {
 }
 
 function splitFileName(urlFile) {
+    if (!urlFile || typeof urlFile !== "string") {
+        return ["", "download.mp3"]
+    }
     var list = urlFile.split("/")
     var nameFile = list[list.length - 1]
     var localDirectory = urlFile.split(nameFile)
