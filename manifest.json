@@ -1,5 +1,5 @@
 {
-    "name": "cloudmusic.jgm90.com",
+    "name": "apu.johangm90",
     "description": "A cloud based music player",
     "architecture": "@CLICK_ARCH@",
     "title": "Cloud Music",
@@ -9,7 +9,7 @@
             "desktop":  "cloudmusic.desktop"
         }
     },
-    "version": "1.7.6",
+    "version": "1.8.0",
     "maintainer": "Johan Guerreros <johangm90@gmail.com>",
     "framework" : "@CLICK_FRAMEWORK@"
 }

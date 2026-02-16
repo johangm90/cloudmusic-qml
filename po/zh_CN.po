@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 04:41+0000\n"
+"POT-Creation-Date: 2026-02-16 05:16+0000\n"
 "PO-Revision-Date: 2017-07-18 09:41+0000\n"
 "Last-Translator: Test <Unknown>\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "What's new?"
 msgstr ""
 
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:108
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:109
 msgid "Donate"
 msgstr ""
 
@@ -94,23 +94,23 @@ msgstr "播放列表"
 msgid "Settings"
 msgstr "设置"
 
-#: qml/components/TabsList.qml:66 qml/ui/About.qml:28 qml/ui/About.qml:178
+#: qml/components/TabsList.qml:66 qml/ui/About.qml:29 qml/ui/About.qml:179
 msgid "About"
 msgstr "关于"
 
-#: qml/ui/About.qml:77
+#: qml/ui/About.qml:78
 msgid "Version %1"
 msgstr "版本 %1"
 
-#: qml/ui/About.qml:100
+#: qml/ui/About.qml:101
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "以 GNU GPL v3 条款发布"
 
-#: qml/ui/About.qml:118
+#: qml/ui/About.qml:119
 msgid "Report bugs on %1"
 msgstr "在 %1 报告错误"
 
-#: qml/ui/About.qml:200
+#: qml/ui/About.qml:201
 msgid "Credits"
 msgstr "鸣谢"
 

@@ -22,7 +22,7 @@ ApplicationWindow {
     height: units.gu(75)
     visible: true
 
-    property string app_version: "1.7.6"
+    property string app_version: "1.8.0"
 
     property string primaryColor: "#e53446"
 
@@ -59,7 +59,7 @@ ApplicationWindow {
         objectName: "mainView"
 
         // Note! applicationName needs to match the "name" field of the click manifest
-        applicationName: "cloudmusic.jgm90.com"
+        applicationName: "apu.johangm90"
 
         //automaticOrientation: true
 
@@ -74,7 +74,7 @@ ApplicationWindow {
             name: "Cloud Music"
             format: i18n.tr("%1 songs played today") + " - Cloud Music"
             emptyFormat: i18n.tr("0 songs played today") + " - Cloud Music"
-            domain: "cloudmusic.jgm90.com"
+            domain: "apu.johangm90"
         }
 
         property

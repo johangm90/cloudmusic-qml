@@ -17,6 +17,7 @@ Page {
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
     property color primaryTextColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#666666"
+    property string versionText: appRoot && appRoot.app_version ? appRoot.app_version : Qt.application.version
 
     TabsList {
         id: tabsList
@@ -74,7 +75,7 @@ Page {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
                             // TRANSLATORS: App version number e.g Version 1.0.0
-                            text: i18n.tr("Version %1").arg(Qt.application.version)
+                            text: i18n.tr("Version %1").arg(versionText)
                             color: secondaryTextColor
                         }
                     }
@@ -115,7 +116,7 @@ Page {
                         fontSize: "small"
                         horizontalAlignment: Text.AlignHCenter
                         linkColor: LomiriColors.blue
-                        text: i18n.tr("Report bugs on %1").arg("<a href=\"https://gitlab.com/johangm90/cloudmusic-qml/issues\">gitlab.com</a>")
+                        text: i18n.tr("Report bugs on %1").arg("<a href=\"https://github.com/johangm90/cloudmusic-qml/issues\">github.com</a>")
                         color: secondaryTextColor
                         onLinkActivated: Qt.openUrlExternally(link)
                     }

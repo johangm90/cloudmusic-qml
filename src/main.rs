@@ -53,7 +53,7 @@ fn main() {
             #include <QtCore/QString>
         }}
         cpp! {[]{
-            QCoreApplication::setApplicationName(QStringLiteral("cloudmusic.jgm90.com"));
+            QCoreApplication::setApplicationName(QStringLiteral("apu.johangm90"));
         }}
     }
     QQuickStyle::set_style("Suru");
@@ -66,7 +66,7 @@ fn main() {
 }
 
 fn init_gettext() {
-    let domain = "cloudmusic.jgm90.com";
+    let domain = "apu.johangm90";
     textdomain(domain).expect("Failed to set gettext domain");
 
     let mut app_dir_path = env::current_dir().expect("Failed to get the app working directory");

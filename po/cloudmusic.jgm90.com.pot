@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 04:41+0000\n"
+"POT-Creation-Date: 2026-02-16 00:26-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "What's new?"
 msgstr ""
 
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:108
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:109
 msgid "Donate"
 msgstr ""
 
@@ -93,23 +93,23 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: qml/components/TabsList.qml:66 qml/ui/About.qml:28 qml/ui/About.qml:178
+#: qml/components/TabsList.qml:66 qml/ui/About.qml:29 qml/ui/About.qml:179
 msgid "About"
 msgstr ""
 
-#: qml/ui/About.qml:77
+#: qml/ui/About.qml:78
 msgid "Version %1"
 msgstr ""
 
-#: qml/ui/About.qml:100
+#: qml/ui/About.qml:101
 msgid "Released under the terms of the GNU GPL v3"
 msgstr ""
 
-#: qml/ui/About.qml:118
+#: qml/ui/About.qml:119
 msgid "Report bugs on %1"
 msgstr ""
 
-#: qml/ui/About.qml:200
+#: qml/ui/About.qml:201
 msgid "Credits"
 msgstr ""
 

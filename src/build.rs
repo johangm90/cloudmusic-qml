@@ -49,7 +49,7 @@ fn qmake_args() -> String {
 
 /// Generate gettext translation files
 fn update_language_files() {
-    let pot_file = "po/cloudmusic.jgm90.com.pot";
+    let pot_file = "po/apu.johangm90.pot";
     let source_files = source_files();
 
     let mut child = Command::new("xgettext")
@@ -85,7 +85,7 @@ fn update_language_files() {
         let install_dir = env::var("INSTALL_DIR").expect("No env var INSTALL_DIR provided");
         let lang = po_file.file_stem().unwrap().to_str().unwrap();
         let mo_dir = format!("{install_dir}/share/locale/{lang}/LC_MESSAGES");
-        let mo_file = format!("{}/cloudmusic.jgm90.com.mo", mo_dir);
+        let mo_file = format!("{}/apu.johangm90.mo", mo_dir);
 
         fs::create_dir_all(&mo_dir)
             .expect("Failed to create directory for compiled language files");

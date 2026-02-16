@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 04:41+0000\n"
+"POT-Creation-Date: 2026-02-16 05:16+0000\n"
 "PO-Revision-Date: 2016-12-19 07:24+0000\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "What's new?"
 msgstr ""
 
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:108
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:109
 msgid "Donate"
 msgstr ""
 
@@ -95,23 +95,23 @@ msgstr "Спискови нумера"
 msgid "Settings"
 msgstr "Подешавања"
 
-#: qml/components/TabsList.qml:66 qml/ui/About.qml:28 qml/ui/About.qml:178
+#: qml/components/TabsList.qml:66 qml/ui/About.qml:29 qml/ui/About.qml:179
 msgid "About"
 msgstr "О програму"
 
-#: qml/ui/About.qml:77
+#: qml/ui/About.qml:78
 msgid "Version %1"
 msgstr ""
 
-#: qml/ui/About.qml:100
+#: qml/ui/About.qml:101
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "Издато под одредбама Гнуове ОЈЛ и3"
 
-#: qml/ui/About.qml:118
+#: qml/ui/About.qml:119
 msgid "Report bugs on %1"
 msgstr ""
 
-#: qml/ui/About.qml:200
+#: qml/ui/About.qml:201
 msgid "Credits"
 msgstr ""
 

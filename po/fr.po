@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 04:41+0000\n"
+"POT-Creation-Date: 2026-02-16 05:16+0000\n"
 "PO-Revision-Date: 2021-12-29 21:18+0100\n"
 "Last-Translator: Anne017 <anneonyme017@openmailbox.org>\n"
 "Language-Team: \n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "What's new?"
 msgstr "Nouveautés"
 
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:108
+#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:109
 msgid "Donate"
 msgstr "Faire un don"
 
@@ -93,23 +93,23 @@ msgstr "Listes de lecture"
 msgid "Settings"
 msgstr "Paramètres"
 
-#: qml/components/TabsList.qml:66 qml/ui/About.qml:28 qml/ui/About.qml:178
+#: qml/components/TabsList.qml:66 qml/ui/About.qml:29 qml/ui/About.qml:179
 msgid "About"
 msgstr "À propos"
 
-#: qml/ui/About.qml:77
+#: qml/ui/About.qml:78
 msgid "Version %1"
 msgstr "Version %1"
 
-#: qml/ui/About.qml:100
+#: qml/ui/About.qml:101
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "Distribuée sous les termes de la licence GNU GPL v3"
 
-#: qml/ui/About.qml:118
+#: qml/ui/About.qml:119
 msgid "Report bugs on %1"
 msgstr "Signalez les problèmes sur %1"
 
-#: qml/ui/About.qml:200
+#: qml/ui/About.qml:201
 msgid "Credits"
 msgstr "À propos"
 
