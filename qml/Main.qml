@@ -26,13 +26,30 @@ ApplicationWindow {
 
     property string primaryColor: "#e53446"
 
+    function normalizedThemeMode() {
+        if (settings.theme === "Ambiance" || settings.theme === "SuruDark" || settings.theme === "System") {
+            return settings.theme
+        }
+        return "System"
+    }
+
+    function applyThemeMode() {
+        var mode = normalizedThemeMode()
+        if (mode === "System") {
+            // Keep platform default (system) theme by not forcing Theme.name.
+            Theme.name = ""
+        } else {
+            Theme.name = "Lomiri.Components.Themes." + mode
+        }
+    }
+
     property var settings: Settings {
         property string download_quality: "96000"
         property string streaming_quality: "96000"
-        property string theme: "Ambiance"
+        property string theme: "System"
         property bool first_run: true
         property string current_version: ""
-        onThemeChanged: Theme.name = "Lomiri.Components.Themes." + settings.theme
+        onThemeChanged: appWindow.applyThemeMode()
     }
 
     MainView {
@@ -59,9 +76,21 @@ ApplicationWindow {
 
         property
         var server: "https://cloudmusicapi.nubit.io/netease/";
+        property bool isDarkTheme: {
+            var mode = appWindow.normalizedThemeMode()
+            if (mode === "SuruDark") {
+                return true
+            }
+            if (mode === "Ambiance") {
+                return false
+            }
+            // System mode: infer from current effective theme name when available.
+            var effectiveTheme = Theme.name ? Theme.name : ""
+            return effectiveTheme.indexOf("SuruDark") !== -1
+        }
 
         Component.onCompleted: {
-        Theme.name = "Lomiri.Components.Themes." + settings.theme
+            appWindow.applyThemeMode()
         }
 
         Component {
@@ -122,6 +151,11 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             source: (pagestack.currentPage === searchLoader) ? Qt.resolvedUrl("ui/SearchHistory.qml") : ""
+            onLoaded: {
+                try {
+                    item.appRoot = cloudMusic
+                } catch (e) {}
+            }
             visible: false
         }
 
@@ -131,6 +165,11 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             source: Qt.resolvedUrl("ui/NewAlbums.qml")
+            onLoaded: {
+                try {
+                    item.appRoot = cloudMusic
+                } catch (e) {}
+            }
             visible: false
         }
 
@@ -140,6 +179,11 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             source: Qt.resolvedUrl("ui/TopArtists.qml")
+            onLoaded: {
+                try {
+                    item.appRoot = cloudMusic
+                } catch (e) {}
+            }
             visible: false
         }
 
@@ -149,6 +193,11 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             source: (pagestack.currentPage === playlistsLoader) ? Qt.resolvedUrl("ui/Playlists.qml") : ""
+            onLoaded: {
+                try {
+                    item.appRoot = cloudMusic
+                } catch (e) {}
+            }
             visible: false
         }
 
@@ -158,6 +207,11 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             source: (pagestack.currentPage === settingsLoader) ? Qt.resolvedUrl("ui/SettingsPage.qml") : ""
+            onLoaded: {
+                try {
+                    item.appRoot = cloudMusic
+                } catch (e) {}
+            }
             visible: false
         }
 
@@ -167,6 +221,11 @@ ApplicationWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             source: (pagestack.currentPage === aboutLoader) ? Qt.resolvedUrl("ui/About.qml") : ""
+            onLoaded: {
+                try {
+                    item.appRoot = cloudMusic
+                } catch (e) {}
+            }
             visible: false
         }
 
@@ -180,6 +239,7 @@ ApplicationWindow {
 
             Artist {
                 id: artist_page
+                appRoot: cloudMusic
                 anchors {
                     top: artistPage.header.bottom
                     left: parent.left
@@ -212,6 +272,7 @@ ApplicationWindow {
 
             Album {
                 id: album_page
+                appRoot: cloudMusic
                 anchors {
                     top: albumPage.header.bottom
                     left: parent.left
@@ -231,6 +292,7 @@ ApplicationWindow {
 
             PlaylistDetail {
                 id: playlist_detail_page
+                appRoot: cloudMusic
                 anchors {
                     top: playlistDetailPage.header.bottom
                     left: parent.left

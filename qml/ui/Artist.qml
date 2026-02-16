@@ -3,7 +3,6 @@ import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
-import Lomiri.Components.ListItems 1.3 as ListItems
 import "../logic/Api.js" as Api
 import "../components"
 
@@ -11,28 +10,39 @@ Item {
     id: artistContainer
     width: parent.width
     height: units.gu(120)
+    property var appRoot
+    property int activeTab: 0
+    property bool contentReady: false
+
+    property bool isDarkTheme: appRoot ? appRoot.isDarkTheme : false
+    property color cardColor: isDarkTheme ? "#232323" : "#f2f2f2"
+    property color cardBorder: isDarkTheme ? "#3a3a3a" : "#d8d8d8"
+    property color sectionColor: isDarkTheme ? "#1a1a1a" : "#ececec"
+    property color mutedTextColor: isDarkTheme ? "#b8b8b8" : "#666666"
+    property color primaryTextColor: isDarkTheme ? "#f2f2f2" : "#1f1f1f"
+    property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
 
     function cargar(id) {
-        Api.getArtistTopSongs(id);
+        activeTab = 0
+        contentReady = false
+        Api.getArtistTopSongs(id)
         Api.getArtistAlbums(id)
     }
 
     ActivityIndicator {
         id: artist_songs_loader
         anchors.centerIn: parent
-        z: 1
+        z: 20
     }
 
     ActivityIndicator {
         id: artist_albums_loader
         anchors.centerIn: parent
-        z: 1
+        z: 20
     }
 
-    function is_visible(value){
-        image_layout.visible = value;
-        songs_layout.visible = value;
-        albums_layout.visible = value;
+    function is_visible(value) {
+        contentReady = value
     }
 
     ListModel {
@@ -43,391 +53,579 @@ Item {
         id: albumsModel
     }
     
-    Flickable {
-          clip: true
-          anchors.fill: parent
-          contentWidth: width
-          contentHeight: units.gu(150)
+    SongDialog {
+        id: song_dialog
+    }
 
-    GridLayout {
-        id: layouts
-        anchors.fill: parent
-        columns: layouts.width <= units.gu(50) ? 1 : 2
-        columnSpacing: 1
-        rowSpacing: 1
+    ActionSelectionPopover {
+        id: context_menu
+        z: 999
 
-        Rectangle {
-            id: image_layout
-            color: "transparent"
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.row: 0
-            Layout.column: 0
-            Layout.preferredWidth: layouts.columns == 1 ? parent.width : parent.width/3
-            Layout.preferredHeight: layouts.columns == 1 ? units.gu(25) : layouts.width < units.gu(100) ? parent.height : units.gu(15)
-            Layout.rowSpan: layouts.columns == 1 ? 1 : layouts.width < units.gu(100) ? 2 : 1
+        function close() {
+            context_menu.hide()
+            songsList.index = -1
+        }
 
-            Rectangle {
-                id: photo_overlay
-                anchors.fill: parent
-                color: "#000"
-                opacity: 0.8
-                z: 2
+        delegate: ListItem {
+            contentItem.anchors {
+                leftMargin: units.gu(2)
+                rightMargin: units.gu(2)
             }
 
-            Image {
-                id: photo_blur
-                source: photo.source
-                width: parent.width
-                height: parent.height
-                fillMode: Image.PreserveAspectCrop
-                smooth: true
-                z: 1
+            Icon {
+                id: icon
+                width: units.gu(3)
+                height: width
+                name: action.name
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
             }
 
-            FastBlur {
-                width: parent.width
-                height: parent.height
-                source: photo_blur
-                radius: 32
-            }
-
-            Rectangle {
-                id: photoContainer
-                color: "transparent"
-                width: parent.width
-                height: parent.height
-                z: 3
-
-                Image {
-                    id: photo
-                    property real escalay: parent.height/photo.sourceSize.height
-                    property real escalax: parent.width/photo.sourceSize.width
-                    source: "../graphics/default.png"
-                    width: photo.sourceSize.width*escalax
-                    height: photo.sourceSize.height*escalay
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
-                    clip: true
-                    cache: true
-                    smooth: true
-                }
+            Label {
+                text: action.text
+                anchors.left: icon.right
+                anchors.leftMargin: units.gu(2)
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
 
-        Rectangle {
-            id: songs_layout
-            color: "transparent"
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.row: layouts.columns == 1 ? 1 : layouts.width < units.gu(100) ? 0 : 1
-            Layout.column: layouts.columns == 1 ? 0 : layouts.width < units.gu(100) ? 1 : 0
-            Layout.preferredWidth: parent.width
-            Layout.preferredHeight: layouts.width < units.gu(100) ? units.gu(40) : (parent.height - units.gu(15))
-
-            Rectangle {
-                id: songs_title
-                color: "#333333"
-                width: parent.width
-                height: units.gu(5)
-                Label{
-                    anchors.left: parent.left
-                    anchors.leftMargin: units.gu(1)
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: i18n.tr("Top Songs")
-                    fontSize: "large"
-                    color: "#fff"
+        actions: ActionList {
+            Action {
+                text: i18n.tr("Download")
+                name: "save"
+                onTriggered: {
+                    Api.download(songsModel.get(songsList.index).id, songsModel.get(songsList.index).name, songsModel.get(songsList.index).artist)
+                    context_menu.close()
                 }
             }
-
-            SongDialog {
-                id: song_dialog
-            }
-
-            ActionSelectionPopover {
-                id: context_menu
-                z: 999
-
-                function close() {
-                    context_menu.hide()
-                    songsList.index = -1
-                }
-
-                delegate: ListItem {
-
-                    contentItem.anchors {
-                        leftMargin: units.gu(2)
-                        rightMargin: units.gu(2)
-                    }
-
-                    Icon {
-                        id: icon
-                        width: units.gu(3)
-                        height: width
-                        name: action.name
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    Label {
-                        text: action.text
-                        anchors.left: icon.right
-                        anchors.leftMargin: units.gu(2)
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
-
-                actions: ActionList {
-
-                    Action {
-                        text: i18n.tr("Download")
-                        name: "save"
-                        onTriggered: {
-                            Api.download(songsModel.get(songsList.index).id, songsModel.get(songsList.index).name, songsModel.get(songsList.index).artist)
-                            context_menu.close()
-                        }
-                    }
-                    Action {
-                        text: i18n.tr("Add to playlist")
-                        name: "add-to-playlist"
-                        onTriggered: {
-                            song_dialog.get_playlists()
-                            song_dialog.model_song.clear()
-                            song_dialog.model_song.append(songsModel.get(songsList.index))
-                            song_dialog.open_dialog()
-                            context_menu.close()
-                        }
-                    }
-                    Action {
-                        text: i18n.tr("Add to queue")
-                        name: "navigation-menu"
-                        onTriggered: {
-                            playing_page.songs_list.push(songsModel.get(songsList.index).id)
-                            media_player.additem(cloudMusic.server + 'play/' + songsModel.get(songsList.index).id + '/' + cloudMusic.settings.streaming_quality)
-                            playing_page.model_queue.append(songsModel.get(songsList.index))
-                            context_menu.close()
-                            messager.show_message(i18n.tr("Song added to queue"), 3)
-                        }
-                    }
-                    Action {
-                        text: i18n.tr("Go to album")
-                        name: "slideshow"
-                        onTriggered: {
-                            album_page.cargar(songsModel.get(songsList.index).album_id);
-                            pagestack.push(albumPage);
-                            context_menu.close()
-                        }
-                    }
+            Action {
+                text: i18n.tr("Add to playlist")
+                name: "add-to-playlist"
+                onTriggered: {
+                    song_dialog.get_playlists()
+                    song_dialog.model_song.clear()
+                    song_dialog.model_song.append(songsModel.get(songsList.index))
+                    song_dialog.open_dialog()
+                    context_menu.close()
                 }
             }
-
-            Rectangle {
-                id: songs_view
-                color: "transparent"
-                anchors.top: songs_title.bottom
-                anchors.bottom: parent.bottom
-                width: parent.width
-
-                Item {
-                    id: songsView
-                    width: parent.width
-                    height: parent.height
-                    z:2
-                    ListView {
-                        id: songsList
-                        property int index: -1
-                        clip: true
-                        model: songsModel
-                        width: parent.width
-                        height: parent.height
-                        boundsBehavior: Flickable.StopAtBounds
-                        delegate: ListItem {
-                            contentItem.anchors {
-                                leftMargin: units.gu(2)
-                                rightMargin: units.gu(2)
-                                topMargin: units.gu(1)
-                                bottomMargin: units.gu(1)
-                            }
-
-                            color: songsList.index == index ? "#5d5d5d" : "transparent"
-
-                            Label {
-                                id: lbl_name
-                                text: name
-                                elide: Text.ElideRight
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: lbl_duration.left
-                            }
-
-                            Label {
-                                id: lbl_duration
-                                text: Api.durationToString(duration)
-                                width: units.gu(5)
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: item_menu.left
-                                horizontalAlignment: Text.AlignRight
-                            }
-
-                            MouseArea {
-                                id: item_menu
-                                width: units.gu(5)
-                                height: parent.height
-                                anchors.right: parent.right
-                                onClicked: {
-                                    if(songsList.index == index) {
-                                        context_menu.close()
-                                    }else {
-                                        songsList.index = index
-                                    }
-
-                                    context_menu.caller = item_menu
-                                    context_menu.show()
-                                }
-
-                                Icon {
-                                    height: units.gu(3)
-                                    width: height
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    name: "contextual-menu"
-                                }
-                            }
-
-                            onClicked: {
-                                pagestack.push(playingPage)
-                                var songs = [];
-                                var songs_ids = [];
-                                playing_page.model_queue.clear();
-                                for(var i = 0; i < songsModel.count; i++) {
-                                    songs.push(cloudMusic.server + 'play/' + songsModel.get(i).id + '/' + cloudMusic.settings.streaming_quality);
-                                    songs_ids.push(songsModel.get(i).id);
-                                    playing_page.model_queue.append(songsModel.get(i));
-                                }
-                                playing_page.songs_list = songs_ids
-                                media_player.setPlaylist(songs, index)
-                            }
-                        }
-                    }
-                    Scrollbar {
-                        flickableItem: songsList
-                        align: Qt.AlignTrailing
-                    }
+            Action {
+                text: i18n.tr("Add to queue")
+                name: "navigation-menu"
+                onTriggered: {
+                    playing_page.songs_list.push(songsModel.get(songsList.index).id)
+                    var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
+                    var server = appRoot ? appRoot.server : ""
+                    media_player.additem(server + "play/" + songsModel.get(songsList.index).id + "/" + quality)
+                    playing_page.model_queue.append(songsModel.get(songsList.index))
+                    context_menu.close()
+                    messager.show_message(i18n.tr("Song added to queue"), 3)
                 }
             }
-        }
-
-        Rectangle {
-            id: albums_layout
-            color: "transparent"
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.row: layouts.columns == 1 ? 2 : layouts.width < units.gu(100) ? 1 : 0
-            Layout.column: layouts.columns == 1 ? 0 : layouts.width < units.gu(100) ? 1 : 1
-            Layout.preferredWidth: layouts.columns == 1 ? parent.width : layouts.width < units.gu(100) ? parent.width : (parent.width/3)*2
-            Layout.preferredHeight: layouts.columns == 1 ? units.gu(55) : layouts.width < units.gu(100) ? units.gu(55) : parent.height
-            Layout.rowSpan: layouts.width < units.gu(100) ? 1 : 2
-
-            Rectangle {
-                id: albums_title
-                color: "#333333"
-                width: parent.width
-                height: units.gu(5)
-                Label{
-                    anchors.left: parent.left
-                    anchors.leftMargin: units.gu(1)
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: i18n.tr("Albums")
-                    fontSize: "large"
-                    color: "#fff"
-                }
-            }
-
-            Rectangle {
-                color: "transparent"
-                anchors.top: albums_title.bottom
-                anchors.bottom: parent.bottom
-                width: parent.width
-                clip: true
-
-                GridView {
-                    id: albumsView
-                    anchors {
-                        top: parent.top
-                        left: parent.left
-                        right: parent.right
-                    }
-                    clip: true
-                    boundsBehavior: Flickable.StopAtBounds
-                    z: 1
-                    width: parent.width
-                    height: parent.height
-                    cellWidth: cloudMusic.width > units.gu(25) ? (parent.width/Math.ceil(parent.width/units.gu(25))) : (parent.width)
-                    cellHeight: cellWidth + units.gu(6)
-                    model: albumsModel
-                    cacheBuffer: 1000
-
-                    delegate: MouseArea {
-                        id: item
-                        width: albumsView.cellWidth
-                        height: albumsView.cellHeight
-                        Column {
-                            id: delegateitem
-                            anchors.top: parent.top
-                            anchors.bottom: parent.bottom
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            Image {
-                                id: wimage
-                                width: parent.width
-                                height: parent.height - units.gu(6)
-                                source: image
-                                clip: true
-                                cache: true
-                                fillMode: Image.PreserveAspectCrop
-                                smooth: true
-                            }
-                            Rectangle{
-                                color: "#333"
-                                width: albumsView.cellWidth
-                                height: units.gu(3)
-                                Label {
-                                    text: name
-                                    width: albumsView.cellWidth
-                                    height: units.gu(3)
-                                    horizontalAlignment: Label.AlignHCenter
-                                    verticalAlignment: Label.AlignBottom
-                                    elide: Label.ElideRight
-                                    fontSize: "medium"
-                                    color: "#fff"
-                                }
-                            }
-                            Rectangle{
-                                color: "#333"
-                                width: albumsView.cellWidth
-                                height: units.gu(3)
-                                Label {
-                                    // TRANSLATORS: %1 refers to the amount of songs in album
-                                    text: i18n.tr("%1 song", "%1 songs", size).arg(size)
-                                    width: albumsView.cellWidth
-                                    height: units.gu(4)
-                                    horizontalAlignment: Label.AlignHCenter
-                                    verticalAlignment: Label.AlignTop
-                                    elide: Label.ElideRight
-                                    fontSize: "small"
-                                    color: "#898B8C"
-                                }
-                            }
-                        }
-                        onClicked: {
-                            //albumPage.title = name;
-                            album_page.cargar(id);
-                            pagestack.push(albumPage);
-                        }
-                    }
+            Action {
+                text: i18n.tr("Go to album")
+                name: "slideshow"
+                onTriggered: {
+                    album_page.cargar(songsModel.get(songsList.index).album_id)
+                    pagestack.push(albumPage)
+                    context_menu.close()
                 }
             }
         }
     }
+
+    Flickable {
+        id: artistFlick
+        anchors.fill: parent
+        clip: true
+        contentWidth: width
+        contentHeight: Math.max(height, mainLayout.implicitHeight + units.gu(2))
+
+        GridLayout {
+            id: mainLayout
+            width: artistFlick.width
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: units.gu(1)
+            columns: width < units.gu(90) ? 1 : 2
+            rowSpacing: units.gu(1)
+            columnSpacing: units.gu(1)
+
+            Rectangle {
+                id: image_layout
+                visible: contentReady
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.row: 0
+                Layout.column: 0
+                Layout.preferredWidth: mainLayout.columns === 1 ? mainLayout.width : mainLayout.width / 3
+                Layout.preferredHeight: mainLayout.columns === 1 ? units.gu(34) : units.gu(28)
+                radius: units.gu(1)
+                color: cardColor
+                border.color: cardBorder
+                border.width: 1
+                clip: true
+
+                Image {
+                    id: photo_blur
+                    anchors.fill: parent
+                    source: photo.source
+                    fillMode: Image.PreserveAspectCrop
+                    smooth: true
+                }
+
+                FastBlur {
+                    anchors.fill: parent
+                    source: photo_blur
+                    radius: 26
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0.25) }
+                        GradientStop { position: 0.8; color: Qt.rgba(0, 0, 0, 0.72) }
+                        GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.82) }
+                    }
+                }
+
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: units.gu(2)
+                    spacing: units.gu(2)
+
+                    Rectangle {
+                        width: Math.min(units.gu(20), parent.height - units.gu(2))
+                        height: width
+                        radius: units.gu(10)
+                        color: "#202020"
+                        border.color: Qt.rgba(1, 1, 1, 0.2)
+                        border.width: 1
+                        anchors.verticalCenter: parent.verticalCenter
+                        clip: true
+
+                        Image {
+                            id: photo
+                            anchors.fill: parent
+                            source: "../graphics/default.png"
+                            fillMode: Image.PreserveAspectCrop
+                            cache: true
+                            smooth: true
+                        }
+                    }
+
+                    Column {
+                        width: Math.max(units.gu(12), parent.width - (parent.height - units.gu(2)) - units.gu(4))
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: units.gu(0.8)
+
+                        Label {
+                            text: artistPage.header.title
+                            width: parent.width
+                            elide: Text.ElideRight
+                            fontSize: "large"
+                            font.weight: Font.DemiBold
+                            color: "#ffffff"
+                        }
+
+                        Label {
+                            width: parent.width
+                            text: i18n.tr("Artist profile")
+                            fontSize: "small"
+                            color: "#d0d0d0"
+                        }
+
+                        Row {
+                            spacing: units.gu(1)
+
+                            Rectangle {
+                                radius: units.gu(0.8)
+                                color: Qt.rgba(1, 1, 1, 0.15)
+                                height: units.gu(3)
+                                width: units.gu(14)
+
+                                Label {
+                                    anchors.centerIn: parent
+                                    fontSize: "small"
+                                    color: "#f0f0f0"
+                                    text: i18n.tr("%1 tracks").arg(songsModel.count)
+                                }
+                            }
+
+                            Rectangle {
+                                radius: units.gu(0.8)
+                                color: Qt.rgba(1, 1, 1, 0.15)
+                                height: units.gu(3)
+                                width: units.gu(14)
+
+                                Label {
+                                    anchors.centerIn: parent
+                                    fontSize: "small"
+                                    color: "#f0f0f0"
+                                    text: i18n.tr("%1 albums").arg(albumsModel.count)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: tabs_layout
+                visible: contentReady
+                Layout.fillWidth: true
+                Layout.row: 1
+                Layout.column: 0
+                Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
+                Layout.preferredHeight: units.gu(6)
+                radius: units.gu(1)
+                color: cardColor
+                border.color: cardBorder
+                border.width: 1
+                clip: true
+
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: units.gu(0.6)
+                    spacing: units.gu(0.6)
+
+                    Rectangle {
+                        width: (parent.width - units.gu(0.6)) / 2
+                        height: parent.height
+                        radius: units.gu(0.8)
+                        color: activeTab === 0 ? accentColor : "transparent"
+                        border.color: activeTab === 0 ? accentColor : cardBorder
+                        border.width: 1
+
+                        Label {
+                            anchors.centerIn: parent
+                            text: i18n.tr("Top Songs")
+                            fontSize: "small"
+                            font.weight: Font.DemiBold
+                            color: activeTab === 0 ? "#ffffff" : primaryTextColor
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: activeTab = 0
+                        }
+                    }
+
+                    Rectangle {
+                        width: (parent.width - units.gu(0.6)) / 2
+                        height: parent.height
+                        radius: units.gu(0.8)
+                        color: activeTab === 1 ? accentColor : "transparent"
+                        border.color: activeTab === 1 ? accentColor : cardBorder
+                        border.width: 1
+
+                        Label {
+                            anchors.centerIn: parent
+                            text: i18n.tr("Albums")
+                            fontSize: "small"
+                            font.weight: Font.DemiBold
+                            color: activeTab === 1 ? "#ffffff" : primaryTextColor
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: activeTab = 1
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: songs_layout
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.row: 2
+                Layout.column: 0
+                Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
+                Layout.preferredWidth: mainLayout.width
+                Layout.preferredHeight: activeTab === 0 ? units.gu(66) : 0
+                radius: units.gu(1)
+                color: cardColor
+                border.color: cardBorder
+                border.width: 1
+                clip: true
+                visible: contentReady && activeTab === 0
+
+                Column {
+                    anchors.fill: parent
+
+                    Rectangle {
+                        width: parent.width
+                        height: units.gu(6)
+                        color: sectionColor
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.leftMargin: units.gu(2)
+                            anchors.rightMargin: units.gu(2)
+                            spacing: units.gu(1)
+
+                            Rectangle {
+                                width: units.gu(0.6)
+                                height: units.gu(3.2)
+                                radius: width / 2
+                                color: accentColor
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Label {
+                                text: i18n.tr("Top Songs")
+                                anchors.verticalCenter: parent.verticalCenter
+                                fontSize: "medium"
+                                font.weight: Font.DemiBold
+                                color: primaryTextColor
+                            }
+
+                            Label {
+                                text: i18n.tr("%1 total").arg(songsModel.count)
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                fontSize: "small"
+                                color: mutedTextColor
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: songsView
+                        width: parent.width
+                        height: parent.height - units.gu(6)
+
+                        ListView {
+                            id: songsList
+                            property int index: -1
+                            anchors.fill: parent
+                            anchors.leftMargin: units.gu(0.6)
+                            anchors.rightMargin: units.gu(0.6)
+                            clip: true
+                            spacing: units.gu(0.2)
+                            model: songsModel
+                            boundsBehavior: Flickable.StopAtBounds
+
+                            delegate: ListItem {
+                                contentItem.anchors {
+                                    leftMargin: units.gu(1.2)
+                                    rightMargin: units.gu(1.2)
+                                    topMargin: units.gu(0.9)
+                                    bottomMargin: units.gu(0.9)
+                                }
+                                divider.visible: false
+                                color: songsList.index === index ? Qt.rgba(0.9, 0.2, 0.28, 0.18) : "transparent"
+
+                                Label {
+                                    id: track_index
+                                    width: units.gu(3)
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    horizontalAlignment: Text.AlignLeft
+                                    fontSize: "small"
+                                    color: mutedTextColor
+                                    text: (index + 1) + "."
+                                }
+
+                                Label {
+                                    id: lbl_name
+                                    text: name
+                                    elide: Text.ElideRight
+                                    anchors.left: track_index.right
+                                    anchors.leftMargin: units.gu(0.6)
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.right: lbl_duration.left
+                                    anchors.rightMargin: units.gu(1)
+                                    color: primaryTextColor
+                                }
+
+                                Label {
+                                    id: lbl_duration
+                                    text: Api.durationToString(duration)
+                                    width: units.gu(6)
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.right: item_menu.left
+                                    anchors.rightMargin: units.gu(0.2)
+                                    horizontalAlignment: Text.AlignRight
+                                    fontSize: "small"
+                                    color: mutedTextColor
+                                }
+
+                                MouseArea {
+                                    id: item_menu
+                                    width: units.gu(5)
+                                    height: parent.height
+                                    anchors.right: parent.right
+                                    onClicked: {
+                                        if (songsList.index === index) {
+                                            context_menu.close()
+                                        } else {
+                                            songsList.index = index
+                                        }
+                                        context_menu.caller = item_menu
+                                        context_menu.show()
+                                    }
+
+                                    Icon {
+                                        height: units.gu(2.6)
+                                        width: height
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        name: "contextual-menu"
+                                        color: mutedTextColor
+                                    }
+                                }
+
+                                onClicked: {
+                                    pagestack.push(playingPage)
+                                    var songs = []
+                                    var songs_ids = []
+                                    playing_page.model_queue.clear()
+                                    for (var i = 0; i < songsModel.count; i++) {
+                                        var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
+                                        var server = appRoot ? appRoot.server : ""
+                                        songs.push(server + "play/" + songsModel.get(i).id + "/" + quality)
+                                        songs_ids.push(songsModel.get(i).id)
+                                        playing_page.model_queue.append(songsModel.get(i))
+                                    }
+                                    playing_page.songs_list = songs_ids
+                                    media_player.setPlaylist(songs, index)
+                                }
+                            }
+                        }
+
+                        Scrollbar {
+                            flickableItem: songsList
+                            align: Qt.AlignTrailing
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: albums_layout
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.row: 2
+                Layout.column: 0
+                Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
+                Layout.preferredWidth: mainLayout.width
+                Layout.preferredHeight: activeTab === 1 ? units.gu(66) : 0
+                radius: units.gu(1)
+                color: cardColor
+                border.color: cardBorder
+                border.width: 1
+                clip: true
+                visible: contentReady && activeTab === 1
+
+                Column {
+                    anchors.fill: parent
+
+                    Rectangle {
+                        width: parent.width
+                        height: units.gu(6)
+                        color: sectionColor
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.leftMargin: units.gu(2)
+                            anchors.rightMargin: units.gu(2)
+                            spacing: units.gu(1)
+
+                            Rectangle {
+                                width: units.gu(0.6)
+                                height: units.gu(3.2)
+                                radius: width / 2
+                                color: accentColor
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Label {
+                                text: i18n.tr("Albums")
+                                anchors.verticalCenter: parent.verticalCenter
+                                fontSize: "medium"
+                                font.weight: Font.DemiBold
+                                color: primaryTextColor
+                            }
+
+                            Label {
+                                text: i18n.tr("%1 total").arg(albumsModel.count)
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                fontSize: "small"
+                                color: mutedTextColor
+                            }
+                        }
+                    }
+
+                    GridView {
+                        id: albumsView
+                        width: parent.width
+                        height: parent.height - units.gu(6)
+                        clip: true
+                        cellWidth: width > units.gu(25) ? (width / Math.ceil(width / units.gu(25))) : width
+                        cellHeight: cellWidth + units.gu(7.5)
+                        model: albumsModel
+                        boundsBehavior: Flickable.StopAtBounds
+                        cacheBuffer: 1000
+
+                        delegate: MouseArea {
+                            width: albumsView.cellWidth
+                            height: albumsView.cellHeight
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: units.gu(0.8)
+                                spacing: units.gu(0.4)
+
+                                Rectangle {
+                                    width: parent.width
+                                    height: parent.height - units.gu(5.2)
+                                    radius: units.gu(0.8)
+                                    color: "#202020"
+                                    border.color: Qt.rgba(1, 1, 1, 0.1)
+                                    border.width: 1
+                                    clip: true
+
+                                    Image {
+                                        anchors.fill: parent
+                                        source: image
+                                        cache: true
+                                        smooth: true
+                                        fillMode: Image.PreserveAspectCrop
+                                    }
+                                }
+
+                                Label {
+                                    text: name
+                                    width: parent.width
+                                    horizontalAlignment: Text.AlignHCenter
+                                    elide: Text.ElideRight
+                                    fontSize: "small"
+                                    font.weight: Font.DemiBold
+                                    color: primaryTextColor
+                                }
+
+                                Label {
+                                    width: parent.width
+                                    horizontalAlignment: Text.AlignHCenter
+                                    elide: Text.ElideRight
+                                    fontSize: "small"
+                                    color: mutedTextColor
+                                    text: i18n.tr("%1 song", "%1 songs", size).arg(size)
+                                }
+                            }
+
+                            onClicked: {
+                                album_page.cargar(id)
+                                pagestack.push(albumPage)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

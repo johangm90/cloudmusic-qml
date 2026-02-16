@@ -1,5 +1,6 @@
 qrc!(qml_resources,
     "/" {
+        "assets/logo.svg",
         "qml/Main.qml",
         "qml/components/ChangeLogDialog.qml",
         "qml/components/ChangeLogListItem.qml",

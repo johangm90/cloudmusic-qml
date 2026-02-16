@@ -5,6 +5,7 @@ import "../components"
 
 Page {
     id: settingsPage
+    property var appRoot
 
     TabsList {
         id: tabsList
@@ -43,8 +44,10 @@ Page {
             OptionSelectorDelegate {
                 text: name
                 onClicked: {
-                    cloudMusic.settings.download_quality = customModel.get(qselector.selectedIndex).key
-                    console.log("Download Quality: " + cloudMusic.settings.download_quality)
+                    if (appRoot && appRoot.settings) {
+                        appRoot.settings.download_quality = customModel.get(qselector.selectedIndex).key
+                        console.log("Download Quality: " + appRoot.settings.download_quality)
+                    }
                 }
             }
         }
@@ -57,11 +60,11 @@ Page {
                     customModel.append({'name':qualitys[i], 'key':keys[i]})
                 }
                 var selected = 0
-                if(cloudMusic.settings.download_quality=='96000'){
+                if (appRoot && appRoot.settings && appRoot.settings.download_quality == '96000') {
                     selected = 0
-                }else if(cloudMusic.settings.download_quality=='160000'){
+                } else if (appRoot && appRoot.settings && appRoot.settings.download_quality == '160000') {
                     selected = 1
-                }else{
+                } else {
                     selected = 2
                 }
                 qselector.selectedIndex = selected
@@ -73,8 +76,10 @@ Page {
             OptionSelectorDelegate {
                 text: name
                 onClicked: {
-                    cloudMusic.settings.streaming_quality = customModel2.get(qselector2.selectedIndex).key
-                    console.log("Streaming Quality: "+cloudMusic.settings.streaming_quality)
+                    if (appRoot && appRoot.settings) {
+                        appRoot.settings.streaming_quality = customModel2.get(qselector2.selectedIndex).key
+                        console.log("Streaming Quality: " + appRoot.settings.streaming_quality)
+                    }
                 }
             }
         }
@@ -87,11 +92,11 @@ Page {
                     customModel2.append({'name':qualitys[i], 'key':keys[i]})
                 }
                 var selected = 0
-                if(cloudMusic.settings.streaming_quality=='96000'){
+                if (appRoot && appRoot.settings && appRoot.settings.streaming_quality == '96000') {
                     selected = 0
-                }else if(cloudMusic.settings.streaming_quality=='160000'){
+                } else if (appRoot && appRoot.settings && appRoot.settings.streaming_quality == '160000') {
                     selected = 1
-                }else{
+                } else {
                     selected = 2
                 }
                 qselector2.selectedIndex = selected
@@ -99,21 +104,24 @@ Page {
         }
         //Theme cloudMusic.settings
         UListItem.ItemSelector {
-            property variant themeModel: [i18n.tr("Ambiance"), i18n.tr("SuruDark")]
+            property variant themeModel: [i18n.tr("System"), i18n.tr("Ambiance"), i18n.tr("SuruDark")]
             id: themeSelector
             text: i18n.tr("Theme")
             model: themeModel
             delegate: themeSelectorDelegate
             Component.onCompleted: {
-                if(cloudMusic.settings.theme == 'Ambiance'){
+                if (appRoot && appRoot.settings && appRoot.settings.theme == 'System') {
                     selectedIndex = 0
-                }else{
+                } else if (appRoot && appRoot.settings && appRoot.settings.theme == 'Ambiance') {
                     selectedIndex = 1
+                } else {
+                    selectedIndex = 2
                 }
             }
         }
         ListModel {
             id: themeModel
+            ListElement { name: "System" }
             ListElement { name: "Ambiance" }
             ListElement { name: "SuruDark" }
         }
@@ -122,8 +130,10 @@ Page {
             OptionSelectorDelegate {
                 text: name
                 onClicked: {
-                    cloudMusic.settings.theme = themeModel.get(themeSelector.selectedIndex).name
-                    console.log("Theme: "+ cloudMusic.settings.theme)
+                    if (appRoot && appRoot.settings) {
+                        appRoot.settings.theme = themeModel.get(themeSelector.selectedIndex).name
+                        console.log("Theme: " + appRoot.settings.theme)
+                    }
                 }
             }
         }

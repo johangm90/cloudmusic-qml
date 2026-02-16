@@ -7,6 +7,12 @@ import "../logic/Api.js" as Api
 
 Page {
     id: newAlbumsPage
+    property var appRoot
+    property bool isDarkTheme: appRoot ? appRoot.isDarkTheme : false
+    property color primaryTextColor: isDarkTheme ? "#f2f2f2" : "#1f1f1f"
+    property color secondaryTextColor: isDarkTheme ? "#b8b8b8" : "#6a6a6a"
+    property color tileColor: isDarkTheme ? "#252525" : "#ffffff"
+    property color tileBorderColor: isDarkTheme ? "#3a3a3a" : "#dcdcdc"
 
     TabsList {
         id: tabsList
@@ -68,7 +74,7 @@ Page {
         z: 1
         width: parent.width
         height: parent.height
-        cellWidth: cloudMusic.width > units.gu(25) ? (parent.width / Math.ceil(parent.width / units.gu(25))) : (parent.width)
+        cellWidth: (appRoot && appRoot.width > units.gu(25)) ? (parent.width / Math.ceil(parent.width / units.gu(25))) : parent.width
         cellHeight: cellWidth + units.gu(8)
         model: newAlbumsModel
         cacheBuffer: 50
@@ -79,14 +85,14 @@ Page {
 
             Rectangle {
                 id: item
-                color: "transparent"
+                color: tileColor
 
                 anchors {
                     fill: parent
                     margins: units.gu(1)
                 }
 
-                border.color: cloudMusic.settings.theme == "Ambiance" ? Qt.rgba(0,0,0,0.2) : Qt.rgba(250,250,250,0.2)
+                border.color: tileBorderColor
                 border.width: 1
                 radius: units.gu(1.5)
 
@@ -125,6 +131,7 @@ Page {
                         verticalAlignment: Label.AlignBottom
                         elide: Label.ElideRight
                         fontSize: "medium"
+                        color: primaryTextColor
                     }
 
 
@@ -136,7 +143,7 @@ Page {
                         verticalAlignment: Label.AlignTop
                         elide: Label.ElideRight
                         fontSize: "small"
-                        color: "#898B8C"
+                        color: secondaryTextColor
                     }
                 }
             }

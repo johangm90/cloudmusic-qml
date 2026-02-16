@@ -10,6 +10,7 @@ import "../logic/Database.js" as Db
 
 Item {
     id: playlist
+    property var appRoot
 
     function cargar(id) {
         Db.getPlaylist(id);
@@ -160,7 +161,9 @@ Item {
                 name: "navigation-menu"
                 onTriggered: {
                     playing_page.songs_list.push(songsModel.get(songsList.index).id)
-                    media_player.additem(cloudMusic.server + 'play/' + songsModel.get(songsList.index).id + '/' + cloudMusic.settings.streaming_quality)
+                    var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
+                    var server = appRoot ? appRoot.server : ""
+                    media_player.additem(server + 'play/' + songsModel.get(songsList.index).id + '/' + quality)
                     //media_player.additem(cloudMusic.server1 + 'url?id=' + songsModel.get(songsList.index).id + '&br=' + cloudMusic.settings.streaming_quality + '&raw')
                     playing_page.model_queue.append(songsModel.get(songsList.index))
                     context_menu.close()
@@ -288,7 +291,9 @@ Item {
                             if (songsModel.get(index).local) {
                                 songs.push(Qt.resolvedUrl(songsModel.get(i).local))
                             } else {
-                                songs.push(cloudMusic.server + 'play/' + songsModel.get(i).song_id + '/' + cloudMusic.settings.streaming_quality);
+                                var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
+                                var server = appRoot ? appRoot.server : ""
+                                songs.push(server + 'play/' + songsModel.get(i).song_id + '/' + quality);
                                 //songs.push(cloudMusic.server1 + 'url?id=' + songsModel.get(i).song_id + '&br=' + cloudMusic.settings.streaming_quality + '&raw');
                             }
                             songs_ids.push(songsModel.get(i).song_id);

@@ -5,6 +5,7 @@ import "../components"
 
 Page {
     id: aboutPage
+    property var appRoot
     property var date: new Date()
 
     TabsList {
@@ -32,7 +33,7 @@ Page {
             model: [i18n.tr("About"), i18n.tr("Credits")]
 
             StyleHints {
-                selectedSectionColor: cloudMusic.primaryColor
+                selectedSectionColor: appRoot ? appRoot.primaryColor : "#e53446"
             }
         }
     }
@@ -65,7 +66,7 @@ Page {
                         anchors.horizontalCenter: parent.horizontalCenter
                         radius: "medium"
                         image: Image{
-                            source: "../../assets/logo.svg"
+                            source: "qrc:/assets/logo.svg"
                         }
                     }
 
