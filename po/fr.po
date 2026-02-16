@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-15 21:40+0000\n"
+"POT-Creation-Date: 2026-02-16 00:57+0000\n"
 "PO-Revision-Date: 2021-12-29 21:18+0100\n"
 "Last-Translator: Anne017 <anneonyme017@openmailbox.org>\n"
 "Language-Team: \n"
@@ -17,49 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Launchpad-Export-Date: 2017-03-19 06:51+0000\n"
-
-#: qml/Main.qml:56
-msgid "%1 songs played today"
-msgstr "%1 morceaux lus aujourd'hui"
-
-#: qml/Main.qml:57
-msgid "0 songs played today"
-msgstr "Pas de morceau lu aujourd'hui"
-
-#: qml/Main.qml:86 qml/components/TabsList.qml:10 qml/ui/Search.qml:18
-#: qml/ui/Search.qml:22 qml/ui/SearchHistory.qml:13
-msgid "Search"
-msgstr "Rechercher"
-
-#: qml/Main.qml:94 qml/ui/Album.qml:193 qml/ui/Artist.qml:183
-#: qml/ui/PlaylistDetail.qml:141 qml/ui/Search.qml:342
-msgid "Download"
-msgstr "Télécharger"
-
-#: qml/Main.qml:177
-msgid "Artist"
-msgstr "Artiste"
-
-#: qml/Main.qml:196
-msgid "Album"
-msgstr "Album"
-
-#: qml/Main.qml:202 qml/components/SongDialog.qml:95 qml/ui/Album.qml:201
-#: qml/ui/Artist.qml:191 qml/ui/Search.qml:350
-msgid "Add to playlist"
-msgstr "Ajouter à la liste de lecture"
-
-#: qml/Main.qml:228
-msgid "Playlist"
-msgstr "Liste de lecture"
-
-#: qml/Main.qml:246
-msgid "Now Playing"
-msgstr "Lecture en cours"
-
-#: qml/Main.qml:250 qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9
-msgid "Queue"
-msgstr "File d’attente"
 
 #: qml/components/ChangeLogDialog.qml:11
 msgid "What's new?"
@@ -98,6 +55,11 @@ msgstr "Créer"
 msgid "Cancel"
 msgstr "Annuler"
 
+#: qml/components/SongDialog.qml:95 qml/ui/Album.qml:201 qml/ui/Artist.qml:191
+#: qml/ui/Search.qml:407 qml/Main.qml:203
+msgid "Add to playlist"
+msgstr "Ajouter à la liste de lecture"
+
 #: qml/components/SongDialog.qml:96
 msgid "Select one playlist to add"
 msgstr "Sélectionner une liste de lecture à ajouter"
@@ -109,6 +71,11 @@ msgstr "Créer une nouvelle liste de lecture"
 #: qml/components/SongDialog.qml:137
 msgid "Add"
 msgstr "Ajouter"
+
+#: qml/components/TabsList.qml:10 qml/ui/SearchHistory.qml:13
+#: qml/ui/Search.qml:20 qml/ui/Search.qml:24 qml/Main.qml:87
+msgid "Search"
+msgstr "Rechercher"
 
 #: qml/components/TabsList.qml:19 qml/ui/NewAlbums.qml:16
 msgid "New Albums"
@@ -146,17 +113,22 @@ msgstr "Distribuée sous les termes de la licence GNU GPL v3"
 msgid "Report bugs on %1"
 msgstr "Signalez les problèmes sur %1"
 
+#: qml/ui/Album.qml:193 qml/ui/Artist.qml:183 qml/ui/PlaylistDetail.qml:141
+#: qml/ui/Search.qml:399 qml/Main.qml:95
+msgid "Download"
+msgstr "Télécharger"
+
 #: qml/ui/Album.qml:212 qml/ui/Artist.qml:202 qml/ui/PlaylistDetail.qml:159
-#: qml/ui/Search.qml:361
+#: qml/ui/Search.qml:418
 msgid "Add to queue"
 msgstr "Ajouter à la file d'attente"
 
 #: qml/ui/Album.qml:219 qml/ui/Artist.qml:209 qml/ui/PlaylistDetail.qml:167
-#: qml/ui/Search.qml:368
+#: qml/ui/Search.qml:425
 msgid "Song added to queue"
 msgstr "Morceau ajouté à la file d'attente"
 
-#: qml/ui/Album.qml:223 qml/ui/PlaylistDetail.qml:180 qml/ui/Search.qml:381
+#: qml/ui/Album.qml:223 qml/ui/PlaylistDetail.qml:180 qml/ui/Search.qml:438
 msgid "Go to artist"
 msgstr "Aller à l'artiste"
 
@@ -172,11 +144,11 @@ msgstr ""
 msgid "Top Songs"
 msgstr "Meilleurs morceaux"
 
-#: qml/ui/Artist.qml:213 qml/ui/PlaylistDetail.qml:171 qml/ui/Search.qml:372
+#: qml/ui/Artist.qml:213 qml/ui/PlaylistDetail.qml:171 qml/ui/Search.qml:429
 msgid "Go to album"
 msgstr "Aller à l'album"
 
-#: qml/ui/Artist.qml:340 qml/ui/Search.qml:512
+#: qml/ui/Artist.qml:340 qml/ui/Search.qml:310 qml/ui/Search.qml:567
 msgid "Albums"
 msgstr "Albums"
 
@@ -205,6 +177,10 @@ msgid ""
 msgstr ""
 "Une erreur s'est produite\n"
 "Appuyez pour réessayer"
+
+#: qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9 qml/Main.qml:251
+msgid "Queue"
+msgstr "File d’attente"
 
 #: qml/ui/PlaylistDetail.qml:38
 msgid "Available offline"
@@ -242,29 +218,9 @@ msgstr "Supprimer la liste de lecture"
 msgid "This cannot be undone"
 msgstr "Ceci ne peut pas être annulé"
 
-#: qml/ui/Playlists.qml:128 qml/ui/Search.qml:204
+#: qml/ui/Playlists.qml:128 qml/ui/Search.qml:208
 msgid "Delete"
 msgstr "Supprimer"
-
-#: qml/ui/Search.qml:201
-msgid "Item deletion"
-msgstr "Suppression de l'élément"
-
-#: qml/ui/Search.qml:202
-msgid "The selected element to be deleted from the search list is: "
-msgstr "L'élément sélectionné à supprimer de la liste de recherche est : "
-
-#: qml/ui/Search.qml:215
-msgid "Return"
-msgstr "Retour"
-
-#: qml/ui/Search.qml:300
-msgid "Songs"
-msgstr "Morceaux"
-
-#: qml/ui/Search.qml:602
-msgid "Artists"
-msgstr "Artistes"
 
 #: qml/ui/SettingsPage.qml:31
 msgid "Download quality"
@@ -297,6 +253,50 @@ msgstr "Suru Sombre"
 #: qml/ui/SettingsPage.qml:104
 msgid "Theme"
 msgstr "Thème"
+
+#: qml/ui/Search.qml:205
+msgid "Item deletion"
+msgstr "Suppression de l'élément"
+
+#: qml/ui/Search.qml:206
+msgid "The selected element to be deleted from the search list is: "
+msgstr "L'élément sélectionné à supprimer de la liste de recherche est : "
+
+#: qml/ui/Search.qml:219
+msgid "Return"
+msgstr "Retour"
+
+#: qml/ui/Search.qml:294 qml/ui/Search.qml:357
+msgid "Songs"
+msgstr "Morceaux"
+
+#: qml/ui/Search.qml:326 qml/ui/Search.qml:655
+msgid "Artists"
+msgstr "Artistes"
+
+#: qml/Main.qml:55
+msgid "%1 songs played today"
+msgstr "%1 morceaux lus aujourd'hui"
+
+#: qml/Main.qml:56
+msgid "0 songs played today"
+msgstr "Pas de morceau lu aujourd'hui"
+
+#: qml/Main.qml:178
+msgid "Artist"
+msgstr "Artiste"
+
+#: qml/Main.qml:197
+msgid "Album"
+msgstr "Album"
+
+#: qml/Main.qml:229
+msgid "Playlist"
+msgstr "Liste de lecture"
+
+#: qml/Main.qml:247
+msgid "Now Playing"
+msgstr "Lecture en cours"
 
 #~ msgid "Release Date:"
 #~ msgstr "Date de sortie :"

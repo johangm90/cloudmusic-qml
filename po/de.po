@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-15 21:40+0000\n"
+"POT-Creation-Date: 2026-02-16 00:57+0000\n"
 "PO-Revision-Date: 2017-06-04 21:11+0000\n"
 "Last-Translator: Mauro Sbicego <Unknown>\n"
 "Language-Team: German <de@li.org>\n"
@@ -18,49 +18,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2017-06-05 06:11+0000\n"
 "X-Generator: Launchpad (build 18391)\n"
-
-#: qml/Main.qml:56
-msgid "%1 songs played today"
-msgstr "%1 Lieder heute gehört"
-
-#: qml/Main.qml:57
-msgid "0 songs played today"
-msgstr "0 Lieder heute gehört"
-
-#: qml/Main.qml:86 qml/components/TabsList.qml:10 qml/ui/Search.qml:18
-#: qml/ui/Search.qml:22 qml/ui/SearchHistory.qml:13
-msgid "Search"
-msgstr "Suche"
-
-#: qml/Main.qml:94 qml/ui/Album.qml:193 qml/ui/Artist.qml:183
-#: qml/ui/PlaylistDetail.qml:141 qml/ui/Search.qml:342
-msgid "Download"
-msgstr "Herunterladen"
-
-#: qml/Main.qml:177
-msgid "Artist"
-msgstr "Interpret"
-
-#: qml/Main.qml:196
-msgid "Album"
-msgstr "Album"
-
-#: qml/Main.qml:202 qml/components/SongDialog.qml:95 qml/ui/Album.qml:201
-#: qml/ui/Artist.qml:191 qml/ui/Search.qml:350
-msgid "Add to playlist"
-msgstr "Zur Wiedergabeliste hinzufügen"
-
-#: qml/Main.qml:228
-msgid "Playlist"
-msgstr "Wiedergabeliste"
-
-#: qml/Main.qml:246
-msgid "Now Playing"
-msgstr "Aktueller Titel"
-
-#: qml/Main.qml:250 qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9
-msgid "Queue"
-msgstr "Warteschlange"
 
 #: qml/components/ChangeLogDialog.qml:11
 msgid "What's new?"
@@ -99,6 +56,11 @@ msgstr "Erstellen"
 msgid "Cancel"
 msgstr "Abbrechen"
 
+#: qml/components/SongDialog.qml:95 qml/ui/Album.qml:201 qml/ui/Artist.qml:191
+#: qml/ui/Search.qml:407 qml/Main.qml:203
+msgid "Add to playlist"
+msgstr "Zur Wiedergabeliste hinzufügen"
+
 #: qml/components/SongDialog.qml:96
 msgid "Select one playlist to add"
 msgstr "Wähle zum Hinzufügen eine Wiedergabeliste aus"
@@ -110,6 +72,11 @@ msgstr "Neue Wiedergabeliste erstellen"
 #: qml/components/SongDialog.qml:137
 msgid "Add"
 msgstr "Hinzufügen"
+
+#: qml/components/TabsList.qml:10 qml/ui/SearchHistory.qml:13
+#: qml/ui/Search.qml:20 qml/ui/Search.qml:24 qml/Main.qml:87
+msgid "Search"
+msgstr "Suche"
 
 #: qml/components/TabsList.qml:19 qml/ui/NewAlbums.qml:16
 msgid "New Albums"
@@ -147,17 +114,22 @@ msgstr "Veröffentlicht unter den Bedingungen der GNU GPL v3"
 msgid "Report bugs on %1"
 msgstr "Melde Fehler auf %1"
 
+#: qml/ui/Album.qml:193 qml/ui/Artist.qml:183 qml/ui/PlaylistDetail.qml:141
+#: qml/ui/Search.qml:399 qml/Main.qml:95
+msgid "Download"
+msgstr "Herunterladen"
+
 #: qml/ui/Album.qml:212 qml/ui/Artist.qml:202 qml/ui/PlaylistDetail.qml:159
-#: qml/ui/Search.qml:361
+#: qml/ui/Search.qml:418
 msgid "Add to queue"
 msgstr "Zur Warteschlange hinzufügen"
 
 #: qml/ui/Album.qml:219 qml/ui/Artist.qml:209 qml/ui/PlaylistDetail.qml:167
-#: qml/ui/Search.qml:368
+#: qml/ui/Search.qml:425
 msgid "Song added to queue"
 msgstr "Song zur Warteschlange hinzugefügt"
 
-#: qml/ui/Album.qml:223 qml/ui/PlaylistDetail.qml:180 qml/ui/Search.qml:381
+#: qml/ui/Album.qml:223 qml/ui/PlaylistDetail.qml:180 qml/ui/Search.qml:438
 msgid "Go to artist"
 msgstr "Gehe zu Künstler"
 
@@ -171,11 +143,11 @@ msgstr ""
 msgid "Top Songs"
 msgstr "Top-Lieder"
 
-#: qml/ui/Artist.qml:213 qml/ui/PlaylistDetail.qml:171 qml/ui/Search.qml:372
+#: qml/ui/Artist.qml:213 qml/ui/PlaylistDetail.qml:171 qml/ui/Search.qml:429
 msgid "Go to album"
 msgstr "Gehe zu Album"
 
-#: qml/ui/Artist.qml:340 qml/ui/Search.qml:512
+#: qml/ui/Artist.qml:340 qml/ui/Search.qml:310 qml/ui/Search.qml:567
 msgid "Albums"
 msgstr "Alben"
 
@@ -204,6 +176,10 @@ msgid ""
 msgstr ""
 "Ein Fehler ist aufgetreten\n"
 "Zum Wiederholen tippen"
+
+#: qml/ui/NowPlaying.qml:99 qml/ui/Queue.qml:9 qml/Main.qml:251
+msgid "Queue"
+msgstr "Warteschlange"
 
 #: qml/ui/PlaylistDetail.qml:38
 msgid "Available offline"
@@ -241,29 +217,9 @@ msgstr "Wiedergabeliste löschen"
 msgid "This cannot be undone"
 msgstr "Dies kann nicht rückgängig gemacht werden"
 
-#: qml/ui/Playlists.qml:128 qml/ui/Search.qml:204
+#: qml/ui/Playlists.qml:128 qml/ui/Search.qml:208
 msgid "Delete"
 msgstr "Löschen"
-
-#: qml/ui/Search.qml:201
-msgid "Item deletion"
-msgstr ""
-
-#: qml/ui/Search.qml:202
-msgid "The selected element to be deleted from the search list is: "
-msgstr ""
-
-#: qml/ui/Search.qml:215
-msgid "Return"
-msgstr ""
-
-#: qml/ui/Search.qml:300
-msgid "Songs"
-msgstr "Lieder"
-
-#: qml/ui/Search.qml:602
-msgid "Artists"
-msgstr "Interpreten"
 
 #: qml/ui/SettingsPage.qml:31
 msgid "Download quality"
@@ -296,6 +252,50 @@ msgstr "Dunkel (SuruDark)"
 #: qml/ui/SettingsPage.qml:104
 msgid "Theme"
 msgstr "Design"
+
+#: qml/ui/Search.qml:205
+msgid "Item deletion"
+msgstr ""
+
+#: qml/ui/Search.qml:206
+msgid "The selected element to be deleted from the search list is: "
+msgstr ""
+
+#: qml/ui/Search.qml:219
+msgid "Return"
+msgstr ""
+
+#: qml/ui/Search.qml:294 qml/ui/Search.qml:357
+msgid "Songs"
+msgstr "Lieder"
+
+#: qml/ui/Search.qml:326 qml/ui/Search.qml:655
+msgid "Artists"
+msgstr "Interpreten"
+
+#: qml/Main.qml:55
+msgid "%1 songs played today"
+msgstr "%1 Lieder heute gehört"
+
+#: qml/Main.qml:56
+msgid "0 songs played today"
+msgstr "0 Lieder heute gehört"
+
+#: qml/Main.qml:178
+msgid "Artist"
+msgstr "Interpret"
+
+#: qml/Main.qml:197
+msgid "Album"
+msgstr "Album"
+
+#: qml/Main.qml:229
+msgid "Playlist"
+msgstr "Wiedergabeliste"
+
+#: qml/Main.qml:247
+msgid "Now Playing"
+msgstr "Aktueller Titel"
 
 #~ msgid "Migration required"
 #~ msgstr "Laden erforderlich"
