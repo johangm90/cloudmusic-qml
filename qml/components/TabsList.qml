@@ -4,60 +4,70 @@ import Lomiri.Components 1.3
 ActionList {
     id: tabsList
 
+    function isCurrentPage(loader) {
+        return pagestack.currentPage === loader || pagestack.currentPage === loader.item
+    }
+
+    function navigateTo(loader) {
+        if (!loader || isCurrentPage(loader)) {
+            return
+        }
+        pagestack.push(loader)
+    }
+
     children: [
         Action {
             iconName: "find"
             text: i18n.tr("Search")
-            enabled: pagestack.currentPage !== searchLoader
+            enabled: !tabsList.isCurrentPage(searchLoader)
             onTriggered: {
-                pagestack.push(searchLoader)
+                tabsList.navigateTo(searchLoader)
             }
         },
 
         Action {
             iconName: "slideshow"
             text: i18n.tr("New Albums")
-            enabled: pagestack.currentPage !== albumsLoader
+            enabled: !tabsList.isCurrentPage(albumsLoader)
             onTriggered: {
-                pagestack.push(albumsLoader)
+                tabsList.navigateTo(albumsLoader)
             }
         },
 
         Action {
             iconName: "contact-group"
             text: i18n.tr("Top Artists")
-            enabled: pagestack.currentPage !== artistsLoader
+            enabled: !tabsList.isCurrentPage(artistsLoader)
             onTriggered: {
-                pagestack.push(artistsLoader)
+                tabsList.navigateTo(artistsLoader)
             }
         },
 
         Action {
             iconName: "stock_music"
             text: i18n.tr("Playlists")
-            enabled: pagestack.currentPage !== playlistsLoader
+            enabled: !tabsList.isCurrentPage(playlistsLoader)
             onTriggered: {
-                pagestack.push(playlistsLoader)
+                tabsList.navigateTo(playlistsLoader)
             }
         },
 
         Action {
             iconName: "settings"
             text: i18n.tr("Settings")
-            enabled: pagestack.currentPage !== settingsLoader
+            enabled: !tabsList.isCurrentPage(settingsLoader)
             onTriggered: {
-                pagestack.push(settingsLoader)
+                tabsList.navigateTo(settingsLoader)
             }
         },
 
         Action {
             iconName: "help"
             text: i18n.tr("About")
-            enabled: pagestack.currentPage !== aboutLoader
+            enabled: !tabsList.isCurrentPage(aboutLoader)
             onTriggered: {
-                pagestack.push(aboutLoader)
+                tabsList.navigateTo(aboutLoader)
             }
         }
     ]
 }
-

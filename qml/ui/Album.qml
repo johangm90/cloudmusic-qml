@@ -13,10 +13,13 @@ Item {
     property var appRoot
 
     property bool isDarkTheme: appRoot ? appRoot.isDarkTheme : false
-    property color cardColor: isDarkTheme ? "#232323" : "#f2f2f2"
-    property color cardBorder: isDarkTheme ? "#3a3a3a" : "#d8d8d8"
-    property color sectionColor: isDarkTheme ? "#1a1a1a" : "#ececec"
-    property color mutedTextColor: isDarkTheme ? "#b8b8b8" : "#666666"
+    property color cardColor: appRoot ? appRoot.cardColor : (isDarkTheme ? "#232323" : "#ffffff")
+    property color cardBorder: appRoot ? appRoot.borderColor : (isDarkTheme ? "#3a3a3a" : "#d8d8d8")
+    property color sectionColor: appRoot ? appRoot.sectionColor : (isDarkTheme ? "#1a1a1a" : "#ececec")
+    property color mutedTextColor: appRoot ? appRoot.secondaryTextColor : (isDarkTheme ? "#b8b8b8" : "#666666")
+    property color primaryTextColor: appRoot ? appRoot.textColor : (isDarkTheme ? "#f2f2f2" : "#1f1f1f")
+    property color inverseTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
+    property color selectedColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.18)
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
 
     function cargar(id) {
@@ -142,7 +145,7 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: units.gu(1)
+            anchors.margins: 0
             columns: width < units.gu(90) ? 1 : 2
             rowSpacing: units.gu(1)
             columnSpacing: units.gu(1)
@@ -195,7 +198,6 @@ Item {
                         border.color: Qt.rgba(1, 1, 1, 0.15)
                         border.width: 1
                         anchors.horizontalCenter: parent.horizontalCenter
-                        clip: true
 
                         Image {
                             id: photo
@@ -204,6 +206,18 @@ Item {
                             fillMode: Image.PreserveAspectCrop
                             cache: true
                             smooth: true
+                            visible: false
+                        }
+
+                        OpacityMask {
+                            anchors.fill: parent
+                            source: photo
+                            cached: true
+                            maskSource: Rectangle {
+                                width: photo.width
+                                height: photo.height
+                                radius: units.gu(0.8)
+                            }
                         }
                     }
 
@@ -213,7 +227,7 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
                         fontSize: "large"
-                        color: "#ffffff"
+                        color: inverseTextColor
                         font.weight: Font.DemiBold
                     }
 
@@ -223,14 +237,14 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
                         fontSize: "small"
-                        color: "#d0d0d0"
+                        color: mutedTextColor
                     }
 
                     Label {
                         width: parent.width
                         horizontalAlignment: Text.AlignHCenter
                         fontSize: "small"
-                        color: "#d0d0d0"
+                        color: mutedTextColor
                         text: i18n.tr("%1 song", "%1 songs", albumModel.count).arg(albumModel.count)
                     }
                 }
@@ -275,6 +289,7 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSize: "medium"
                                 font.weight: Font.DemiBold
+                                color: primaryTextColor
                             }
 
                             Label {
@@ -311,7 +326,7 @@ Item {
                                     bottomMargin: units.gu(0.9)
                                 }
                                 divider.visible: false
-                                color: albumList.index === index ? Qt.rgba(0.9, 0.2, 0.28, 0.18) : "transparent"
+                                color: albumList.index === index ? selectedColor : "transparent"
 
                                 Label {
                                     id: track_index
@@ -333,6 +348,7 @@ Item {
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.right: lbl_duration.left
                                     anchors.rightMargin: units.gu(1)
+                                    color: primaryTextColor
                                 }
 
                                 Label {

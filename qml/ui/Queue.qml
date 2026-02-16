@@ -4,6 +4,10 @@ import "../logic/Api.js" as Api
 
 Page {
     id: queuePage
+    property var appRoot
+    property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
+    property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
 
     header: PageHeader {
         title: i18n.tr("Queue")
@@ -44,7 +48,7 @@ Page {
                         bottomMargin: units.gu(1)
                     }
 
-                    color: playing_page.current_index == index ? "#5d5d5d" : "transparent"
+                    color: playing_page.current_index == index ? selectedColor : "transparent"
 
                     Label {
                         id: lbl_name
@@ -52,13 +56,14 @@ Page {
                         elide: Label.ElideRight
                         anchors.left: parent.left
                         anchors.right: lbl_duration.left
+                        color: textColor
                     }
 
                     Label {
                         id: lbl_artist
                         text: artist
                         fontSize: "small"
-                        color: "#898B8C"
+                        color: secondaryTextColor
                         elide: Label.ElideRight
                         anchors.left: parent.left
                         anchors.right: lbl_duration.left

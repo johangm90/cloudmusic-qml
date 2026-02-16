@@ -7,6 +7,9 @@ import "../ui"
 
 Rectangle {
     id: playerToolbar
+    property color accentColor: cloudMusic.primaryColor
+    property color textColor: cloudMusic.textColor
+    property color secondaryTextColor: cloudMusic.secondaryTextColor
     visible: media_player.queue > 0 && !playingPage.visible && !aboutLoader.visible && !settingsLoader.visible ? true : false
     anchors {
         bottom: parent.bottom
@@ -42,6 +45,7 @@ Rectangle {
             width: parent.width
             elide: Text.ElideRight
             font.weight: Font.DemiBold
+            color: textColor
         }
 
         Label {
@@ -49,7 +53,8 @@ Rectangle {
             width: parent.width
             elide: Text.ElideRight
             fontSize: "small"
-            opacity: 0.4
+            color: secondaryTextColor
+            opacity: 0.9
         }
     }
 
@@ -60,7 +65,7 @@ Rectangle {
         anchors.rightMargin: units.gu(1)
         anchors.verticalCenter: parent.verticalCenter
         color: "transparent"
-        border.color: "#e53446"
+        border.color: accentColor
         border.width: 1
         width: units.gu(5)
         height: units.gu(5)
@@ -70,7 +75,7 @@ Rectangle {
             width: units.gu(3)
             height: units.gu(3)
             name: media_player.playbackState === 1 ? "media-playback-pause" : "media-playback-start"
-            color: "#e53446"
+            color: accentColor
             anchors.centerIn: parent
         }
 
@@ -108,7 +113,7 @@ Rectangle {
 
            Rectangle {
                id: progresoHint
-               color: "#e53446"
+               color: accentColor
                height: parent.height
                width: media_player.duration > 0 ? (media_player.position / media_player.duration) * progreso.width : 0
 
@@ -131,7 +136,6 @@ Rectangle {
             verticalOffset: -1
             radius: 4
             samples: 17
-            color: cloudMusic.settings.theme == "Ambiance" ? Qt.rgba(0,0,0,0.2) : Qt.rgba(250,250,250,0.2)
             source: divider
         }*/
     }

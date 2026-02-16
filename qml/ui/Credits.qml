@@ -4,6 +4,13 @@ import "../components"
 
 Item {
     id: creditsPage
+    property var appRoot
+    property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
+    property color cardColor: appRoot ? appRoot.cardColor : "#ffffff"
+    property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
+    property color sectionColor: appRoot ? appRoot.sectionColor : "#ececec"
+    property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#666666"
 
     ListModel {
         id: creditsModel
@@ -16,7 +23,12 @@ Item {
         }
     }
 
-    LomiriListView {
+    Rectangle {
+        anchors.fill: parent
+        color: pageColor
+    }
+
+    ListView {
         id: credits
 
         currentIndex: -1
@@ -25,8 +37,22 @@ Item {
 
         section.property: "title"
         section.labelPositioning: ViewSection.InlineLabels
-        section.delegate: HeaderListItem {
-            title.text: section
+        section.delegate: Rectangle {
+            width: credits.width
+            height: units.gu(4.5)
+            color: sectionColor
+            border.color: borderColor
+            border.width: 1
+
+            Label {
+                anchors.fill: parent
+                anchors.leftMargin: units.gu(1.5)
+                verticalAlignment: Text.AlignVCenter
+                fontSize: "small"
+                font.weight: Font.DemiBold
+                text: section
+                color: textColor
+            }
         }
 
         // Required to accomodate the now playing bar being shown in landscape mode which
@@ -36,13 +62,39 @@ Item {
             height: units.gu(8)
         }
 
-        delegate: ListItem {
-            ListItemLayout {
-                title.text: model.name
-                ProgressionSlot {}
+        delegate: Rectangle {
+            width: credits.width
+            height: units.gu(6)
+            color: cardColor
+            border.color: borderColor
+            border.width: 1
+
+            Label {
+                anchors.left: parent.left
+                anchors.right: chevron.left
+                anchors.leftMargin: units.gu(1.5)
+                anchors.rightMargin: units.gu(1)
+                anchors.verticalCenter: parent.verticalCenter
+                elide: Text.ElideRight
+                text: model.name
+                color: textColor
             }
-            divider.visible: false
-            onClicked: Qt.openUrlExternally(model.url)
+
+            Icon {
+                id: chevron
+                anchors.right: parent.right
+                anchors.rightMargin: units.gu(1.2)
+                anchors.verticalCenter: parent.verticalCenter
+                width: units.gu(2.4)
+                height: width
+                name: "go-next"
+                color: secondaryTextColor
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.openUrlExternally(model.url)
+            }
         }
     }
 }

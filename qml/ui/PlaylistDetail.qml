@@ -11,6 +11,9 @@ import "../logic/Database.js" as Db
 Item {
     id: playlist
     property var appRoot
+    property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
+    property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
 
     function cargar(id) {
         Db.getPlaylist(id);
@@ -227,7 +230,7 @@ Item {
                         bottomMargin: units.gu(1)
                     }
 
-                    color: songsList.index == index ? "#5d5d5d" : "transparent"
+                    color: songsList.index == index ? selectedColor : "transparent"
 
                     Label {
                         id: song_name
@@ -235,13 +238,14 @@ Item {
                         elide: Text.ElideRight
                         anchors.left: parent.left
                         anchors.right: song_duration.left
+                        color: textColor
                     }
 
                     Label {
                         id: song_artista
                         text: artist
                         fontSize: "small"
-                        color: "#898B8C"
+                        color: secondaryTextColor
                         elide: Text.ElideRight
                         anchors.left: parent.left
                         anchors.right: song_duration.left

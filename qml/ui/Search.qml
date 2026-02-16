@@ -11,10 +11,18 @@ import "StorageSearchKey.js" as StorageSearchKey
 Page {
     id: searchPage
     property var appRoot
+    property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
+    property color cardColor: appRoot ? appRoot.cardColor : "#ffffff"
+    property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
+    property color sectionColor: appRoot ? appRoot.sectionColor : "#333333"
+    property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
+    property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
     property var searchModel: refineDataModel()
     property int numKeys : StorageSearchKey.doesExistKeyStorage() ? StorageSearchKey.getSize() : 0
     property var showPopup : true
     property int currentTab: 0
+    property int tabAnimDuration: LomiriAnimation.FastDuration
 
     header: PageHeader {
         title: i18n.tr("Search")
@@ -225,11 +233,11 @@ Page {
                           
                           Rectangle {
                             anchors.fill: parent
-                            color: searchPage.appRoot && searchPage.appRoot.settings && searchPage.appRoot.settings.theme == "SuruDark" ? "black" : "white"
+                            color: cardColor
                             Rectangle {
                                 visible: mouseArea.containsMouse
                                 anchors.fill: parent
-                                color: "red"
+                                color: searchPage.appRoot ? searchPage.appRoot.primaryColor : "red"
                                 border.width: units.dp(1)
                                 border.color: Qt.darker(color, 1.02)
                                 antialiasing: true
@@ -243,7 +251,7 @@ Page {
                                     rightMargin: comboBoxPopOver.itemMargins
                                 }
                                 text: model[textRole]
-                                color: searchPage.appRoot && searchPage.appRoot.settings && searchPage.appRoot.settings.theme == "SuruDark" ? "white" : "black"
+                                color: textColor
                                 elide: Text.ElideRight
                                 verticalAlignment: Text.AlignVCenter
           
@@ -261,7 +269,7 @@ Page {
     }
 
     Rectangle {
-        color: "transparent"
+        color: appRoot ? appRoot.pageColor : "transparent"
         anchors {
             top: searchPage.header.bottom
             left: parent.left
@@ -277,22 +285,35 @@ Page {
             Rectangle {
                 id: results_tabs
                 Layout.fillWidth: true
-                height: units.gu(5)
-                color: "transparent"
+                Layout.leftMargin: 0
+                Layout.rightMargin: 0
+                Layout.topMargin: 0
+                height: units.gu(6)
+                color: cardColor
+                border.color: borderColor
+                border.width: 1
+                radius: units.gu(1)
+                clip: true
 
                 Row {
                     anchors.fill: parent
-                    spacing: units.gu(0.5)
+                    anchors.margins: units.gu(0.6)
+                    spacing: units.gu(0.6)
 
                     Rectangle {
                         id: tabSongs
-                        width: parent.width / 3
+                        width: (parent.width - units.gu(1.2)) / 3
                         height: parent.height
-                        color: searchPage.currentTab === 0 ? "#333" : "#555"
+                        radius: units.gu(0.8)
+                        color: searchPage.currentTab === 0 ? accentColor : "transparent"
+                        border.color: searchPage.currentTab === 0 ? accentColor : borderColor
+                        border.width: 1
                         Label {
                             anchors.centerIn: parent
                             text: i18n.tr("Songs")
-                            color: "#fff"
+                            color: searchPage.currentTab === 0 ? (appRoot ? appRoot.inverseTextColor : "#fff") : textColor
+                            fontSize: "small"
+                            font.weight: Font.DemiBold
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -302,13 +323,18 @@ Page {
 
                     Rectangle {
                         id: tabAlbums
-                        width: parent.width / 3
+                        width: (parent.width - units.gu(1.2)) / 3
                         height: parent.height
-                        color: searchPage.currentTab === 1 ? "#333" : "#555"
+                        radius: units.gu(0.8)
+                        color: searchPage.currentTab === 1 ? accentColor : "transparent"
+                        border.color: searchPage.currentTab === 1 ? accentColor : borderColor
+                        border.width: 1
                         Label {
                             anchors.centerIn: parent
                             text: i18n.tr("Albums")
-                            color: "#fff"
+                            color: searchPage.currentTab === 1 ? (appRoot ? appRoot.inverseTextColor : "#fff") : textColor
+                            fontSize: "small"
+                            font.weight: Font.DemiBold
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -318,13 +344,18 @@ Page {
 
                     Rectangle {
                         id: tabArtists
-                        width: parent.width / 3
+                        width: (parent.width - units.gu(1.2)) / 3
                         height: parent.height
-                        color: searchPage.currentTab === 2 ? "#333" : "#555"
+                        radius: units.gu(0.8)
+                        color: searchPage.currentTab === 2 ? accentColor : "transparent"
+                        border.color: searchPage.currentTab === 2 ? accentColor : borderColor
+                        border.width: 1
                         Label {
                             anchors.centerIn: parent
                             text: i18n.tr("Artists")
-                            color: "#fff"
+                            color: searchPage.currentTab === 2 ? (appRoot ? appRoot.inverseTextColor : "#fff") : textColor
+                            fontSize: "small"
+                            font.weight: Font.DemiBold
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -338,16 +369,24 @@ Page {
                 id: results_stack
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.leftMargin: 0
+                Layout.rightMargin: 0
+                Layout.topMargin: 0
+                Layout.bottomMargin: 0
 
                 Rectangle {
                     id: songs_layout
-                    color: "transparent"
+                    color: cardColor
                     anchors.fill: parent
-                    visible: searchPage.currentTab === 0
+                    visible: opacity > 0
+                    opacity: searchPage.currentTab === 0 ? 1 : 0
+                    Behavior on opacity {
+                        LomiriNumberAnimation { duration: tabAnimDuration }
+                    }
 
                     Rectangle {
                         id: songs_title
-                        color: "#333"
+                        color: sectionColor
                         width: parent.width
                         height: units.gu(5)
                         Label {
@@ -356,7 +395,7 @@ Page {
                             anchors.verticalCenter: parent.verticalCenter
                             text: i18n.tr("Songs")
                             fontSize: "large"
-                            color: "#fff"
+                            color: textColor
                         }
                     }
 
@@ -419,7 +458,7 @@ Page {
                                 name: "navigation-menu"
                                 onTriggered: {
                                     playing_page.songs_list.push(searchSongsModel.get(songsList.index).id)
-                                    media_player.additem((searchPage.appRoot ? searchPage.appRoot.server : "") + 'play/' + searchSongsModel.get(songsList.index).id + '/' + (searchPage.appRoot && searchPage.appRoot.settings ? searchPage.appRoot.settings.streaming_quality : ""))
+                                    media_player.additem((searchPage.appRoot ? searchPage.appRoot.server : "") + 'play/' + searchSongsModel.get(songsList.index).id + '/' + (searchPage.appRoot && searchPage.appRoot.settings ? searchPage.appRoot.settings.streaming_quality : "320"))
                                     playing_page.model_queue.append(searchSongsModel.get(songsList.index))
                                     context_menu.close()
                                     messager.show_message(i18n.tr("Song added to queue"), 3)
@@ -471,7 +510,7 @@ Page {
                                         bottomMargin: units.gu(1)
                                     }
 
-                                    color: songsList.index == index ? "#5d5d5d" : "transparent"
+                                    color: songsList.index == index ? selectedColor : "transparent"
 
                                     Label {
                                         id: lbl_name
@@ -479,13 +518,14 @@ Page {
                                         elide: Label.ElideRight
                                         anchors.left: parent.left
                                         anchors.right: lbl_duration.left
+                                        color: textColor
                                     }
 
                                     Label {
                                         id: lbl_artist
                                         text: artist
                                         fontSize: "small"
-                                        color: "#898B8C"
+                                        color: secondaryTextColor
                                         elide: Label.ElideRight
                                         anchors.left: parent.left
                                         anchors.right: lbl_duration.left
@@ -499,6 +539,7 @@ Page {
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.right: item_menu.left
                                         horizontalAlignment: Text.AlignRight
+                                        color: secondaryTextColor
                                     }
 
                                     MouseArea {
@@ -551,13 +592,17 @@ Page {
 
                 Rectangle {
                     id: albums_layout
-                    color: "transparent"
+                    color: cardColor
                     anchors.fill: parent
-                    visible: searchPage.currentTab === 1
+                    visible: opacity > 0
+                    opacity: searchPage.currentTab === 1 ? 1 : 0
+                    Behavior on opacity {
+                        LomiriNumberAnimation { duration: tabAnimDuration }
+                    }
 
                     Rectangle {
                         id: albums_title
-                        color: "#333"
+                        color: sectionColor
                         width: parent.width
                         height: units.gu(5)
                         Label {
@@ -566,7 +611,7 @@ Page {
                             anchors.verticalCenter: parent.verticalCenter
                             text: i18n.tr("Albums")
                             fontSize: "large"
-                            color: "#fff"
+                            color: textColor
                         }
                     }
 
@@ -601,13 +646,14 @@ Page {
                                         elide: Label.ElideRight
                                         anchors.left: parent.left
                                         anchors.right: lbl__album_size.left
+                                        color: textColor
                                     }
 
                                     Label {
                                         id: lbl__album_artist
                                         text: artist
                                         fontSize: "small"
-                                        color: "#898B8C"
+                                        color: secondaryTextColor
                                         elide: Label.ElideRight
                                         anchors.left: parent.left
                                         anchors.right: lbl__album_size.left
@@ -621,6 +667,7 @@ Page {
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.right: parent.right
                                         horizontalAlignment: Text.AlignRight
+                                        color: secondaryTextColor
                                     }
 
                                     onClicked: {
@@ -639,13 +686,17 @@ Page {
 
                 Rectangle {
                     id: artists_layout
-                    color: "transparent"
+                    color: cardColor
                     anchors.fill: parent
-                    visible: searchPage.currentTab === 2
+                    visible: opacity > 0
+                    opacity: searchPage.currentTab === 2 ? 1 : 0
+                    Behavior on opacity {
+                        LomiriNumberAnimation { duration: tabAnimDuration }
+                    }
 
                     Rectangle {
                         id: artists_title
-                        color: "#333"
+                        color: sectionColor
                         width: parent.width
                         height: units.gu(5)
                         Label {
@@ -654,7 +705,7 @@ Page {
                             anchors.verticalCenter: parent.verticalCenter
                             text: i18n.tr("Artists")
                             fontSize: "large"
-                            color: "#fff"
+                            color: textColor
                         }
                     }
 
@@ -700,7 +751,9 @@ Page {
                                         fillMode: Image.PreserveAspectCrop
                                     }
                                     Rectangle {
-                                        color: "#333"
+                                        color: cardColor
+                                        border.color: borderColor
+                                        border.width: 1
                                         width: artistsView.cellWidth
                                         height: units.gu(4)
                                         Label {
@@ -711,7 +764,7 @@ Page {
                                             anchors.verticalCenter: parent.verticalCenter
                                             elide: Text.ElideRight
                                             fontSize: "medium"
-                                            color: "#fff"
+                                            color: textColor
                                         }
                                     }
                                 }

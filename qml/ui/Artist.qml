@@ -13,13 +13,16 @@ Item {
     property var appRoot
     property int activeTab: 0
     property bool contentReady: false
+    property int tabAnimDuration: LomiriAnimation.FastDuration
 
     property bool isDarkTheme: appRoot ? appRoot.isDarkTheme : false
-    property color cardColor: isDarkTheme ? "#232323" : "#f2f2f2"
-    property color cardBorder: isDarkTheme ? "#3a3a3a" : "#d8d8d8"
-    property color sectionColor: isDarkTheme ? "#1a1a1a" : "#ececec"
-    property color mutedTextColor: isDarkTheme ? "#b8b8b8" : "#666666"
-    property color primaryTextColor: isDarkTheme ? "#f2f2f2" : "#1f1f1f"
+    property color cardColor: appRoot ? appRoot.cardColor : (isDarkTheme ? "#232323" : "#ffffff")
+    property color cardBorder: appRoot ? appRoot.borderColor : (isDarkTheme ? "#3a3a3a" : "#d8d8d8")
+    property color sectionColor: appRoot ? appRoot.sectionColor : (isDarkTheme ? "#1a1a1a" : "#ececec")
+    property color mutedTextColor: appRoot ? appRoot.secondaryTextColor : (isDarkTheme ? "#b8b8b8" : "#666666")
+    property color primaryTextColor: appRoot ? appRoot.textColor : (isDarkTheme ? "#f2f2f2" : "#1f1f1f")
+    property color inverseTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
+    property color selectedColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.18)
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
 
     function cargar(id) {
@@ -147,7 +150,7 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: units.gu(1)
+            anchors.margins: 0
             columns: width < units.gu(90) ? 1 : 2
             rowSpacing: units.gu(1)
             columnSpacing: units.gu(1)
@@ -198,12 +201,11 @@ Item {
                     Rectangle {
                         width: Math.min(units.gu(20), parent.height - units.gu(2))
                         height: width
-                        radius: units.gu(10)
+                        radius: width / 2
                         color: "#202020"
                         border.color: Qt.rgba(1, 1, 1, 0.2)
                         border.width: 1
                         anchors.verticalCenter: parent.verticalCenter
-                        clip: true
 
                         Image {
                             id: photo
@@ -212,6 +214,18 @@ Item {
                             fillMode: Image.PreserveAspectCrop
                             cache: true
                             smooth: true
+                            visible: false
+                        }
+
+                        OpacityMask {
+                            anchors.fill: parent
+                            source: photo
+                            cached: true
+                            maskSource: Rectangle {
+                                width: photo.width
+                                height: photo.height
+                                radius: width / 2
+                            }
                         }
                     }
 
@@ -226,14 +240,14 @@ Item {
                             elide: Text.ElideRight
                             fontSize: "large"
                             font.weight: Font.DemiBold
-                            color: "#ffffff"
+                            color: inverseTextColor
                         }
 
                         Label {
                             width: parent.width
                             text: i18n.tr("Artist profile")
                             fontSize: "small"
-                            color: "#d0d0d0"
+                            color: mutedTextColor
                         }
 
                         Row {
@@ -248,7 +262,7 @@ Item {
                                 Label {
                                     anchors.centerIn: parent
                                     fontSize: "small"
-                                    color: "#f0f0f0"
+                                    color: inverseTextColor
                                     text: i18n.tr("%1 tracks").arg(songsModel.count)
                                 }
                             }
@@ -262,7 +276,7 @@ Item {
                                 Label {
                                     anchors.centerIn: parent
                                     fontSize: "small"
-                                    color: "#f0f0f0"
+                                    color: inverseTextColor
                                     text: i18n.tr("%1 albums").arg(albumsModel.count)
                                 }
                             }
@@ -303,7 +317,7 @@ Item {
                             text: i18n.tr("Top Songs")
                             fontSize: "small"
                             font.weight: Font.DemiBold
-                            color: activeTab === 0 ? "#ffffff" : primaryTextColor
+                            color: activeTab === 0 ? inverseTextColor : primaryTextColor
                         }
 
                         MouseArea {
@@ -325,7 +339,7 @@ Item {
                             text: i18n.tr("Albums")
                             fontSize: "small"
                             font.weight: Font.DemiBold
-                            color: activeTab === 1 ? "#ffffff" : primaryTextColor
+                            color: activeTab === 1 ? inverseTextColor : primaryTextColor
                         }
 
                         MouseArea {
@@ -350,7 +364,11 @@ Item {
                 border.color: cardBorder
                 border.width: 1
                 clip: true
-                visible: contentReady && activeTab === 0
+                visible: opacity > 0
+                opacity: (contentReady && activeTab === 0) ? 1 : 0
+                Behavior on opacity {
+                    LomiriNumberAnimation { duration: tabAnimDuration }
+                }
 
                 Column {
                     anchors.fill: parent
@@ -416,7 +434,7 @@ Item {
                                     bottomMargin: units.gu(0.9)
                                 }
                                 divider.visible: false
-                                color: songsList.index === index ? Qt.rgba(0.9, 0.2, 0.28, 0.18) : "transparent"
+                                color: songsList.index === index ? selectedColor : "transparent"
 
                                 Label {
                                     id: track_index
@@ -518,7 +536,11 @@ Item {
                 border.color: cardBorder
                 border.width: 1
                 clip: true
-                visible: contentReady && activeTab === 1
+                visible: opacity > 0
+                opacity: (contentReady && activeTab === 1) ? 1 : 0
+                Behavior on opacity {
+                    LomiriNumberAnimation { duration: tabAnimDuration }
+                }
 
                 Column {
                     anchors.fill: parent

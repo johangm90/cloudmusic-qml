@@ -8,11 +8,10 @@ import "../logic/Api.js" as Api
 Page {
     id: newAlbumsPage
     property var appRoot
-    property bool isDarkTheme: appRoot ? appRoot.isDarkTheme : false
-    property color primaryTextColor: isDarkTheme ? "#f2f2f2" : "#1f1f1f"
-    property color secondaryTextColor: isDarkTheme ? "#b8b8b8" : "#6a6a6a"
-    property color tileColor: isDarkTheme ? "#252525" : "#ffffff"
-    property color tileBorderColor: isDarkTheme ? "#3a3a3a" : "#dcdcdc"
+    property color primaryTextColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#6a6a6a"
+    property color tileColor: appRoot ? appRoot.tileColor : "#ffffff"
+    property color tileBorderColor: appRoot ? appRoot.tileBorderColor : "#dcdcdc"
 
     TabsList {
         id: tabsList
@@ -89,7 +88,7 @@ Page {
 
                 anchors {
                     fill: parent
-                    margins: units.gu(1)
+                    margins: 0
                 }
 
                 border.color: tileBorderColor

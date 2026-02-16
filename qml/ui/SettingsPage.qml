@@ -104,7 +104,6 @@ Page {
         }
         //Theme cloudMusic.settings
         UListItem.ItemSelector {
-            property variant themeModel: [i18n.tr("System"), i18n.tr("Ambiance"), i18n.tr("SuruDark")]
             id: themeSelector
             text: i18n.tr("Theme")
             model: themeModel
@@ -131,7 +130,7 @@ Page {
                 text: name
                 onClicked: {
                     if (appRoot && appRoot.settings) {
-                        appRoot.settings.theme = themeModel.get(themeSelector.selectedIndex).name
+                        appRoot.settings.theme = name
                         console.log("Theme: " + appRoot.settings.theme)
                     }
                 }

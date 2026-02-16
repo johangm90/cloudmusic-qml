@@ -64,6 +64,9 @@ ApplicationWindow {
         //automaticOrientation: true
 
         anchors.fill: parent
+        property var settings: appWindow.settings
+        property color primaryColor: appWindow.primaryColor
+        property string app_version: appWindow.app_version
 
         // TRANSLATORS: %1 refers to the amount of songs played in the day
         Metric {
@@ -88,6 +91,16 @@ ApplicationWindow {
             var effectiveTheme = Theme.name ? Theme.name : ""
             return effectiveTheme.indexOf("SuruDark") !== -1
         }
+        property color pageColor: isDarkTheme ? "#1f1f1f" : "#f5f5f5"
+        property color cardColor: isDarkTheme ? "#232323" : "#ffffff"
+        property color borderColor: isDarkTheme ? "#3a3a3a" : "#d8d8d8"
+        property color sectionColor: isDarkTheme ? "#1a1a1a" : "#ececec"
+        property color textColor: isDarkTheme ? "#f2f2f2" : "#1f1f1f"
+        property color secondaryTextColor: isDarkTheme ? "#b8b8b8" : "#666666"
+        property color inverseTextColor: "#ffffff"
+        property color selectedColor: Qt.rgba(0.9, 0.2, 0.28, isDarkTheme ? 0.22 : 0.16)
+        property color tileColor: isDarkTheme ? "#252525" : "#ffffff"
+        property color tileBorderColor: isDarkTheme ? "#3a3a3a" : "#dcdcdc"
 
         Component.onCompleted: {
             appWindow.applyThemeMode()
@@ -102,7 +115,9 @@ ApplicationWindow {
 
         Component {
             id: queuePage
-            Queue {}
+            Queue {
+                appRoot: cloudMusic
+            }
         }
 
         ChangeLogDialog {
@@ -322,6 +337,7 @@ ApplicationWindow {
 
             NowPlaying {
                 id: playing_page
+                appRoot: cloudMusic
                 anchors {
                     top: playingPage.header.bottom
                     left: parent.left

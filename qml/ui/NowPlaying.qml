@@ -13,6 +13,16 @@ import "../logic/Database.js" as Db
 
 Item {
     id: playingContainer
+    property var appRoot
+    property color pageColor: appRoot ? appRoot.pageColor : "#1f1f1f"
+    property color cardColor: appRoot ? appRoot.cardColor : "#232323"
+    property color borderColor: appRoot ? appRoot.borderColor : "#3a3a3a"
+    property color textColor: appRoot ? appRoot.textColor : "#f2f2f2"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#b8b8b8"
+    property color inverseTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
+    property color sectionColor: appRoot ? appRoot.sectionColor : "#333333"
+    property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
+    property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
 
     property
     var settings: Settings {
@@ -70,6 +80,11 @@ Item {
         id: lyric_model
     }
 
+    Rectangle {
+        anchors.fill: parent
+        color: pageColor
+    }
+
     GridLayout {
         id: layouts
         anchors.fill: parent
@@ -79,7 +94,11 @@ Item {
 
                     Rectangle {
                         id: queue_layout
-                        color: "transparent"
+                        color: cardColor
+                        radius: units.gu(1)
+                        border.color: borderColor
+                        border.width: 1
+                        clip: true
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.row: layouts.columns == 1 ? 1 : 0
@@ -89,16 +108,39 @@ Item {
 
                         Rectangle {
                             id: queue_title
-                            color: "#333"
+                            color: sectionColor
                             width: parent.width
-                            height: units.gu(5)
-                            Label {
-                                anchors.left: parent.left
-                                anchors.leftMargin: units.gu(1)
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: i18n.tr("Queue")
-                                fontSize: "large"
-                                color: "#fff"
+                            height: units.gu(6)
+
+                            Row {
+                                anchors.fill: parent
+                                anchors.leftMargin: units.gu(1.6)
+                                anchors.rightMargin: units.gu(1.6)
+                                spacing: units.gu(1)
+
+                                Rectangle {
+                                    width: units.gu(0.6)
+                                    height: units.gu(3.2)
+                                    radius: width / 2
+                                    color: accentColor
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+
+                                Label {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: i18n.tr("Queue")
+                                    fontSize: "medium"
+                                    font.weight: Font.DemiBold
+                                    color: textColor
+                                }
+
+                                Label {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.right: parent.right
+                                    text: i18n.tr("%1 total").arg(queue_model.count)
+                                    fontSize: "small"
+                                    color: secondaryTextColor
+                                }
                             }
                         }
 
@@ -123,13 +165,14 @@ Item {
 
                                     delegate: ListItem {
                                         contentItem.anchors {
-                                            leftMargin: units.gu(2)
-                                            rightMargin: units.gu(2)
-                                            topMargin: units.gu(1)
-                                            bottomMargin: units.gu(1)
+                                            leftMargin: units.gu(1.4)
+                                            rightMargin: units.gu(1.4)
+                                            topMargin: units.gu(0.9)
+                                            bottomMargin: units.gu(0.9)
                                         }
 
-                                        color: current_index == index ? "#5d5d5d" : "transparent"
+                                        color: current_index == index ? selectedColor : "transparent"
+                                        divider.visible: false
 
                                         Label {
                                             id: lbl_name
@@ -137,13 +180,14 @@ Item {
                                             elide: Label.ElideRight
                                             anchors.left: parent.left
                                             anchors.right: lbl_duration.left
+                                            color: textColor
                                         }
 
                                         Label {
                                             id: lbl_artist
                                             text: artist
                                             fontSize: "small"
-                                            color: "#898B8C"
+                                            color: secondaryTextColor
                                             elide: Label.ElideRight
                                             anchors.left: parent.left
                                             anchors.right: lbl_duration.left
@@ -157,6 +201,7 @@ Item {
                                             anchors.verticalCenter: parent.verticalCenter
                                             anchors.right: parent.right
                                             horizontalAlignment: Text.AlignRight
+                                            color: secondaryTextColor
                                         }
 
                                         onClicked: {
@@ -199,12 +244,13 @@ Item {
                     Rectangle {
                         id: loader_overlay
                         visible: playing_loader.running
-                        width: albumImage.width
-                        height: albumImage.height
+                        width: coverFrame.width
+                        height: coverFrame.height
                         anchors.centerIn: parent
                         color: "#000"
                         opacity: 0.8
                         z: 4
+                        radius: units.gu(1.2)
                     }
 
                     ActivityIndicator {
@@ -213,16 +259,36 @@ Item {
                         z: 999
                     }
 
-                    Image {
-                        id: albumImage
-                        property real escalay: parent.height / albumImage.sourceSize.height
-                        property real escalax: parent.width / albumImage.sourceSize.width
-                        source: "../graphics/default.png"
-                        width: albumImage.sourceSize.width * escalax - units.gu(5)
-                        height: albumImage.sourceSize.height * escalay - units.gu(5)
+                    Rectangle {
+                        id: coverFrame
+                        property real side: Math.max(units.gu(18), Math.min(parent.width, parent.height) - units.gu(6))
+                        width: side
+                        height: side
                         anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectFit
+                        radius: units.gu(1.2)
+                        border.color: Qt.rgba(1, 1, 1, 0.12)
+                        border.width: 1
+                        color: "#202020"
                         z: 3
+
+                        Image {
+                            id: albumImage
+                            source: "../graphics/default.png"
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectCrop
+                            visible: false
+                        }
+
+                        OpacityMask {
+                            anchors.fill: parent
+                            source: albumImage
+                            cached: true
+                            maskSource: Rectangle {
+                                width: coverFrame.width
+                                height: coverFrame.height
+                                radius: coverFrame.radius
+                            }
+                        }
                     }
 
                     Rectangle {
@@ -256,7 +322,7 @@ Item {
                             id: lbl_lyric
                             fontSize: "medium"
                             font.weight: Font.DemiBold
-                            color: "#fff"
+                            color: inverseTextColor
                             width: parent.width - units.gu(6)
                             anchors {
                                 centerIn: parent
@@ -268,7 +334,7 @@ Item {
                         Label {
                             id: lbl_next
                             fontSize: "small"
-                            color: "#fefefe"
+                            color: inverseTextColor
                             anchors {
                                 top: lbl_lyric.bottom
                                 left: parent.left
@@ -310,12 +376,15 @@ Item {
                     }
                 }
 
-                Rectangle {
-                    id: tags
-                    color: "transparent"
-                    width: parent.width
-                    anchors.bottom: nav_wrapper.top
-                    height: units.gu(8)
+                    Rectangle {
+                        id: tags
+                        color: Qt.rgba(cardColor.r, cardColor.g, cardColor.b, 0.86)
+                        border.color: borderColor
+                        border.width: 1
+                        radius: units.gu(1)
+                        width: parent.width
+                        anchors.bottom: nav_wrapper.top
+                        height: units.gu(8)
 
                     Column {
                         anchors {
@@ -331,12 +400,14 @@ Item {
                             width: parent.width
                             fontSize: "large"
                             elide: Label.ElideRight
+                            color: inverseTextColor
                         }
 
                         Label {
                             id: lbl_albumDetalle
                             width: parent.width
                             elide: Label.ElideRight
+                            color: secondaryTextColor
                         }
                     }
 
@@ -353,17 +424,21 @@ Item {
                             width: height
                             anchors.centerIn: parent
                             name: "note"
+                            color: textColor
                             opacity: settings.lyrics ? 1 : .4
                         }
                     }
                 }
 
-                Rectangle {
-                    id: nav_wrapper
-                    color: "transparent"
-                    width: parent.width
-                    anchors.bottom: control_wrapper.top
-                    height: units.gu(3)
+                    Rectangle {
+                        id: nav_wrapper
+                        color: Qt.rgba(cardColor.r, cardColor.g, cardColor.b, 0.9)
+                        border.color: borderColor
+                        border.width: 1
+                        radius: units.gu(1)
+                        width: parent.width
+                        anchors.bottom: control_wrapper.top
+                        height: units.gu(4.5)
 
                     Label {
                         id: current
@@ -372,6 +447,7 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: units.gu(2)
                         fontSize: "small"
+                        color: inverseTextColor
                     }
 
                     Slider {
@@ -384,7 +460,7 @@ Item {
                         minimumValue: 0.00
                         value: media_player.position
                         live: true
-                        StyleHints { foregroundColor: "#e53446" }
+                        StyleHints { foregroundColor: accentColor }
 
                         function formatValue(v) {
                             return Api.durationToString(v)
@@ -436,16 +512,20 @@ Item {
                         anchors.right: parent.right
                         anchors.rightMargin: units.gu(2)
                         fontSize: "small"
+                        color: inverseTextColor
                     }
                 }
 
-                Rectangle {
-                    id: control_wrapper
-                    color: "transparent"
-                    width: parent.width
-                    anchors.bottom: parent.bottom
-                    anchors.margins: units.gu(1)
-                    height: units.gu(7)
+                    Rectangle {
+                        id: control_wrapper
+                        color: Qt.rgba(cardColor.r, cardColor.g, cardColor.b, 0.92)
+                        border.color: borderColor
+                        border.width: 1
+                        radius: units.gu(1)
+                        width: parent.width
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 0
+                        height: units.gu(7)
 
                     Row {
                         spacing: units.gu(4)
@@ -475,6 +555,7 @@ Item {
                                 width: height
                                 anchors.centerIn: parent
                                 name: "media-playlist-repeat"
+                                color: textColor
                                 opacity: settings.repeat != 0 && media_player.queue > 1 ? 1 : .4
                             }
                         }
@@ -492,7 +573,7 @@ Item {
                                 width: units.gu(3)
                                 height: units.gu(3)
                                 name: "media-skip-backward"
-                                color: "#e53446"
+                                color: accentColor
                                 anchors.centerIn: parent
                                 opacity: media_player.queue > 1 ? 1 : .4
                             }
@@ -508,7 +589,7 @@ Item {
                         Rectangle {
                             id: player_control
                             color: "transparent";
-                            border.color: "#e53446"
+                            border.color: accentColor
                             border.width: 1
                             width: units.gu(6)
                             height: units.gu(6)
@@ -519,7 +600,7 @@ Item {
                                 width: units.gu(4)
                                 height: units.gu(4)
                                 name: "media-playback-start"
-                                color: "#e53446"
+                                color: accentColor
                                 anchors.centerIn: parent
                             }
 
@@ -544,7 +625,7 @@ Item {
                                 width: units.gu(3)
                                 height: units.gu(3)
                                 name: "media-skip-forward"
-                                color: "#e53446"
+                                color: accentColor
                                 anchors.centerIn: parent
                                 opacity: media_player.queue > 1 ? 1 : .4
                             }
@@ -568,6 +649,7 @@ Item {
                                 width: height
                                 anchors.centerIn: parent
                                 name: "media-playlist-shuffle"
+                                color: textColor
                                 opacity: settings.shuffle && media_player.queue > 1 ? 1 : .4
                             }
                         }

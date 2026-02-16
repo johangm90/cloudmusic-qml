@@ -19,17 +19,15 @@ function apiSearch(query, type, limit) {
             data = JSON.parse(data);
             for (var i = 0; i < data.result.songs.length; i++) {
                 var song = data.result.songs[i];
-                if (song.fee != 1) {
-                    searchSongsModel.append({
-                        'id': song.id,
-                        'name': song.name,
-                        'album_id': song.album.id,
-                        'album': song.album.name,
-                        'artist_id': song.artists[0].id,
-                        'artist': song.artists[0].name,
-                        'duration': song.duration
-                    });
-                }
+                searchSongsModel.append({
+                    'id': song.id,
+                    'name': song.name,
+                    'album_id': song.album.id,
+                    'album': song.album.name,
+                    'artist_id': song.artists[0].id,
+                    'artist': song.artists[0].name,
+                    'duration': song.duration
+                });
             }
             search_songs_loader.running = false;
         } else {
@@ -191,17 +189,15 @@ function getArtistTopSongs(id) {
             try {
                 for (var i = 0; i < data.hotSongs.length; i++) {
                     var song = data.hotSongs[i];
-                    if (song.fee != 1) {
-                        songsModel.append({
-                            'id': song.id,
-                            'name': song.name,
-                            'album_id': song.album.id,
-                            'album': song.album.name,
-                            'artist_id': song.artists[0].id,
-                            'artist': song.artists[0].name,
-                            'duration': song.duration
-                        })
-                    }
+                    songsModel.append({
+                        'id': song.id,
+                        'name': song.name,
+                        'album_id': song.album.id,
+                        'album': song.album.name,
+                        'artist_id': song.artists[0].id,
+                        'artist': song.artists[0].name,
+                        'duration': song.duration
+                    })
                 }
             } catch (e) {
                 console.log(e);
@@ -273,17 +269,15 @@ function getAlbumDetail(id) {
                 lbl_album_date.text = i18n.tr('Release Date:') + ' ' + release_date;
                 for (var i = 0; i < data.album.songs.length; i++) {
                     var song = data.album.songs[i];
-                    if (song.fee != 1) {
-                        albumModel.append({
-                            'id': song.id,
-                            'name': song.name,
-                            'album_id': song.album.id,
-                            'album': song.album.name,
-                            'artist_id': song.artists[0].id,
-                            'artist': song.artists[0].name,
-                            'duration': song.duration
-                        })
-                    }
+                    albumModel.append({
+                        'id': song.id,
+                        'name': song.name,
+                        'album_id': song.album.id,
+                        'album': song.album.name,
+                        'artist_id': song.artists[0].id,
+                        'artist': song.artists[0].name,
+                        'duration': song.duration
+                    })
                 }
                 album_loader.running = false;
             } catch (e) {

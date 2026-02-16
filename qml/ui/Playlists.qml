@@ -7,6 +7,9 @@ import "../logic/Database.js" as Db
 
 Page {
     id: playlistsPage
+    property var appRoot
+    property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
 
     onVisibleChanged: {
         if (visible) {
@@ -203,6 +206,7 @@ Page {
                         text: playlistName
                         elide: Text.ElideRight
                         anchors.left: parent.left
+                        color: textColor
                     }
 
                     Label {
@@ -213,7 +217,7 @@ Page {
                         elide: Text.ElideRight
                         anchors.left: parent.left
                         anchors.bottom: parent.bottom
-                        color: "#898B8C"
+                        color: secondaryTextColor
                     }
 
                     onClicked: {
