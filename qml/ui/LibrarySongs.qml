@@ -127,16 +127,17 @@ Item {
                 }
             }
             Action {
-                text: (selectedIndex >= 0 && Db.isLikedSong(filteredSongsModel.get(selectedIndex).song_id))
+                text: (selectedIndex >= 0 && Db.isLikedSong(filteredSongsModel.get(selectedIndex).song_id, filteredSongsModel.get(selectedIndex).source))
                       ? i18n.tr("Remove from Favorites")
                       : i18n.tr("Add to Favorites")
-                name: (selectedIndex >= 0 && Db.isLikedSong(filteredSongsModel.get(selectedIndex).song_id))
+                name: (selectedIndex >= 0 && Db.isLikedSong(filteredSongsModel.get(selectedIndex).song_id, filteredSongsModel.get(selectedIndex).source))
                       ? "like"
                       : "unlike"
                 onTriggered: {
                     if (selectedIndex < 0) return
                     var liked = Db.toggleLikedSong({
                         id: filteredSongsModel.get(selectedIndex).song_id,
+                        source: filteredSongsModel.get(selectedIndex).source,
                         name: filteredSongsModel.get(selectedIndex).name,
                         artist_id: filteredSongsModel.get(selectedIndex).artist_id,
                         artist: filteredSongsModel.get(selectedIndex).artist,
@@ -203,7 +204,7 @@ Item {
                     title: name
                     subtitle: artist
                     durationText: Api.durationToString(duration)
-                    coverSource: image
+                    coverSource: image ? image : "../graphics/default.png"
                     albumId: album_id
                     selected: selectedIndex === index
                     rowTextColor: textColor

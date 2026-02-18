@@ -21,6 +21,7 @@ Page {
     property var showPopup : true
     property int currentTab: 0
     property int tabAnimDuration: LomiriAnimation.FastDuration
+    property bool searchLoading: false
 
     header: PageHeader {
         title: i18n.tr("Search")
@@ -84,12 +85,17 @@ Page {
                         search_query.cursorVisible = false
                       }
                       showPopup = true;
+                      if (search_query.text && search_query.text.length >= 2) {
+                          searchDebounce.restart()
+                      } else {
+                          searchDebounce.stop()
+                          searchLoading = false
+                      }
             }
             Keys.onReturnPressed: {
                 if(search_query.text!=''){
-                    Db.insertSearchHistory(search_query.text, 20)
-                    populateDataModel()
-                    Api.apiSearch(search_query.text, 0, 50, searchApiContext())
+                    searchDebounce.stop()
+                    executeSearch(search_query.text, true)
                     search_query.cursorVisible = false
                 } else {
                     console.log('search parameter is empty')
@@ -109,6 +115,17 @@ Page {
               }
               PopupUtils.open(comboBoxPopup, search_query, properties); 
               search_query.cursorVisible = true
+    }
+
+    Timer {
+        id: searchDebounce
+        interval: 350
+        repeat: false
+        onTriggered: {
+            if (search_query.text && search_query.text.length >= 2) {
+                executeSearch(search_query.text, false)
+            }
+        }
     }
 
     function is_visible(value){
@@ -135,16 +152,19 @@ Page {
         id: search_songs_loader
         anchors.centerIn: parent
         z: 1
+        visible: false
     }
     ActivityIndicator {
         id: search_albums_loader
         anchors.centerIn: parent
         z: 1
+        visible: false
     }
     ActivityIndicator {
         id: search_artists_loader
         anchors.centerIn: parent
         z: 1
+        visible: false
     }
 
     ListModel {
@@ -194,7 +214,8 @@ Page {
                           onClicked: {
                               showPopup = false;
                               search_query.text = comboBoxPopOver.model.get(index)[textRole];
-                              Api.apiSearch(search_query.text, 0, 50, searchApiContext());
+                              searchDebounce.stop()
+                              executeSearch(search_query.text, true);
                               PopupUtils.close(comboBoxPopOver);
                           }
                           onPressAndHold: {
@@ -461,10 +482,10 @@ Page {
                                 }
                             }
                             Action {
-                                text: (songsList.index >= 0 && Db.isLikedSong(searchSongsModel.get(songsList.index).id))
+                                text: (songsList.index >= 0 && Db.isLikedSong(searchSongsModel.get(songsList.index).id, searchSongsModel.get(songsList.index).source))
                                       ? i18n.tr("Remove from Favorites")
                                       : i18n.tr("Add to Favorites")
-                                name: (songsList.index >= 0 && Db.isLikedSong(searchSongsModel.get(songsList.index).id))
+                                name: (songsList.index >= 0 && Db.isLikedSong(searchSongsModel.get(songsList.index).id, searchSongsModel.get(songsList.index).source))
                                       ? "like"
                                       : "unlike"
                                 onTriggered: {
@@ -589,50 +610,20 @@ Page {
                             height: parent.height
                             ListView {
                                 id: albums_list
-                                property int index: 0
                                 clip: true
                                 model: searchAlbumsModel
                                 width: parent.width
                                 height: parent.height
                                 boundsBehavior: Flickable.StopAtBounds
-                                delegate: ListItem {
-                                    id: albumlist
-                                    contentItem.anchors {
-                                        leftMargin: units.gu(2)
-                                        rightMargin: units.gu(2)
-                                        topMargin: units.gu(1)
-                                        bottomMargin: units.gu(1)
-                                    }
-                                    Label {
-                                        id: lbl__album_name
-                                        text: name
-                                        elide: Label.ElideRight
-                                        anchors.left: parent.left
-                                        anchors.right: lbl__album_size.left
-                                        color: textColor
-                                    }
-
-                                    Label {
-                                        id: lbl__album_artist
-                                        text: artist
-                                        fontSize: "small"
-                                        color: secondaryTextColor
-                                        elide: Label.ElideRight
-                                        anchors.left: parent.left
-                                        anchors.right: lbl__album_size.left
-                                        anchors.bottom: parent.bottom
-                                    }
-
-                                    Label {
-                                        id: lbl__album_size
-                                        text: size
-                                        width: units.gu(5)
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.right: parent.right
-                                        horizontalAlignment: Text.AlignRight
-                                        color: secondaryTextColor
-                                    }
-
+                                delegate: AlbumListItem {
+                                    title: name
+                                    subtitle: artist ? (date ? (artist + " • " + date) : artist) : (date ? date : "")
+                                    metaText: i18n.tr("%1 song", "%1 songs", size).arg(size)
+                                    coverSource: image
+                                    albumId: id
+                                    rowTextColor: textColor
+                                    rowSecondaryTextColor: secondaryTextColor
+                                    selectedColor: searchPage.selectedColor
                                     onClicked: {
                                         album_page.cargar(id);
                                         pagestack.push(albumPage);
@@ -742,6 +733,18 @@ Page {
                 }
             }
         }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#55000000"
+            visible: searchLoading
+            z: 200
+
+            ActivityIndicator {
+                anchors.centerIn: parent
+                running: searchLoading
+            }
+        }
     }
     function populateDataModel() {
         dataModel.clear()
@@ -760,8 +763,21 @@ Page {
             artistsModel: searchArtistsModel,
             songsLoader: search_songs_loader,
             albumsLoader: search_albums_loader,
-            artistsLoader: search_artists_loader
+            artistsLoader: search_artists_loader,
+            onStarted: function() { searchLoading = true },
+            onFinished: function() { searchLoading = false }
         }
+    }
+
+    function executeSearch(query, saveHistory) {
+        if (!query || query.length === 0) {
+            return
+        }
+        if (saveHistory) {
+            Db.insertSearchHistory(query, 20)
+            populateDataModel()
+        }
+        Api.apiSearch(query, 0, 50, searchApiContext())
     }
 
     function refineDataModel() {

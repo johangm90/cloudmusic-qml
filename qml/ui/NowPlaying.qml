@@ -73,14 +73,34 @@ Item {
     }
 
     function currentSongRecord() {
+        var idx = media_player.getIndex()
+        var src = "netease"
+        if (idx >= 0 && idx < model_queue.count) {
+            src = model_queue.get(idx).source ? model_queue.get(idx).source : "netease"
+        }
         return {
             id: current_id,
             name: playingPage.title,
             artist: lbl_artistaDetalle.text,
             album: lbl_albumDetalle.text,
             duration: seek.maximumValue,
-            image: albumImage.source
+            image: albumImage.source,
+            source: src
         }
+    }
+
+    function currentQueueDuration() {
+        var idx = media_player.getIndex()
+        if (idx >= 0 && idx < model_queue.count) {
+            var value = model_queue.get(idx).duration
+            if (value && value > 0) {
+                return value
+            }
+        }
+        if (seek.maximumValue && seek.maximumValue > 0) {
+            return seek.maximumValue
+        }
+        return 0
     }
 
     function toggleCurrentSongLike() {
@@ -95,7 +115,12 @@ Item {
         if (current_id <= 0) {
             return false
         }
-        return Db.isLikedSong(current_id)
+        var idx = media_player.getIndex()
+        var src = "netease"
+        if (idx >= 0 && idx < model_queue.count) {
+            src = model_queue.get(idx).source ? model_queue.get(idx).source : "netease"
+        }
+        return Db.isLikedSong(current_id, src)
     }
 
     function lyricApiContext() {
@@ -119,6 +144,7 @@ Item {
             setAlbumText: function(text) { lbl_albumDetalle.text = text },
             setAlbumImage: function(source) { albumImage.source = source },
             setSeekMaximum: function(value) { seek.maximumValue = value },
+            fallbackDuration: currentQueueDuration(),
             setCurrentId: function(value) { current_id = value },
             updateToolbar: function(name, artist, image) { player_toolbar.cargar(name, artist, image) },
             onSongResolved: function(song) { Db.addRecentlyPlayed(song) }

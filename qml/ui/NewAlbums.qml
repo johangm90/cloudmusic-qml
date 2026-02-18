@@ -4,6 +4,7 @@ import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import "../components"
 import "../logic/Api.js" as Api
+import "../logic/CoverCache.js" as CoverCache
 
 Page {
     id: newAlbumsPage
@@ -130,7 +131,7 @@ Page {
                             id: wimage
                             width: parent.width
                             height: parent.height - units.gu(8)
-                            source: image
+                            source: CoverCache.resolve(id, image, "../graphics/default.png")
                             clip: true
                             cache: true
                             fillMode: Image.PreserveAspectCrop

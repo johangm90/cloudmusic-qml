@@ -12,9 +12,11 @@ MediaPlayer {
     property int autoplayLastPosition: 0
     property int autoplayProgressTicks: 0
     property bool autoplayPauseIssued: false
+    property bool autoplayHardFailed: false
 
     function stopAutoplayRetry(success, silent) {
         autoplayPending = false
+        autoplayHardFailed = !success
         autoplayTargetIndex = -1
         autoplayProgressTicks = 0
         autoplayPauseIssued = false
@@ -86,6 +88,7 @@ MediaPlayer {
     }
 
     function requestAutoplay(targetIndex) {
+        autoplayHardFailed = false
         autoplayPending = true
         autoplayAttempts = 0
         autoplayTargetIndex = typeof targetIndex === "number" ? targetIndex : autoplayTargetIndex
@@ -115,6 +118,10 @@ MediaPlayer {
 
     onStatusChanged: {
         console.log("[Status] " + status)
+        if (status === MediaPlayer.InvalidMedia) {
+            stopAutoplayRetry(false, false)
+            return
+        }
         if (autoplayPending && playbackState !== MediaPlayer.PlayingState && (status === MediaPlayer.LoadedMedia || status === MediaPlayer.BufferedMedia)) {
             try {
                 playMusic.play()
@@ -129,6 +136,9 @@ MediaPlayer {
     }
 
     onPlaybackStateChanged: {
+        if (status === MediaPlayer.InvalidMedia || autoplayHardFailed) {
+            return
+        }
         if (autoplayPending && playbackState !== MediaPlayer.PlayingState) {
             try {
                 playMusic.play()

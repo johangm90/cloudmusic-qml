@@ -133,10 +133,10 @@ Item {
                 }
             }
             Action {
-                text: (albumList.index >= 0 && Db.isLikedSong(albumModel.get(albumList.index).id))
+                text: (albumList.index >= 0 && Db.isLikedSong(albumModel.get(albumList.index).id, albumModel.get(albumList.index).source))
                       ? i18n.tr("Remove from Favorites")
                       : i18n.tr("Add to Favorites")
-                name: (albumList.index >= 0 && Db.isLikedSong(albumModel.get(albumList.index).id))
+                name: (albumList.index >= 0 && Db.isLikedSong(albumModel.get(albumList.index).id, albumModel.get(albumList.index).source))
                       ? "like"
                       : "unlike"
                 onTriggered: {

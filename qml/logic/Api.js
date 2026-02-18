@@ -1,9 +1,144 @@
-var server = "https://vulgry.innves.com/rapsody/api.php";
-var api2 = "https://cloudmusicapi.nubit.io/netease/";
+var server = "http://127.0.0.1:39876/";
+var api2 = "http://127.0.0.1:39876/";
+var _activeSearchToken = 0;
+var _asyncSeq = 0;
+var _asyncConnected = false;
+var _asyncCallbacks = {};
+
+function directApi(action, params) {
+    try {
+        if (!cloudMusic || !cloudMusic.cloudApi) {
+            return null
+        }
+        var raw = cloudMusic.cloudApi.call(action, JSON.stringify(params || {}))
+        if (!raw || raw === "") {
+            return null
+        }
+        return JSON.parse(raw)
+    } catch (e) {
+        console.log(e)
+        return null
+    }
+}
+
+function ensureAsyncBridgeConnected() {
+    if (_asyncConnected) {
+        return true
+    }
+    if (!cloudMusic || !cloudMusic.cloudApi || !cloudMusic.cloudApi.requestFinished) {
+        return false
+    }
+    cloudMusic.cloudApi.requestFinished.connect(function(requestId, ok, payloadJson, error) {
+        var id = String(requestId)
+        var cb = _asyncCallbacks[id]
+        if (!cb) {
+            return
+        }
+        delete _asyncCallbacks[id]
+        if (!ok) {
+            if (cb.onError) {
+                cb.onError(error ? String(error) : "request failed")
+            }
+            return
+        }
+        try {
+            var payload = JSON.parse(payloadJson)
+            if (payload && payload.error) {
+                if (cb.onError) {
+                    cb.onError(payload.error)
+                }
+                return
+            }
+            if (cb.onSuccess) {
+                cb.onSuccess(payload)
+            }
+        } catch (e) {
+            if (cb.onError) {
+                cb.onError(e)
+            }
+        }
+    })
+    _asyncConnected = true
+    return true
+}
+
+function directApiAsync(action, params, onSuccess, onError) {
+    if (!ensureAsyncBridgeConnected()) {
+        if (onError) {
+            onError("cloud api bridge unavailable")
+        }
+        return
+    }
+    _asyncSeq += 1
+    var reqId = "req_" + String(_asyncSeq)
+    _asyncCallbacks[reqId] = {
+        onSuccess: onSuccess,
+        onError: onError
+    }
+    cloudMusic.cloudApi.callAsync(action, JSON.stringify(params || {}), reqId)
+}
+
+function requestJson(url, onSuccess, onError) {
+    var cn = new XMLHttpRequest()
+    cn.open("GET", url, true)
+    cn.onreadystatechange = function() {
+        if (cn.readyState !== XMLHttpRequest.DONE) {
+            return
+        }
+        if (cn.status === 200) {
+            try {
+                var data = JSON.parse(cn.responseText)
+                onSuccess(data)
+            } catch (e) {
+                if (onError) onError(e)
+            }
+        } else {
+            if (onError) onError(cn.status)
+        }
+    }
+    cn.send()
+}
+
+function resolveSongCover(song) {
+    if (!song || !song.album) {
+        return "../graphics/default.png"
+    }
+    var picId = song.album.picId || song.album.pic_id || song.album.pic || 0
+    if (song.album.picUrl) {
+        var match = /\/(\d+)\./.exec(song.album.picUrl)
+        if (match && match.length > 1) {
+            picId = match[1]
+        }
+    }
+    if (picId && picId !== 0) {
+        return api2 + "pic/" + picId + "?size=120"
+    }
+    return "../graphics/default.png"
+}
+
+function resolveAlbumCover(album) {
+    if (!album) {
+        return "../graphics/default.png"
+    }
+    var picId = album.picId || album.pic_id || album.pic || 0
+    if (album.picUrl) {
+        var match = /\/(\d+)\./.exec(album.picUrl)
+        if (match && match.length > 1) {
+            picId = match[1]
+        }
+    }
+    if (picId && picId !== 0) {
+        return api2 + "pic/" + picId + "?size=200"
+    }
+    return "../graphics/default.png"
+}
 
 function apiSearch(query, type, limit, context) {
+    var token = ++_activeSearchToken
     var ctx = context || {}
     var setVisible = ctx.setVisible || is_visible
+    var onStarted = ctx.onStarted || null
+    var onFinished = ctx.onFinished || null
     var songsModelRef = ctx.songsModel || searchSongsModel
     var albumsModelRef = ctx.albumsModel || searchAlbumsModel
     var artistsModelRef = ctx.artistsModel || searchArtistsModel
@@ -16,74 +151,115 @@ function apiSearch(query, type, limit, context) {
     albumsModelRef.clear()
     artistsModelRef.clear()
     songsLoaderRef.running = true
-    var song_type = '1';
-    var album_type = '10';
-    var artist_type = '100';
-    var cn1 = new XMLHttpRequest();
-    var searchSongsUrl = server + '?action=search&query=' + query + '&type=' + song_type + '&limit=' + limit;
-    cn1.open("GET", searchSongsUrl);
-    cn1.onreadystatechange = function () {
-        if (cn1.readyState == XMLHttpRequest.DONE && cn1.status == 200) {
-            var data = cn1.responseText;
-            data = JSON.parse(data);
-            for (var i = 0; i < data.result.songs.length; i++) {
-                var song = data.result.songs[i];
-                songsModelRef.append({
-                    'id': song.id,
-                    'name': song.name,
-                    'album_id': song.album.id,
-                    'album': song.album.name,
-                    'artist_id': song.artists[0].id,
-                    'artist': song.artists[0].name,
-                    'duration': song.duration,
-                    'image': (song.album && song.album.picUrl) ? (song.album.picUrl + '?param=120y120') : "../graphics/default.png"
-                });
+    albumsLoaderRef.running = true
+    artistsLoaderRef.running = true
+    if (onStarted) {
+        onStarted()
+    }
+    var pending = 3
+    function done() {
+        pending -= 1
+        if (pending <= 0) {
+            setVisible(true)
+            if (onFinished) {
+                onFinished()
             }
-            songsLoaderRef.running = false;
-        } else {
-            songsLoaderRef.running = false;
         }
-    };
-    cn1.send();
-    albumsLoaderRef.running = true;
-    var cn2 = new XMLHttpRequest();
-    var searchAlbumsUrl = server + '?action=search&query=' + query + '&type=' + album_type + '&limit=' + limit;
-    cn2.open("GET", searchAlbumsUrl);
-    cn2.onreadystatechange = function () {
-        if (cn2.readyState == XMLHttpRequest.DONE && cn2.status == 200) {
-            var data = cn2.responseText;
-            data = JSON.parse(data);
-            for (var i = 0; i < data.result.albums.length; i++) {
-                var album = data.result.albums[i];
-                var date = new Date(album.publishTime);
-                var release_date = formatDate(date);
-                albumsModelRef.append({
-                    'id': album.id,
-                    'name': album.name,
-                    'artist': album.artist.name,
-                    'date': release_date,
-                    'size': album.size,
-                    'image': album.picUrl + '?param=200y200',
-                    'big_image': album.picUrl
-                });
+    }
+
+    directApiAsync(
+        "search",
+        { query: String(query), type: "1", limit: Number(limit) },
+        function(songsData) {
+            if (token !== _activeSearchToken) {
+                songsLoaderRef.running = false
+                done()
+                return
             }
-            albumsLoaderRef.running = false;
-        } else {
-            albumsLoaderRef.running = false;
+            if (songsData && songsData.result && songsData.result.songs) {
+                for (var i = 0; i < songsData.result.songs.length; i++) {
+                    var song = songsData.result.songs[i];
+                    songsModelRef.append({
+                        'id': song.id,
+                        'name': song.name,
+                        'album_id': song.album.id,
+                        'album': song.album.name,
+                        'artist_id': song.artists[0].id,
+                        'artist': song.artists[0].name,
+                        'duration': song.duration,
+                        'image': resolveSongCover(song),
+                        'source': "netease"
+                    });
+                }
+            }
+            songsLoaderRef.running = false
+            done()
+        },
+        function(err) {
+            if (token !== _activeSearchToken) {
+                songsLoaderRef.running = false
+                done()
+                return
+            }
+            console.log(err)
+            songsLoaderRef.running = false
+            done()
         }
-    };
-    cn2.send();
-    artistsLoaderRef.running = true;
-    var cn3 = new XMLHttpRequest();
-    var searchArtistsUrl = server + '?action=search&query=' + query + '&type=' + artist_type + '&limit=' + limit;
-    cn3.open("GET", searchArtistsUrl);
-    cn3.onreadystatechange = function () {
-        if (cn3.readyState == XMLHttpRequest.DONE && cn3.status == 200) {
-            var data = cn3.responseText;
-            data = JSON.parse(data);
-            try {
-                for (var i = 0; i < data.result.artists.length; i++) {
-                    var artist = data.result.artists[i];
+    )
+
+    directApiAsync(
+        "search",
+        { query: String(query), type: "10", limit: Number(limit) },
+        function(albumsData) {
+            if (token !== _activeSearchToken) {
+                albumsLoaderRef.running = false
+                done()
+                return
+            }
+            if (albumsData && albumsData.result && albumsData.result.albums) {
+                for (var j = 0; j < albumsData.result.albums.length; j++) {
+                    var album = albumsData.result.albums[j];
+                    var date = new Date(album.publishTime);
+                    var release_date = formatDate(date);
+                    albumsModelRef.append({
+                        'id': album.id,
+                        'name': album.name,
+                        'artist': album.artist.name,
+                        'date': release_date,
+                        'size': album.size,
+                        'image': resolveAlbumCover(album),
+                        'big_image': resolveAlbumCover(album),
+                        'source': "netease"
+                    });
+                }
+            }
+            albumsLoaderRef.running = false
+            done()
+        },
+        function(err) {
+            if (token !== _activeSearchToken) {
+                albumsLoaderRef.running = false
+                done()
+                return
+            }
+            console.log(err)
+            albumsLoaderRef.running = false
+            done()
+        }
+    )
+
+    directApiAsync(
+        "search",
+        { query: String(query), type: "100", limit: Number(limit) },
+        function(artistsData) {
+            if (token !== _activeSearchToken) {
+                artistsLoaderRef.running = false
+                done()
+                return
+            }
+            if (artistsData && artistsData.result && artistsData.result.artists) {
+                for (var k = 0; k < artistsData.result.artists.length; k++) {
+                    var artist = artistsData.result.artists[k];
                     var image = "../graphics/default.png";
                     var bigimage = "../graphics/default.png";
                     if (artist.picUrl != null) {
@@ -94,19 +270,25 @@ function apiSearch(query, type, limit, context) {
                         'id': artist.id,
                         'name': artist.name,
                         'image': image,
-                        'big_image': bigimage
+                        'big_image': bigimage,
+                        'source': "netease"
                     });
                 }
-                artistsLoaderRef.running = false;
-            } catch (e) {
-                console.log(e);
             }
-            setVisible(true)
-        } else {
-            artistsLoaderRef.running = false;
+            artistsLoaderRef.running = false
+            done()
+        },
+        function(err) {
+            if (token !== _activeSearchToken) {
+                artistsLoaderRef.running = false
+                done()
+                return
+            }
+            console.log(err)
+            artistsLoaderRef.running = false
+            done()
         }
-    };
-    cn3.send();
+    )
 }
 
 function getNewAlbums(limit, context) {
@@ -118,38 +300,36 @@ function getNewAlbums(limit, context) {
     errorRef.visible = false;
     albumsModelRef.clear();
     loaderRef.running = true;
-    var cn = new XMLHttpRequest();
-    cn.open("GET", server + '?action=getNewAlbums&limit=' + limit);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                for (var i = 0; i < data.albums.length; i++) {
-                    var album = data.albums[i];
-                    var date = new Date(album.publishTime);
-                    var release_date = formatDate(date);
-                    albumsModelRef.append({
-                        'id': album.id,
-                        'name': album.name,
-                        'artist': album.artist.name,
-                        'date': release_date,
-                        'image': album.picUrl + '?param=200y200',
-                        'big_image': album.picUrl
-                    });
-                }
-                loaderRef.running = false;
-            } catch (e) {
-                console.log(e);
-                errorRef.visible = true;
-                loaderRef.running = false;
+    directApiAsync(
+        "getNewAlbums",
+        { limit: Number(limit) },
+        function(data) {
+        if (data && data.albums) {
+            for (var i = 0; i < data.albums.length; i++) {
+                var album = data.albums[i];
+                var date = new Date(album.publishTime);
+                var release_date = formatDate(date);
+                albumsModelRef.append({
+                    'id': album.id,
+                    'name': album.name,
+                    'artist': album.artist.name,
+                    'date': release_date,
+                    'image': resolveAlbumCover(album),
+                    'big_image': resolveAlbumCover(album),
+                    'source': "netease"
+                });
             }
-        } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            errorRef.visible = true;
-            loaderRef.running = false;
+        } else {
+            errorRef.visible = true
         }
-    };
-    cn.send();
+        loaderRef.running = false
+    },
+    function(e) {
+        console.log(e)
+        errorRef.visible = true
+        loaderRef.running = false
+    }
+    )
 }
 
 function getTopArtists(limit, context) {
@@ -161,35 +341,32 @@ function getTopArtists(limit, context) {
     errorRef.visible = false;
     artistsModelRef.clear();
     loaderRef.running = true;
-    var cn = new XMLHttpRequest();
-    var url = server + '?action=getTopArtists&limit=' + limit;
-    cn.open("GET", url);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                for (var i = 0; i < data.artists.length; i++) {
-                    var artist = data.artists[i];
-                    artistsModelRef.append({
-                        'id': artist.id,
-                        'name': artist.name,
-                        'image': artist.picUrl + '?param=200y200',
-                        'big_image': artist.picUrl
-                    })
-                }
-                loaderRef.running = false;
-            } catch (e) {
-                console.log(e);
-                errorRef.visible = true;
-                loaderRef.running = false;
+    directApiAsync(
+        "getTopArtists",
+        { limit: Number(limit) },
+        function(data) {
+        if (data && data.artists) {
+            for (var i = 0; i < data.artists.length; i++) {
+                var artist = data.artists[i];
+                artistsModelRef.append({
+                    'id': artist.id,
+                    'name': artist.name,
+                    'image': artist.picUrl + '?param=200y200',
+                    'big_image': artist.picUrl,
+                    'source': "netease"
+                })
             }
-        } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            errorRef.visible = true;
-            loaderRef.running = false;
+        } else {
+            errorRef.visible = true
         }
-    };
-    cn.send();
+        loaderRef.running = false
+    },
+    function(e) {
+        console.log(e)
+        errorRef.visible = true
+        loaderRef.running = false
+    }
+    )
 }
 
 function getArtistTopSongs(id, context) {
@@ -210,36 +387,33 @@ function getArtistTopSongs(id, context) {
     setVisible(false)
     songsModelRef.clear()
     songsLoaderRef.running = true
-    var cn = new XMLHttpRequest();
-    var url = server + '?action=getArtistTopSongs&id=' + id;
-    cn.open("GET", url);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                for (var i = 0; i < data.hotSongs.length; i++) {
-                    var song = data.hotSongs[i];
-                    songsModelRef.append({
-                        'id': song.id,
-                        'name': song.name,
-                        'album_id': song.album.id,
-                        'album': song.album.name,
-                        'artist_id': song.artists[0].id,
-                        'artist': song.artists[0].name,
-                        'duration': song.duration,
-                        'image': (song.album && song.album.picUrl) ? (song.album.picUrl + '?param=120y120') : "../graphics/default.png"
-                    })
-                }
-            } catch (e) {
-                console.log(e);
+    directApiAsync(
+        "getArtistTopSongs",
+        { id: String(id) },
+        function(data) {
+        if (data && data.hotSongs) {
+            for (var i = 0; i < data.hotSongs.length; i++) {
+                var song = data.hotSongs[i];
+                songsModelRef.append({
+                    'id': song.id,
+                    'name': song.name,
+                    'album_id': song.album.id,
+                    'album': song.album.name,
+                    'artist_id': song.artists[0].id,
+                    'artist': song.artists[0].name,
+                    'duration': song.duration,
+                    'image': resolveSongCover(song),
+                    'source': "netease"
+                })
             }
-            songsLoaderRef.running = false
-        } else {
-            songsLoaderRef.running = false
         }
-    };
-    cn.send();
+        songsLoaderRef.running = false
+    },
+    function(e) {
+        console.log(e)
+        songsLoaderRef.running = false
+    }
+    )
 }
 
 function getArtistAlbums(id, context) {
@@ -257,16 +431,14 @@ function getArtistAlbums(id, context) {
 
     albumsModelRef.clear()
     albumsLoaderRef.running = true
-    var cn = new XMLHttpRequest();
-    var url = server + '?action=getArtistAlbums&id=' + id;
-    cn.open("GET", url);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                setPhoto(data.artist.picUrl)
-                setPageTitle(data.artist.name)
+    directApiAsync(
+        "getArtistAlbums",
+        { id: String(id) },
+        function(data) {
+        if (data) {
+            setPhoto(data.artist ? data.artist.picUrl : "../graphics/default.png")
+            setPageTitle(data.artist ? data.artist.name : i18n.tr("Artist"))
+            if (data.hotAlbums) {
                 for (var i = 0; i < data.hotAlbums.length; i++) {
                     var album = data.hotAlbums[i];
                     var date = new Date(album.publishTime);
@@ -274,22 +446,25 @@ function getArtistAlbums(id, context) {
                     albumsModelRef.append({
                         'id': album.id,
                         'name': album.name,
+                        'artist': data.artist ? data.artist.name : "",
                         'date': release_date,
                         'size': album.size,
-                        'image': album.picUrl + '?param=200y200',
-                        'big_image': album.picUrl
+                        'image': resolveAlbumCover(album),
+                        'big_image': resolveAlbumCover(album),
+                        'source': "netease"
                     })
                 }
-            } catch (e) {
-                console.log(e);
             }
-            albumsLoaderRef.running = false
-            setVisible(true)
-        } else {
-            albumsLoaderRef.running = false
         }
+        albumsLoaderRef.running = false
+        setVisible(true)
+    },
+    function(e) {
+        console.log(e)
+        albumsLoaderRef.running = false
+        setVisible(true)
     }
-    cn.send();
+    )
 }
 
 function getAlbumDetail(id, context) {
@@ -312,42 +487,40 @@ function getAlbumDetail(id, context) {
     setVisible(false)
     albumModelRef.clear()
     albumLoaderRef.running = true
-    var cn = new XMLHttpRequest();
-    cn.open("GET", server + '?action=getAlbumDetail&id=' + id);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                setPhoto(data.album.picUrl)
-                setAlbumTitle(data.album.name)
-                var date = new Date(data.album.publishTime);
-                var release_date = formatDate(date);
-                setAlbumDate(i18n.tr('Release Date:') + ' ' + release_date)
-                for (var i = 0; i < data.album.songs.length; i++) {
-                    var song = data.album.songs[i];
-                    albumModelRef.append({
-                        'id': song.id,
-                        'name': song.name,
-                        'album_id': song.album.id,
-                        'album': song.album.name,
-                        'artist_id': song.artists[0].id,
-                        'artist': song.artists[0].name,
-                        'duration': song.duration,
-                        'image': (song.album && song.album.picUrl) ? (song.album.picUrl + '?param=120y120') : "../graphics/default.png"
-                    })
-                }
-                albumLoaderRef.running = false
-            } catch (e) {
-                console.log(e);
+    directApiAsync(
+        "getAlbumDetail",
+        { id: String(id) },
+        function(data) {
+        if (data && data.album) {
+            setPhoto(data.album.picUrl)
+            setAlbumTitle(data.album.name)
+            var date = new Date(data.album.publishTime);
+            var release_date = formatDate(date);
+            setAlbumDate(i18n.tr('Release Date:') + ' ' + release_date)
+            for (var i = 0; i < data.album.songs.length; i++) {
+                var song = data.album.songs[i];
+                albumModelRef.append({
+                    'id': song.id,
+                    'name': song.name,
+                    'album_id': song.album.id,
+                    'album': song.album.name,
+                    'artist_id': song.artists[0].id,
+                    'artist': song.artists[0].name,
+                    'duration': song.duration,
+                    'image': resolveSongCover(song),
+                    'source': "netease"
+                })
             }
-            setVisible(true)
-        } else {
-            albumLoaderRef.running = false
-            setVisible(true)
         }
-    };
-    cn.send();
+        albumLoaderRef.running = false
+        setVisible(true)
+    },
+    function(e) {
+        console.log(e)
+        albumLoaderRef.running = false
+        setVisible(true)
+    }
+    )
 }
 
 function getSongDetail(id, context) {
@@ -368,6 +541,7 @@ function getSongDetail(id, context) {
     var setSeekMaximum = ctx.setSeekMaximum || function(value) {
         seek.maximumValue = value
     }
+    var fallbackDuration = ctx.fallbackDuration || 0
     var setCurrentId = ctx.setCurrentId || function(value) {
         current_id = value
     }
@@ -390,58 +564,62 @@ function getSongDetail(id, context) {
         getLyric(id, lyricContext)
     }
     playingLoaderRef.running = true
-    var cn = new XMLHttpRequest();
-    var url = api2 + 'song/' + id;
-    cn.open('GET', url);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                var song = data
-                if (data && data.length && data.length > 0) {
-                    song = data[0]
-                }
-                var artistName = ""
-                if (song.artist && song.artist.length && song.artist.length > 0) {
-                    artistName = song.artist.join(", ")
-                } else if (typeof song.artist === "string") {
-                    artistName = song.artist
-                }
-                var cover = song.pic_id ? (api2 + "pic/" + song.pic_id) : "../graphics/default.png"
-                setPageTitle(song.name || i18n.tr("Now Playing"))
-                setAlbumImage(cover)
-                setArtistText(artistName)
-                setAlbumText(song.album || "")
-                if (song.duration) {
-                    setSeekMaximum(song.duration)
-                }
-                updateToolbar(song.name || i18n.tr("Now Playing"), artistName, cover)
-                setCurrentId(song.id ? song.id : id)
-                if (onSongResolved) {
-                    onSongResolved({
-                        id: song.id ? song.id : id,
-                        name: song.name || "",
-                        artist: artistName,
-                        album: song.album || "",
-                        duration: song.duration || 0,
-                        image: cover
-                    })
-                }
-            } catch (e) {
-                console.log(e);
+    directApiAsync(
+        "songDetail",
+        { id: String(id) },
+        function(data) {
+        if (data) {
+            var song = data
+            if (data && data.length && data.length > 0) {
+                song = data[0]
             }
-            playingLoaderRef.running = false
-        } else {
-            playingLoaderRef.running = false
+            var artistName = ""
+            if (song.artist && song.artist.length && song.artist.length > 0) {
+                artistName = song.artist.join(", ")
+            } else if (typeof song.artist === "string") {
+                artistName = song.artist
+            }
+            var resolvedDuration = 0
+            if (song.duration && song.duration > 0) {
+                resolvedDuration = song.duration
+            } else if (fallbackDuration && fallbackDuration > 0) {
+                resolvedDuration = fallbackDuration
+            }
+            var picId = song.pic_id ? song.pic_id : ""
+            var cover = (picId !== "" && picId !== "0") ? (api2 + "pic/" + picId + "?size=300") : "../graphics/default.png"
+            setPageTitle(song.name || i18n.tr("Now Playing"))
+            setAlbumImage(cover)
+            setArtistText(artistName)
+            setAlbumText(song.album || "")
+            if (resolvedDuration > 0) {
+                setSeekMaximum(resolvedDuration)
+            }
+            updateToolbar(song.name || i18n.tr("Now Playing"), artistName, cover)
+            setCurrentId(song.id ? song.id : id)
+            if (onSongResolved) {
+                onSongResolved({
+                    id: song.id ? song.id : id,
+                    name: song.name || "",
+                    artist: artistName,
+                    album: song.album || "",
+                    duration: resolvedDuration,
+                    image: cover,
+                    source: song.source || "netease"
+                })
+            }
         }
-    };
-    cn.send();
+        playingLoaderRef.running = false
+    },
+    function(e) {
+        console.log(e)
+        playingLoaderRef.running = false
+    }
+    )
 }
 
 function stream(id) {
     var cn = new XMLHttpRequest();
-    cn.open('GET', server + '?stream=' + id + '&quality=lMusic');
+    cn.open('GET', server + '?stream=' + id + '&quality=' + (cloudMusic && cloudMusic.settings ? cloudMusic.settings.streaming_quality : "96"));
     cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
@@ -553,27 +731,25 @@ function getLyric(id, context) {
     lyricModelRef.clear()
     setCurrentLyric("")
     setNextLyric("")
-    var cn = new XMLHttpRequest();
-    cn.open('GET', server + '?lyric=' + id);
-    cn.onreadystatechange = function () {
-        if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            try {
-                parseLyric(data.lyric, {
-                    lyricModel: lyricModelRef,
-                    setCurrentLyric: setCurrentLyric,
-                    setNextLyric: setNextLyric
-                })
-            } catch (e) {
-                console.log(e);
-                setCurrentLyric(i18n.tr("I'm sorry but I forgot that lyric :("))
-            }
-        } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            console.log("Error loading lyric")
+    directApiAsync(
+        "lyric",
+        { id: String(id) },
+        function(data) {
+        if (data) {
+            parseLyric(data.lyric, {
+                lyricModel: lyricModelRef,
+                setCurrentLyric: setCurrentLyric,
+                setNextLyric: setNextLyric
+            })
+        } else {
+            setCurrentLyric(i18n.tr("I'm sorry but I forgot that lyric :("))
         }
-    };
-    cn.send();
+    },
+    function(e) {
+        console.log(e)
+        setCurrentLyric(i18n.tr("I'm sorry but I forgot that lyric :("))
+    }
+    )
 }
 
 function parseLyric(lyric, context) {
@@ -619,13 +795,13 @@ function next(lines, context) {
 
 // Converts an duration in ms to a formated string ("minutes:seconds")
 function durationToString(duration) {
-    var minutes = Math.floor((duration / 1000) / 60);
-    var seconds = Math.floor((duration / 1000)) % 60;
-    // Make sure that we never see "NaN:NaN"
-    if (minutes.toString() == 'NaN')
-        minutes = 0;
-    if (seconds.toString() == 'NaN')
-        seconds = 0;
+    var value = Number(duration)
+    if (!isFinite(value) || value < 0) {
+        value = 0
+    }
+    var totalSeconds = Math.floor(value / 1000)
+    var minutes = Math.floor(totalSeconds / 60)
+    var seconds = totalSeconds % 60
     return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
 }
 

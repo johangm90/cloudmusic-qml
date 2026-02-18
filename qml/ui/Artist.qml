@@ -4,6 +4,7 @@ import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
 import "../logic/Api.js" as Api
+import "../logic/CoverCache.js" as CoverCache
 import "../logic/Database.js" as Db
 import "../components"
 
@@ -152,10 +153,10 @@ Item {
                 }
             }
             Action {
-                text: (songsList.index >= 0 && Db.isLikedSong(songsModel.get(songsList.index).id))
+                text: (songsList.index >= 0 && Db.isLikedSong(songsModel.get(songsList.index).id, songsModel.get(songsList.index).source))
                       ? i18n.tr("Remove from Favorites")
                       : i18n.tr("Add to Favorites")
-                name: (songsList.index >= 0 && Db.isLikedSong(songsModel.get(songsList.index).id))
+                name: (songsList.index >= 0 && Db.isLikedSong(songsModel.get(songsList.index).id, songsModel.get(songsList.index).source))
                       ? "like"
                       : "unlike"
                 onTriggered: {
@@ -598,7 +599,7 @@ Item {
 
                                     Image {
                                         anchors.fill: parent
-                                        source: image
+                                        source: CoverCache.resolve(id, image, "../graphics/default.png")
                                         cache: true
                                         smooth: true
                                         fillMode: Image.PreserveAspectCrop

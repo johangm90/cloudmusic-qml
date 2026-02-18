@@ -8,6 +8,7 @@ import UserMetrics 0.1
 import Lomiri.DownloadManager 1.2
 import Qt.labs.settings 1.0
 import FileManager 1.0
+import CloudMusic 1.0
 import "components"
 import "graphics"
 import "ui"
@@ -44,12 +45,29 @@ ApplicationWindow {
     }
 
     property var settings: Settings {
-        property string download_quality: "96000"
-        property string streaming_quality: "96000"
+        property string download_quality: "96"
+        property string streaming_quality: "96"
         property string theme: "System"
         property bool first_run: true
         property string current_version: ""
         onThemeChanged: appWindow.applyThemeMode()
+    }
+
+    function normalizeQuality(value) {
+        var v = parseInt(value, 10)
+        if (!v || v <= 0) {
+            return "96"
+        }
+        if (v >= 1000) {
+            v = Math.floor(v / 1000)
+        }
+        if (v >= 320) {
+            return "320"
+        }
+        if (v >= 160) {
+            return "160"
+        }
+        return "96"
     }
 
     MainView {
@@ -71,8 +89,21 @@ ApplicationWindow {
         FileManager {
             id: fileMgr
         }
+
+        CloudMusic {
+            id: cloudApiBridge
+        }
+
+        Timer {
+            id: cloudApiPumpTimer
+            interval: 30
+            running: true
+            repeat: true
+            onTriggered: cloudApiBridge.pumpResponses()
+        }
         
         property var fileManager: fileMgr
+        property var cloudApi: cloudApiBridge
 
         // TRANSLATORS: %1 refers to the amount of songs played in the day
         Metric {
@@ -84,7 +115,7 @@ ApplicationWindow {
         }
 
         property
-        var server: "https://cloudmusicapi.nubit.io/netease/";
+        var server: "http://127.0.0.1:39876/";
         property bool isDarkTheme: {
             var mode = appWindow.normalizedThemeMode()
             if (mode === "SuruDark") {
@@ -116,6 +147,8 @@ ApplicationWindow {
 
         Component.onCompleted: {
             appWindow.applyThemeMode()
+            appWindow.settings.download_quality = appWindow.normalizeQuality(appWindow.settings.download_quality)
+            appWindow.settings.streaming_quality = appWindow.normalizeQuality(appWindow.settings.streaming_quality)
         }
 
         Component {

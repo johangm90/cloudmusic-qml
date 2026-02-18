@@ -55,14 +55,14 @@ Page {
             id: customModel
             Component.onCompleted: {
                 var qualitys = [i18n.tr("Normal"), i18n.tr("High"), i18n.tr("Extreme")]
-                var keys = ["96000", "160000", "320000"]
+                var keys = ["96", "160", "320"]
                 for (var i = 0; i < qualitys.length; i++){
                     customModel.append({'name':qualitys[i], 'key':keys[i]})
                 }
                 var selected = 0
-                if (appRoot && appRoot.settings && appRoot.settings.download_quality == '96000') {
+                if (appRoot && appRoot.settings && (appRoot.settings.download_quality == '96' || appRoot.settings.download_quality == '96000')) {
                     selected = 0
-                } else if (appRoot && appRoot.settings && appRoot.settings.download_quality == '160000') {
+                } else if (appRoot && appRoot.settings && (appRoot.settings.download_quality == '160' || appRoot.settings.download_quality == '160000')) {
                     selected = 1
                 } else {
                     selected = 2
@@ -87,14 +87,14 @@ Page {
             id: customModel2
             Component.onCompleted: {
                 var qualitys = [i18n.tr("Normal"), i18n.tr("High"), i18n.tr("Extreme")]
-                var keys = ["96000", "160000", "320000"]
+                var keys = ["96", "160", "320"]
                 for (var i = 0; i < qualitys.length; i++){
                     customModel2.append({'name':qualitys[i], 'key':keys[i]})
                 }
                 var selected = 0
-                if (appRoot && appRoot.settings && appRoot.settings.streaming_quality == '96000') {
+                if (appRoot && appRoot.settings && (appRoot.settings.streaming_quality == '96' || appRoot.settings.streaming_quality == '96000')) {
                     selected = 0
-                } else if (appRoot && appRoot.settings && appRoot.settings.streaming_quality == '160000') {
+                } else if (appRoot && appRoot.settings && (appRoot.settings.streaming_quality == '160' || appRoot.settings.streaming_quality == '160000')) {
                     selected = 1
                 } else {
                     selected = 2

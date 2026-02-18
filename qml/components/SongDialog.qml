@@ -28,8 +28,9 @@ Item {
             var album_id = song_model.get(i).album_id
             var album = song_model.get(i).album
             var duration = song_model.get(i).duration
+            var source = song_model.get(i).source ? song_model.get(i).source : "netease"
             var playlist = pid
-            var song = [sid, name, artist_id, artist, album_id, album, duration, playlist]
+            var song = [sid, name, artist_id, artist, album_id, album, duration, playlist, source]
             Db.insertSong(song)
         }
         if(song_model.count>1){
@@ -153,4 +154,3 @@ Item {
         }
     }
 }
-
