@@ -65,11 +65,37 @@ Item {
     function getSongDetail() {
         var index = media_player.getIndex()
         console.log("Obteniendo detalle de: " + songs_list[index])
-        Api.getSongDetail(songs_list[index]);
+        Api.getSongDetail(songs_list[index], songDetailContext());
     }
 
     function showLyrics() {
-        Api.getLyric(current_id);
+        Api.getLyric(current_id, lyricApiContext());
+    }
+
+    function lyricApiContext() {
+        return {
+            lyricModel: model_lyric,
+            setCurrentLyric: function(text) { lbl_lyric.text = text },
+            setNextLyric: function(text) { lbl_next.text = text }
+        }
+    }
+
+    function songDetailContext() {
+        return {
+            loader: playing_loader,
+            lyricsEnabled: settings.lyrics,
+            lyricContext: lyricApiContext(),
+            setPageTitle: function(title) {
+                playingPage.title = title
+                playingPage.header.title = title
+            },
+            setArtistText: function(text) { lbl_artistaDetalle.text = text },
+            setAlbumText: function(text) { lbl_albumDetalle.text = text },
+            setAlbumImage: function(source) { albumImage.source = source },
+            setSeekMaximum: function(value) { seek.maximumValue = value },
+            setCurrentId: function(value) { current_id = value },
+            updateToolbar: function(name, artist, image) { player_toolbar.cargar(name, artist, image) }
+        }
     }
 
     property ListModel model_queue: ListModel {

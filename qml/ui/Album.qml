@@ -23,7 +23,18 @@ Item {
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
 
     function cargar(id) {
-        Api.getAlbumDetail(id)
+        Api.getAlbumDetail(id, albumApiContext())
+    }
+
+    function albumApiContext() {
+        return {
+            albumModel: albumModel,
+            loader: album_loader,
+            setVisible: is_visible,
+            setPhoto: function(source) { photo.source = source },
+            setAlbumTitle: function(title) { lbl_album_title.text = title },
+            setAlbumDate: function(dateText) { lbl_album_date.text = dateText }
+        }
     }
 
     function is_visible(value) {

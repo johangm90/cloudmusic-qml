@@ -107,6 +107,12 @@ ApplicationWindow {
         property color selectedColor: Qt.rgba(0.9, 0.2, 0.28, isDarkTheme ? 0.22 : 0.16)
         property color tileColor: isDarkTheme ? "#252525" : "#ffffff"
         property color tileBorderColor: isDarkTheme ? "#3a3a3a" : "#dcdcdc"
+        property real radiusSmall: units.gu(0.8)
+        property real radiusMedium: units.gu(1.2)
+        property real spacingSmall: units.gu(0.8)
+        property real spacingMedium: units.gu(1.2)
+        property real spacingLarge: units.gu(1.8)
+        property real pagePadding: units.gu(1.2)
 
         Component.onCompleted: {
             appWindow.applyThemeMode()

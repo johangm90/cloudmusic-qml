@@ -28,8 +28,33 @@ Item {
     function cargar(id) {
         activeTab = 0
         contentReady = false
-        Api.getArtistTopSongs(id)
-        Api.getArtistAlbums(id)
+        Api.getArtistTopSongs(id, artistSongsContext())
+        Api.getArtistAlbums(id, artistAlbumsContext())
+    }
+
+    function setArtistTitle(title) {
+        artistPage.title = title
+        artistPage.header.title = title
+    }
+
+    function artistSongsContext() {
+        return {
+            songsModel: songsModel,
+            songsLoader: artist_songs_loader,
+            setPageTitle: setArtistTitle,
+            setPhoto: function(source) { photo.source = source },
+            setVisible: is_visible
+        }
+    }
+
+    function artistAlbumsContext() {
+        return {
+            albumsModel: albumsModel,
+            albumsLoader: artist_albums_loader,
+            setPageTitle: setArtistTitle,
+            setPhoto: function(source) { photo.source = source },
+            setVisible: is_visible
+        }
     }
 
     ActivityIndicator {

@@ -8,6 +8,7 @@ function init() {
     try {
         db().transaction(function(tx) {
             create_tables(tx);
+            migrate_schema(tx);
             console.log("Database version: " + db().version);
         })
     } catch (e) {
@@ -18,7 +19,27 @@ function init() {
 function create_tables(tx) {
     tx.executeSql('CREATE TABLE IF NOT EXISTS playlists(id INTEGER PRIMARY KEY, name TEXT UNIQUE, offline NUMERIC);');
     tx.executeSql('CREATE TABLE IF NOT EXISTS songs(id INTEGER PRIMARY KEY, sid INTEGER, name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration TEXT, playlist INTEGER, song_order INTEGER, local TEXT, local_art TEXT, lyric TEXT);');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS search_history(id INTEGER PRIMARY KEY, search TEXT);');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS search_history(id INTEGER PRIMARY KEY, search TEXT UNIQUE, created_at INTEGER);');
+}
+
+function migrate_schema(tx) {
+    ensure_search_history_created_at(tx)
+}
+
+function ensure_search_history_created_at(tx) {
+    var hasCreatedAt = false
+    var info = tx.executeSql('PRAGMA table_info(search_history);')
+    for (var i = 0; i < info.rows.length; i++) {
+        if (info.rows.item(i).name === "created_at") {
+            hasCreatedAt = true
+            break
+        }
+    }
+
+    if (!hasCreatedAt) {
+        tx.executeSql('ALTER TABLE search_history ADD COLUMN created_at INTEGER;')
+        tx.executeSql('UPDATE search_history SET created_at=? WHERE created_at IS NULL;', [Date.now()])
+    }
 }
 
 function delete_tables(tx) {
@@ -86,7 +107,7 @@ function insertPlaylist(content) {
 
 function updatePlaylist(id, name) {
     db().transaction(function(tx) {
-        tx.executeSql('UPDATE playlists SET name="' + name + '" WHERE id=' + id);
+        tx.executeSql('UPDATE playlists SET name=? WHERE id=?', [name, id]);
     })
 }
 
@@ -112,7 +133,7 @@ function insertSong(content) {
 
 function updateSong(order, id) {
     db().transaction(function(tx) {
-        tx.executeSql('UPDATE songs SET song_order=' + order + ' WHERE id=' + id);
+        tx.executeSql('UPDATE songs SET song_order=? WHERE id=?', [order, id]);
     })
 }
 
@@ -178,6 +199,59 @@ function getOffline(id) {
 
 function setOffline(id, value) {
     db().transaction(function(tx) {
-        tx.executeSql('UPDATE playlists SET offline=' + value + ' WHERE id=' + id);
+        tx.executeSql('UPDATE playlists SET offline=? WHERE id=?', [value, id]);
+    })
+}
+
+function getSearchHistory(limit) {
+    var records = []
+    var max = (typeof limit === "number" && limit > 0) ? limit : 20
+
+    db().transaction(function(tx) {
+        var rs = tx.executeSql(
+            'SELECT search FROM search_history ORDER BY created_at DESC, id DESC LIMIT ?;',
+            [max]
+        )
+        for (var i = 0; i < rs.rows.length; i++) {
+            records.push(rs.rows.item(i).search)
+        }
+    })
+
+    return records
+}
+
+function insertSearchHistory(search, max) {
+    var value = (search || "").trim()
+    if (!value) {
+        return
+    }
+
+    var maxRows = (typeof max === "number" && max > 0) ? max : 20
+    db().transaction(function(tx) {
+        tx.executeSql('DELETE FROM search_history WHERE search=?;', [value])
+        tx.executeSql(
+            'INSERT INTO search_history(search, created_at) VALUES(?, ?);',
+            [value, Date.now()]
+        )
+
+        var countRs = tx.executeSql('SELECT COUNT(*) as total FROM search_history;')
+        var total = countRs.rows.item(0).total
+        if (total > maxRows) {
+            tx.executeSql(
+                'DELETE FROM search_history WHERE id IN (SELECT id FROM search_history ORDER BY created_at ASC, id ASC LIMIT ?);',
+                [total - maxRows]
+            )
+        }
+    })
+}
+
+function deleteSearchHistory(search) {
+    var value = (search || "").trim()
+    if (!value) {
+        return
+    }
+
+    db().transaction(function(tx) {
+        tx.executeSql('DELETE FROM search_history WHERE search=?;', [value])
     })
 }

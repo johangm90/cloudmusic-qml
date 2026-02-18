@@ -25,7 +25,6 @@ qrc!(qml_resources,
         "qml/ui/Search.qml",
         "qml/ui/SearchHistory.qml",
         "qml/ui/SettingsPage.qml",
-        "qml/ui/StorageSearchKey.js",
         "qml/ui/TopArtists.qml",
     },
 );

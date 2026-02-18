@@ -1,12 +1,21 @@
 var server = "https://vulgry.innves.com/rapsody/api.php";
 var api2 = "https://cloudmusicapi.nubit.io/netease/";
 
-function apiSearch(query, type, limit) {
-    is_visible(false);
-    searchSongsModel.clear();
-    searchAlbumsModel.clear();
-    searchArtistsModel.clear();
-    search_songs_loader.running = true;
+function apiSearch(query, type, limit, context) {
+    var ctx = context || {}
+    var setVisible = ctx.setVisible || is_visible
+    var songsModelRef = ctx.songsModel || searchSongsModel
+    var albumsModelRef = ctx.albumsModel || searchAlbumsModel
+    var artistsModelRef = ctx.artistsModel || searchArtistsModel
+    var songsLoaderRef = ctx.songsLoader || search_songs_loader
+    var albumsLoaderRef = ctx.albumsLoader || search_albums_loader
+    var artistsLoaderRef = ctx.artistsLoader || search_artists_loader
+
+    setVisible(false)
+    songsModelRef.clear()
+    albumsModelRef.clear()
+    artistsModelRef.clear()
+    songsLoaderRef.running = true
     var song_type = '1';
     var album_type = '10';
     var artist_type = '100';
@@ -19,7 +28,7 @@ function apiSearch(query, type, limit) {
             data = JSON.parse(data);
             for (var i = 0; i < data.result.songs.length; i++) {
                 var song = data.result.songs[i];
-                searchSongsModel.append({
+                songsModelRef.append({
                     'id': song.id,
                     'name': song.name,
                     'album_id': song.album.id,
@@ -29,13 +38,13 @@ function apiSearch(query, type, limit) {
                     'duration': song.duration
                 });
             }
-            search_songs_loader.running = false;
+            songsLoaderRef.running = false;
         } else {
-            search_songs_loader.running = false;
+            songsLoaderRef.running = false;
         }
     };
     cn1.send();
-    search_albums_loader.running = true;
+    albumsLoaderRef.running = true;
     var cn2 = new XMLHttpRequest();
     var searchAlbumsUrl = server + '?action=search&query=' + query + '&type=' + album_type + '&limit=' + limit;
     cn2.open("GET", searchAlbumsUrl);
@@ -47,7 +56,7 @@ function apiSearch(query, type, limit) {
                 var album = data.result.albums[i];
                 var date = new Date(album.publishTime);
                 var release_date = formatDate(date);
-                searchAlbumsModel.append({
+                albumsModelRef.append({
                     'id': album.id,
                     'name': album.name,
                     'artist': album.artist.name,
@@ -57,13 +66,13 @@ function apiSearch(query, type, limit) {
                     'big_image': album.picUrl
                 });
             }
-            search_albums_loader.running = false;
+            albumsLoaderRef.running = false;
         } else {
-            search_albums_loader.running = false;
+            albumsLoaderRef.running = false;
         }
     };
     cn2.send();
-    search_artists_loader.running = true;
+    artistsLoaderRef.running = true;
     var cn3 = new XMLHttpRequest();
     var searchArtistsUrl = server + '?action=search&query=' + query + '&type=' + artist_type + '&limit=' + limit;
     cn3.open("GET", searchArtistsUrl);
@@ -80,29 +89,34 @@ function apiSearch(query, type, limit) {
                         image = artist.picUrl + "?param=200y200";
                         bigimage = artist.picUrl;
                     }
-                    searchArtistsModel.append({
+                    artistsModelRef.append({
                         'id': artist.id,
                         'name': artist.name,
                         'image': image,
                         'big_image': bigimage
                     });
                 }
-                search_artists_loader.running = false;
+                artistsLoaderRef.running = false;
             } catch (e) {
                 console.log(e);
             }
-            is_visible(true);
+            setVisible(true)
         } else {
-            search_artists_loader.running = false;
+            artistsLoaderRef.running = false;
         }
     };
     cn3.send();
 }
 
-function getNewAlbums(limit) {
-    new_albums_error.visible = false;
-    newAlbumsModel.clear();
-    new_albums_loader.running = true;
+function getNewAlbums(limit, context) {
+    var ctx = context || {}
+    var errorRef = ctx.errorItem || new_albums_error
+    var albumsModelRef = ctx.model || newAlbumsModel
+    var loaderRef = ctx.loader || new_albums_loader
+
+    errorRef.visible = false;
+    albumsModelRef.clear();
+    loaderRef.running = true;
     var cn = new XMLHttpRequest();
     cn.open("GET", server + '?action=getNewAlbums&limit=' + limit);
     cn.onreadystatechange = function () {
@@ -114,7 +128,7 @@ function getNewAlbums(limit) {
                     var album = data.albums[i];
                     var date = new Date(album.publishTime);
                     var release_date = formatDate(date);
-                    newAlbumsModel.append({
+                    albumsModelRef.append({
                         'id': album.id,
                         'name': album.name,
                         'artist': album.artist.name,
@@ -123,24 +137,29 @@ function getNewAlbums(limit) {
                         'big_image': album.picUrl
                     });
                 }
-                new_albums_loader.running = false;
+                loaderRef.running = false;
             } catch (e) {
                 console.log(e);
-                new_albums_error.visible = true;
-                new_albums_loader.running = false;
+                errorRef.visible = true;
+                loaderRef.running = false;
             }
         } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            new_albums_error.visible = true;
-            new_albums_loader.running = false;
+            errorRef.visible = true;
+            loaderRef.running = false;
         }
     };
     cn.send();
 }
 
-function getTopArtists(limit) {
-    top_artists_error.visible = false;
-    artistsModel.clear();
-    top_artists_loader.running = true;
+function getTopArtists(limit, context) {
+    var ctx = context || {}
+    var errorRef = ctx.errorItem || top_artists_error
+    var artistsModelRef = ctx.model || artistsModel
+    var loaderRef = ctx.loader || top_artists_loader
+
+    errorRef.visible = false;
+    artistsModelRef.clear();
+    loaderRef.running = true;
     var cn = new XMLHttpRequest();
     var url = server + '?action=getTopArtists&limit=' + limit;
     cn.open("GET", url);
@@ -151,34 +170,45 @@ function getTopArtists(limit) {
             try {
                 for (var i = 0; i < data.artists.length; i++) {
                     var artist = data.artists[i];
-                    artistsModel.append({
+                    artistsModelRef.append({
                         'id': artist.id,
                         'name': artist.name,
                         'image': artist.picUrl + '?param=200y200',
                         'big_image': artist.picUrl
                     })
                 }
-                top_artists_loader.running = false;
+                loaderRef.running = false;
             } catch (e) {
                 console.log(e);
-                top_artists_error.visible = true;
-                top_artists_loader.running = false;
+                errorRef.visible = true;
+                loaderRef.running = false;
             }
         } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
-            top_artists_error.visible = true;
-            top_artists_loader.running = false;
+            errorRef.visible = true;
+            loaderRef.running = false;
         }
     };
     cn.send();
 }
 
-function getArtistTopSongs(id) {
-    artistPage.title = i18n.tr("Artist");
-    artistPage.header.title = i18n.tr("Artist");
-    photo.source = "../graphics/default.png";
-    is_visible(false);
-    songsModel.clear();
-    artist_songs_loader.running = true;
+function getArtistTopSongs(id, context) {
+    var ctx = context || {}
+    var setPageTitle = ctx.setPageTitle || function(title) {
+        artistPage.title = title
+        artistPage.header.title = title
+    }
+    var setPhoto = ctx.setPhoto || function(source) {
+        photo.source = source
+    }
+    var setVisible = ctx.setVisible || is_visible
+    var songsModelRef = ctx.songsModel || songsModel
+    var songsLoaderRef = ctx.songsLoader || artist_songs_loader
+
+    setPageTitle(i18n.tr("Artist"))
+    setPhoto("../graphics/default.png")
+    setVisible(false)
+    songsModelRef.clear()
+    songsLoaderRef.running = true
     var cn = new XMLHttpRequest();
     var url = server + '?action=getArtistTopSongs&id=' + id;
     cn.open("GET", url);
@@ -189,7 +219,7 @@ function getArtistTopSongs(id) {
             try {
                 for (var i = 0; i < data.hotSongs.length; i++) {
                     var song = data.hotSongs[i];
-                    songsModel.append({
+                    songsModelRef.append({
                         'id': song.id,
                         'name': song.name,
                         'album_id': song.album.id,
@@ -202,17 +232,29 @@ function getArtistTopSongs(id) {
             } catch (e) {
                 console.log(e);
             }
-            artist_songs_loader.running = false;
+            songsLoaderRef.running = false
         } else {
-            artist_songs_loader.running = false;
+            songsLoaderRef.running = false
         }
     };
     cn.send();
 }
 
-function getArtistAlbums(id) {
-    albumsModel.clear();
-    artist_albums_loader.running = true;
+function getArtistAlbums(id, context) {
+    var ctx = context || {}
+    var albumsModelRef = ctx.albumsModel || albumsModel
+    var albumsLoaderRef = ctx.albumsLoader || artist_albums_loader
+    var setPhoto = ctx.setPhoto || function(source) {
+        photo.source = source
+    }
+    var setPageTitle = ctx.setPageTitle || function(title) {
+        artistPage.title = title
+        artistPage.header.title = title
+    }
+    var setVisible = ctx.setVisible || is_visible
+
+    albumsModelRef.clear()
+    albumsLoaderRef.running = true
     var cn = new XMLHttpRequest();
     var url = server + '?action=getArtistAlbums&id=' + id;
     cn.open("GET", url);
@@ -221,14 +263,13 @@ function getArtistAlbums(id) {
             var data = cn.responseText;
             data = JSON.parse(data);
             try {
-                photo.source = data.artist.picUrl;
-                artistPage.title = data.artist.name;
-                artistPage.header.title = data.artist.name;
+                setPhoto(data.artist.picUrl)
+                setPageTitle(data.artist.name)
                 for (var i = 0; i < data.hotAlbums.length; i++) {
                     var album = data.hotAlbums[i];
                     var date = new Date(album.publishTime);
                     var release_date = formatDate(date);
-                    albumsModel.append({
+                    albumsModelRef.append({
                         'id': album.id,
                         'name': album.name,
                         'date': release_date,
@@ -240,21 +281,35 @@ function getArtistAlbums(id) {
             } catch (e) {
                 console.log(e);
             }
-            artist_albums_loader.running = false;
-            is_visible(true);
+            albumsLoaderRef.running = false
+            setVisible(true)
         } else {
-            artist_albums_loader.running = false;
+            albumsLoaderRef.running = false
         }
     }
     cn.send();
 }
 
-function getAlbumDetail(id) {
-    photo.source = "../graphics/default.png";
-    lbl_album_title.text = "";
-    is_visible(false);
-    albumModel.clear();
-    album_loader.running = true;
+function getAlbumDetail(id, context) {
+    var ctx = context || {}
+    var setPhoto = ctx.setPhoto || function(source) {
+        photo.source = source
+    }
+    var setAlbumTitle = ctx.setAlbumTitle || function(title) {
+        lbl_album_title.text = title
+    }
+    var setAlbumDate = ctx.setAlbumDate || function(dateText) {
+        lbl_album_date.text = dateText
+    }
+    var setVisible = ctx.setVisible || is_visible
+    var albumModelRef = ctx.albumModel || albumModel
+    var albumLoaderRef = ctx.loader || album_loader
+
+    setPhoto("../graphics/default.png")
+    setAlbumTitle("")
+    setVisible(false)
+    albumModelRef.clear()
+    albumLoaderRef.running = true
     var cn = new XMLHttpRequest();
     cn.open("GET", server + '?action=getAlbumDetail&id=' + id);
     cn.onreadystatechange = function () {
@@ -262,14 +317,14 @@ function getAlbumDetail(id) {
             var data = cn.responseText;
             data = JSON.parse(data);
             try {
-                photo.source = data.album.picUrl;
-                lbl_album_title.text = data.album.name;
+                setPhoto(data.album.picUrl)
+                setAlbumTitle(data.album.name)
                 var date = new Date(data.album.publishTime);
                 var release_date = formatDate(date);
-                lbl_album_date.text = i18n.tr('Release Date:') + ' ' + release_date;
+                setAlbumDate(i18n.tr('Release Date:') + ' ' + release_date)
                 for (var i = 0; i < data.album.songs.length; i++) {
                     var song = data.album.songs[i];
-                    albumModel.append({
+                    albumModelRef.append({
                         'id': song.id,
                         'name': song.name,
                         'album_id': song.album.id,
@@ -279,29 +334,58 @@ function getAlbumDetail(id) {
                         'duration': song.duration
                     })
                 }
-                album_loader.running = false;
+                albumLoaderRef.running = false
             } catch (e) {
                 console.log(e);
             }
-            is_visible(true);
+            setVisible(true)
         } else {
-            album_loader.running = false;
-            is_visible(true);
+            albumLoaderRef.running = false
+            setVisible(true)
         }
     };
     cn.send();
 }
 
-function getSongDetail(id) {
-    playingPage.title = i18n.tr("Now Playing");
-    playingPage.header.title = i18n.tr("Now Playing");
-    lbl_artistaDetalle.text = "";
-    lbl_albumDetalle.text = "";
-    albumImage.source = "../graphics/default.png";
-    if (playing_page.settings.lyrics) {
-        getLyric(id);
+function getSongDetail(id, context) {
+    var ctx = context || {}
+    var setPageTitle = ctx.setPageTitle || function(title) {
+        playingPage.title = title
+        playingPage.header.title = title
     }
-    playing_loader.running = true;
+    var setArtistText = ctx.setArtistText || function(text) {
+        lbl_artistaDetalle.text = text
+    }
+    var setAlbumText = ctx.setAlbumText || function(text) {
+        lbl_albumDetalle.text = text
+    }
+    var setAlbumImage = ctx.setAlbumImage || function(source) {
+        albumImage.source = source
+    }
+    var setSeekMaximum = ctx.setSeekMaximum || function(value) {
+        seek.maximumValue = value
+    }
+    var setCurrentId = ctx.setCurrentId || function(value) {
+        current_id = value
+    }
+    var updateToolbar = ctx.updateToolbar || function(name, artist, image) {
+        player_toolbar.cargar(name, artist, image)
+    }
+    var lyricsEnabled = ctx.lyricsEnabled
+    if (lyricsEnabled === undefined) {
+        lyricsEnabled = playing_page.settings.lyrics
+    }
+    var lyricContext = ctx.lyricContext || null
+    var playingLoaderRef = ctx.loader || playing_loader
+
+    setPageTitle(i18n.tr("Now Playing"))
+    setArtistText("")
+    setAlbumText("")
+    setAlbumImage("../graphics/default.png")
+    if (lyricsEnabled) {
+        getLyric(id, lyricContext)
+    }
+    playingLoaderRef.running = true
     var cn = new XMLHttpRequest();
     var url = server + '?action=getSongDetail&id=' + id;
     cn.open('GET', url);
@@ -310,20 +394,20 @@ function getSongDetail(id) {
             var data = cn.responseText;
             data = JSON.parse(data);
             try {
-                playingPage.title = data.name;
-                playingPage.header.title = data.name;
-                albumImage.source = data.picUrl ? data.picUrl : "../graphics/default.png";
-                lbl_artistaDetalle.text = data.artist;
-                lbl_albumDetalle.text = data.album;
-                seek.maximumValue = data.duration;
-                player_toolbar.cargar(data.name, data.artist, data.picUrl ? data.picUrl : "../graphics/default.png");
-                current_id = id;
+                var cover = data.picUrl ? data.picUrl : "../graphics/default.png"
+                setPageTitle(data.name)
+                setAlbumImage(cover)
+                setArtistText(data.artist)
+                setAlbumText(data.album)
+                setSeekMaximum(data.duration)
+                updateToolbar(data.name, data.artist, cover)
+                setCurrentId(id)
             } catch (e) {
                 console.log(e);
             }
-            playing_loader.running = false;
+            playingLoaderRef.running = false
         } else {
-            playing_loader.running = false;
+            playingLoaderRef.running = false
         }
     };
     cn.send();
@@ -430,10 +514,19 @@ function downloadSong(index) {
 }
 
 //Lyrics
-function getLyric(id) {
-    playing_page.model_lyric.clear();
-    lbl_lyric.text = "";
-    lbl_next.text = "";
+function getLyric(id, context) {
+    var ctx = context || {}
+    var lyricModelRef = ctx.lyricModel || playing_page.model_lyric
+    var setCurrentLyric = ctx.setCurrentLyric || function(text) {
+        lbl_lyric.text = text
+    }
+    var setNextLyric = ctx.setNextLyric || function(text) {
+        lbl_next.text = text
+    }
+
+    lyricModelRef.clear()
+    setCurrentLyric("")
+    setNextLyric("")
     var cn = new XMLHttpRequest();
     cn.open('GET', server + '?lyric=' + id);
     cn.onreadystatechange = function () {
@@ -441,10 +534,14 @@ function getLyric(id) {
             var data = cn.responseText;
             data = JSON.parse(data);
             try {
-                parseLyric(data.lyric);
+                parseLyric(data.lyric, {
+                    lyricModel: lyricModelRef,
+                    setCurrentLyric: setCurrentLyric,
+                    setNextLyric: setNextLyric
+                })
             } catch (e) {
                 console.log(e);
-                lbl_lyric.text = i18n.tr("I'm sorry but I forgot that lyric :(")
+                setCurrentLyric(i18n.tr("I'm sorry but I forgot that lyric :("))
             }
         } else if (cn.readyState == XMLHttpRequest.DONE && cn.status != 200) {
             console.log("Error loading lyric")
@@ -453,18 +550,31 @@ function getLyric(id) {
     cn.send();
 }
 
-function parseLyric(lyric) {
+function parseLyric(lyric, context) {
+    var ctx = context || {}
+    var lyricModelRef = ctx.lyricModel || playing_page.model_lyric
+    var setCurrentLyric = ctx.setCurrentLyric || function(text) {
+        lbl_lyric.text = text
+    }
+    var setNextLyric = ctx.setNextLyric || function(text) {
+        lbl_next.text = text
+    }
+
     if (!lyric || typeof lyric !== "string") {
-        playing_page.model_lyric.clear()
-        lbl_lyric.text = i18n.tr("No lyrics available")
-        lbl_next.text = ""
+        lyricModelRef.clear()
+        setCurrentLyric(i18n.tr("No lyrics available"))
+        setNextLyric("")
         return
     }
     var lines = lyric.split(/\r\n|\n/);
-    next(lines);
+    next(lines, {
+        lyricModel: lyricModelRef
+    })
 }
 
-function next(lines) {
+function next(lines, context) {
+    var ctx = context || {}
+    var lyricModelRef = ctx.lyricModel || playing_page.model_lyric
     var lyrics = [];
     var tim = [];
     var line = " ";
@@ -473,7 +583,7 @@ function next(lines) {
             line = lines[i].match(/^(\[)(\d*)(:)(.*)(\])(.*)/i);
             tim[i] = (parseInt(line[2]) * 60) + parseInt(line[4]); // will give seconds
             lyrics[i] = line[6]; //will give lyrics
-            playing_page.model_lyric.append({
+            lyricModelRef.append({
                 'position': tim[i] * 1000,
                 'line': lyrics[i]
             });

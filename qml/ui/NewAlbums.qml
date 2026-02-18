@@ -8,10 +8,14 @@ import "../logic/Api.js" as Api
 Page {
     id: newAlbumsPage
     property var appRoot
+    property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
     property color primaryTextColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#6a6a6a"
     property color tileColor: appRoot ? appRoot.tileColor : "#ffffff"
     property color tileBorderColor: appRoot ? appRoot.tileBorderColor : "#dcdcdc"
+    property real pagePadding: appRoot ? appRoot.pagePadding : units.gu(1.2)
+    property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
 
     TabsList {
         id: tabsList
@@ -26,7 +30,11 @@ Page {
     }
 
     function getNewAlbums(limit) {
-        Api.getNewAlbums(limit)
+        Api.getNewAlbums(limit, {
+            model: newAlbumsModel,
+            loader: new_albums_loader,
+            errorItem: new_albums_error
+        })
     }
 
     ListModel {
@@ -59,97 +67,104 @@ Page {
         anchors.centerIn: parent
     }
 
-    GridView {
-        id: newAlbumsView
+    Rectangle {
+        color: pageColor
         anchors {
-            margins: 0
             top: newAlbumsPage.header.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
             bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
         }
-        clip: true
-        z: 1
-        width: parent.width
-        height: parent.height
-        cellWidth: (appRoot && appRoot.width > units.gu(25)) ? (parent.width / Math.ceil(parent.width / units.gu(25))) : parent.width
-        cellHeight: cellWidth + units.gu(8)
-        model: newAlbumsModel
-        cacheBuffer: 50
 
-        delegate: MouseArea {
-            width: newAlbumsView.cellWidth
-            height: newAlbumsView.cellHeight
+        GridView {
+            id: newAlbumsView
+            anchors {
+                fill: parent
+                margins: pagePadding
+            }
+            clip: true
+            z: 1
+            width: parent.width
+            height: parent.height
+            cellWidth: (appRoot && appRoot.width > units.gu(25)) ? (width / Math.ceil(width / units.gu(25))) : width
+            cellHeight: cellWidth + units.gu(8)
+            model: newAlbumsModel
+            cacheBuffer: 50
+            interactive: true
 
-            Rectangle {
-                id: item
-                color: tileColor
+            delegate: MouseArea {
+                width: newAlbumsView.cellWidth
+                height: newAlbumsView.cellHeight
 
-                anchors {
-                    fill: parent
-                    margins: 0
-                }
+                Rectangle {
+                    id: item
+                    color: tileColor
 
-                border.color: tileBorderColor
-                border.width: 1
-                radius: units.gu(1.5)
-
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Rectangle {
-                        x: item.x; y: item.y
-                        width: item.width
-                        height: item.height
-                        radius: item.radius
-                    }
-                }
-
-                Column {
                     anchors {
                         fill: parent
-                        margins: 1
+                        margins: spacingSmall / 2
                     }
 
-                    Image {
-                        id: wimage
-                        width: parent.width
-                        height: parent.height - units.gu(8)
-                        source: image
-                        clip: true
-                        cache: true
-                        fillMode: Image.PreserveAspectCrop
-                        //smooth: true
+                    border.color: tileBorderColor
+                    border.width: 1
+                    radius: radiusMedium
+
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: Rectangle {
+                            x: item.x; y: item.y
+                            width: item.width
+                            height: item.height
+                            radius: item.radius
+                        }
                     }
 
-                    Label {
-                        text: name
-                        width: parent.width
-                        height: units.gu(4)
-                        horizontalAlignment: Label.AlignHCenter
-                        verticalAlignment: Label.AlignBottom
-                        elide: Label.ElideRight
-                        fontSize: "medium"
-                        color: primaryTextColor
-                    }
+                    Column {
+                        anchors {
+                            fill: parent
+                            margins: 1
+                        }
+
+                        Image {
+                            id: wimage
+                            width: parent.width
+                            height: parent.height - units.gu(8)
+                            source: image
+                            clip: true
+                            cache: true
+                            fillMode: Image.PreserveAspectCrop
+                        }
+
+                        Label {
+                            text: name
+                            width: parent.width
+                            height: units.gu(4)
+                            horizontalAlignment: Label.AlignHCenter
+                            verticalAlignment: Label.AlignBottom
+                            elide: Label.ElideRight
+                            fontSize: "medium"
+                            color: primaryTextColor
+                        }
 
 
-                    Label {
-                        text: artist
-                        width: parent.width
-                        height: units.gu(4)
-                        horizontalAlignment: Label.AlignHCenter
-                        verticalAlignment: Label.AlignTop
-                        elide: Label.ElideRight
-                        fontSize: "small"
-                        color: secondaryTextColor
+                        Label {
+                            text: artist
+                            width: parent.width
+                            height: units.gu(4)
+                            horizontalAlignment: Label.AlignHCenter
+                            verticalAlignment: Label.AlignTop
+                            elide: Label.ElideRight
+                            fontSize: "small"
+                            color: secondaryTextColor
+                        }
                     }
                 }
-            }
 
-            onClicked: {
-                album_page.cargar(id);
-                pagestack.push(albumPage);
+                onClicked: {
+                    album_page.cargar(id);
+                    pagestack.push(albumPage);
+                }
             }
         }
     }

@@ -2,14 +2,18 @@ import QtQuick 2.12
 import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import "../components"
-import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
 
 Page {
     id: playlistsPage
     property var appRoot
+    property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
+    property color cardColor: appRoot ? appRoot.cardColor : "#ffffff"
+    property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
+    property real pagePadding: appRoot ? appRoot.pagePadding : units.gu(1.2)
+    property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
 
     onVisibleChanged: {
         if (visible) {
@@ -147,9 +151,8 @@ Page {
         }
     }
 
-    Column{
-        id: playlists_wrapper
-        spacing: units.gu(1)
+    Rectangle {
+        color: pageColor
         anchors {
             top: playlistsPage.header.bottom
             left: parent.left
@@ -158,80 +161,91 @@ Page {
             bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
         }
 
-        Item {
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            ListView {
-                id: playlist_lista
-                property int currentId: 0
-                property string current: ""
-                clip: true
-                model: modelo_playlists
-                width: playlists_wrapper.width
-                height: parent.height
-                boundsBehavior: Flickable.StopAtBounds
-                delegate: ListItem {
-                    contentItem.anchors {
-                        leftMargin: units.gu(2)
-                        rightMargin: units.gu(2)
-                        topMargin: units.gu(1)
-                        bottomMargin: units.gu(1)
-                    }
-                    leadingActions: ListItemActions {
-                        actions: [
-                            Action {
-                                iconName: "delete"
-                                onTriggered: {
-                                    playlist_lista.currentId = playlistId
-                                    PopupUtils.open(delplaylist)
+        Rectangle {
+            anchors {
+                fill: parent
+                margins: pagePadding
+            }
+            color: cardColor
+            radius: radiusMedium
+            border.color: borderColor
+            border.width: 1
+            clip: true
+
+            Item {
+                anchors.fill: parent
+                ListView {
+                    id: playlist_lista
+                    property int currentId: 0
+                    property string current: ""
+                    clip: true
+                    model: modelo_playlists
+                    width: parent.width
+                    height: parent.height
+                    boundsBehavior: Flickable.StopAtBounds
+                    delegate: ListItem {
+                        contentItem.anchors {
+                            leftMargin: units.gu(2)
+                            rightMargin: units.gu(2)
+                            topMargin: units.gu(1)
+                            bottomMargin: units.gu(1)
+                        }
+                        leadingActions: ListItemActions {
+                            actions: [
+                                Action {
+                                    iconName: "delete"
+                                    onTriggered: {
+                                        playlist_lista.currentId = playlistId
+                                        PopupUtils.open(delplaylist)
+                                    }
                                 }
-                            }
-                        ]
-                    }
-                    trailingActions: ListItemActions {
-                        actions: [
-                            Action {
-                                iconName: "edit"
-                                onTriggered: {
-                                    playlist_lista.current = playlistName
-                                    playlist_lista.currentId = playlistId
-                                    PopupUtils.open(editplaylist)
+                            ]
+                        }
+                        trailingActions: ListItemActions {
+                            actions: [
+                                Action {
+                                    iconName: "edit"
+                                    onTriggered: {
+                                        playlist_lista.current = playlistName
+                                        playlist_lista.currentId = playlistId
+                                        PopupUtils.open(editplaylist)
+                                    }
                                 }
-                            }
-                        ]
-                    }
+                            ]
+                        }
 
-                    Label {
-                        id: lbl_name
-                        text: playlistName
-                        elide: Text.ElideRight
-                        anchors.left: parent.left
-                        color: textColor
-                    }
+                        Label {
+                            id: lbl_name
+                            text: playlistName
+                            elide: Text.ElideRight
+                            anchors.left: parent.left
+                            color: textColor
+                        }
 
-                    Label {
-                        id: lbl_count
-                        // TRANSLATORS: %1 refers to the amount of songs in playlist
-                        text: i18n.tr("%1 song", "%1 songs", playlistCount).arg(playlistCount)
-                        fontSize: "small"
-                        elide: Text.ElideRight
-                        anchors.left: parent.left
-                        anchors.bottom: parent.bottom
-                        color: secondaryTextColor
-                    }
+                        Label {
+                            id: lbl_count
+                            // TRANSLATORS: %1 refers to the amount of songs in playlist
+                            text: i18n.tr("%1 song", "%1 songs", playlistCount).arg(playlistCount)
+                            fontSize: "small"
+                            elide: Text.ElideRight
+                            anchors.left: parent.left
+                            anchors.bottom: parent.bottom
+                            color: secondaryTextColor
+                        }
 
-                    onClicked: {
-                        playlistDetailPage.title = playlistName
-                        playlistDetailPage.header.title = playlistName
-                        playlist_detail_page.cargar(playlistId)
-                        playlist_detail_page.setStatus(isOffline)
-                        pagestack.push(playlistDetailPage)
+                        onClicked: {
+                            playlistDetailPage.title = playlistName
+                            playlistDetailPage.header.title = playlistName
+                            playlist_detail_page.cargar(playlistId)
+                            playlist_detail_page.setStatus(isOffline)
+                            pagestack.push(playlistDetailPage)
+                        }
                     }
                 }
-            }
-            Scrollbar {
-                flickableItem: playlist_lista
-                align: Qt.AlignTrailing
+                Scrollbar {
+                    flickableItem: playlist_lista
+                    align: Qt.AlignTrailing
+                }
             }
         }
     }

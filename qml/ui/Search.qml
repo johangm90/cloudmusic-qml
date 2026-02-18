@@ -5,8 +5,6 @@ import QtQuick.Layouts 1.2
 import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
 import "../components"
-import QtQuick.LocalStorage 2.0
-import "StorageSearchKey.js" as StorageSearchKey
 
 Page {
     id: searchPage
@@ -19,7 +17,7 @@ Page {
     property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
     property var searchModel: refineDataModel()
-    property int numKeys : StorageSearchKey.doesExistKeyStorage() ? StorageSearchKey.getSize() : 0
+    property int numKeys : dataModel.count
     property var showPopup : true
     property int currentTab: 0
     property int tabAnimDuration: LomiriAnimation.FastDuration
@@ -89,10 +87,9 @@ Page {
             }
             Keys.onReturnPressed: {
                 if(search_query.text!=''){
-                    StorageSearchKey.insertKeyData(search_query.text, numKeys)
-                    numKeys = StorageSearchKey.getSize()
+                    Db.insertSearchHistory(search_query.text, 20)
                     populateDataModel()
-                    Api.apiSearch(search_query.text, 0, 50)
+                    Api.apiSearch(search_query.text, 0, 50, searchApiContext())
                     search_query.cursorVisible = false
                 } else {
                     console.log('search parameter is empty')
@@ -197,7 +194,7 @@ Page {
                           onClicked: {
                               showPopup = false;
                               search_query.text = comboBoxPopOver.model.get(index)[textRole];
-                              Api.apiSearch(search_query.text, 0, 50);
+                              Api.apiSearch(search_query.text, 0, 50, searchApiContext());
                               PopupUtils.close(comboBoxPopOver);
                           }
                           onPressAndHold: {
@@ -216,8 +213,7 @@ Page {
                                           text: i18n.tr("Delete")
                                           color: LomiriColors.red
                                           onClicked: {
-                                             StorageSearchKey.deleteKeyword(comboBoxPopOver.model.get(index)[textRole])
-                                             numKeys = numKeys - 1
+                                             Db.deleteSearchHistory(comboBoxPopOver.model.get(index)[textRole])
                                              populateDataModel()
                                              search_query.textChanged()
                                              PopupUtils.close(dialogue)
@@ -262,7 +258,7 @@ Page {
               }
 
               Connections {
-                  target: pointerTarget
+                  target: search_query
                   onClosePopover: PopupUtils.close(comboBoxPopOver)
               }
         }
@@ -782,9 +778,22 @@ Page {
     }
     function populateDataModel() {
         dataModel.clear()
-        for (var i=numKeys-1; i >= 0; i--) {
-            var keyWord = StorageSearchKey.getValueFromPos(i)
+        var history = Db.getSearchHistory(20)
+        for (var i = 0; i < history.length; i++) {
+            var keyWord = history[i]
             dataModel.append({"searchkey": keyWord})
+        }
+    }
+
+    function searchApiContext() {
+        return {
+            setVisible: is_visible,
+            songsModel: searchSongsModel,
+            albumsModel: searchAlbumsModel,
+            artistsModel: searchArtistsModel,
+            songsLoader: search_songs_loader,
+            albumsLoader: search_albums_loader,
+            artistsLoader: search_artists_loader
         }
     }
 
