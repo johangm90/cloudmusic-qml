@@ -18,15 +18,42 @@ PopupBase {
             visible: parent.visible
 
             onPeerSelected: {
-                      activeTransfer = peer.request()
-                      if (activeTransfer.state === ContentTransfer.InProgress) {
-                          activeTransfer.items = [contentItemComponent.createObject(transferFileDialog, {"url": fileUrl})]
-                          activeTransfer.state = ContentTransfer.Charged
-                      }
-                      PopupUtils.close(transferFileDialog)
+                console.log("File transfer started. File URL: " + fileUrl)
+                
+                // Validate file URL
+                if (!fileUrl || fileUrl === "") {
+                    console.error("Transfer error: file URL is empty")
+                    PopupUtils.close(transferFileDialog)
+                    return
+                }
+                
+                // Ensure proper file:// URL scheme
+                var properUrl = fileUrl
+                if (!properUrl.startsWith("file://")) {
+                    properUrl = "file://" + properUrl
+                }
+                
+                console.log("Using URL for transfer: " + properUrl)
+                
+                activeTransfer = peer.request()
+                if (activeTransfer.state === ContentTransfer.InProgress) {
+                    // Create content item with the file
+                    try {
+                        var contentItem = contentItemComponent.createObject(transferFileDialog, {"url": properUrl})
+                        activeTransfer.items = [contentItem]
+                        activeTransfer.state = ContentTransfer.Charged
+                        console.log("File transfer charged successfully")
+                    } catch (e) {
+                        console.error("Error during file transfer: " + e)
+                    }
+                } else {
+                    console.error("ContentTransfer not in InProgress state: " + activeTransfer.state)
+                }
+                PopupUtils.close(transferFileDialog)
             }
 
             onCancelPressed: {
+                console.log("File transfer cancelled")
                 PopupUtils.close(transferFileDialog)
             }
         }

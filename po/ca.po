@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-17 21:15-0500\n"
+"POT-Creation-Date: 2026-02-17 22:06-0500\n"
 "PO-Revision-Date: 2016-07-25 09:57+0000\n"
 "Last-Translator: Joan CiberSheep <cibersheep@gmail.com>\n"
 "Language-Team: Catalan <ca@li.org>\n"
@@ -45,7 +45,7 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #: qml/components/SongDialog.qml:95 qml/ui/Search.qml:446 qml/ui/Artist.qml:105
-#: qml/ui/Album.qml:100 qml/Main.qml:271
+#: qml/ui/Album.qml:100 qml/Main.qml:277
 msgid "Add to playlist"
 msgstr "Afegeix a la llista de reproducció"
 
@@ -62,7 +62,7 @@ msgid "Add"
 msgstr "Afegeix"
 
 #: qml/components/TabsList.qml:21 qml/ui/SearchHistory.qml:13
-#: qml/ui/Search.qml:28 qml/ui/Search.qml:32 qml/Main.qml:127
+#: qml/ui/Search.qml:28 qml/ui/Search.qml:32 qml/Main.qml:133
 msgid "Search"
 msgstr "Cerca"
 
@@ -126,7 +126,7 @@ msgstr ""
 "S'ha produït un error\n"
 "Toqueu per tornar a provar"
 
-#: qml/ui/NowPlaying.qml:129 qml/ui/Queue.qml:13 qml/Main.qml:321
+#: qml/ui/NowPlaying.qml:129 qml/ui/Queue.qml:13 qml/Main.qml:327
 msgid "Queue"
 msgstr "Cua"
 
@@ -140,7 +140,7 @@ msgid "Available offline"
 msgstr "Disponible sense connexió"
 
 #: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:438 qml/ui/Artist.qml:97
-#: qml/ui/Album.qml:92 qml/Main.qml:135
+#: qml/ui/Album.qml:92 qml/Main.qml:141
 msgid "Download"
 msgstr "Baixa"
 
@@ -281,29 +281,33 @@ msgid ""
 "are of a supported format :("
 msgstr ""
 
-#: qml/Main.qml:75
+#: qml/Main.qml:81
 msgid "%1 songs played today"
 msgstr ""
 
-#: qml/Main.qml:76
+#: qml/Main.qml:82
 msgid "0 songs played today"
 msgstr ""
 
-#: qml/Main.qml:245
+#: qml/Main.qml:251
 msgid "Artist"
 msgstr "Artista"
 
-#: qml/Main.qml:265
+#: qml/Main.qml:271
 msgid "Album"
 msgstr "Àlbum"
 
-#: qml/Main.qml:298
+#: qml/Main.qml:304
 msgid "Playlist"
 msgstr "Llista de reproducció"
 
-#: qml/Main.qml:317
+#: qml/Main.qml:323
 msgid "Now Playing"
 msgstr "S'està reproduint"
+
+#: qml/Main.qml:424
+msgid "Download failed: invalid file path"
+msgstr ""
 
 #~ msgid "Ambiance"
 #~ msgstr "Ambient"

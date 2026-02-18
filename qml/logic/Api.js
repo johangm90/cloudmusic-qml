@@ -348,13 +348,32 @@ function download(id, name, nameArt) {
     cn.open('GET', api2 + 'url/' + id + '/' + cloudMusic.settings.download_quality);
     cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE) {
-            var data = cn.responseText;
-            data = JSON.parse(data);
-            var singleDownload = downloadComponent.createObject(cloudMusic);
-            singleDownload.name = name;
-            var nameArtMod = nameArt.replace(" ", "_")
-            singleDownload.nameArtist = nameArtMod;
-            singleDownload.download(data.url);
+            if (cn.status == 200) {
+                var data = cn.responseText;
+                console.log("Download API response: " + data)
+                try {
+                    data = JSON.parse(data);
+                    if (!data.url) {
+                        console.error("Download error: API response has no URL field")
+                        return
+                    }
+                    console.log("Starting download from URL: " + data.url)
+                    var singleDownload = downloadComponent.createObject(cloudMusic, {
+                        "name": name,
+                        "nameArtist": nameArt.replace(" ", "_")
+                    });
+                    if (!singleDownload) {
+                        console.error("Download error: failed to create SingleDownload component")
+                        return
+                    }
+                    console.log("Calling download with: " + data.url)
+                    singleDownload.download(data.url);
+                } catch (e) {
+                    console.error("Download error: " + e)
+                }
+            } else {
+                console.error("Download API error: status " + cn.status)
+            }
         }
     };
     cn.send();

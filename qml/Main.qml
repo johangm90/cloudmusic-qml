@@ -68,6 +68,12 @@ ApplicationWindow {
         property color primaryColor: appWindow.primaryColor
         property string app_version: appWindow.app_version
 
+        FileManager {
+            id: fileMgr
+        }
+        
+        property var fileManager: fileMgr
+
         // TRANSLATORS: %1 refers to the amount of songs played in the day
         Metric {
             id: cloud_music_metric
@@ -399,9 +405,8 @@ ApplicationWindow {
         Component {
             id: downloadComponent
             SingleDownload {
-                autoStart: false
-                property
-                var contentType
+                autoStart: true
+                property var contentType
                 property string name
                 property string nameArtist
                 property var activeTransfer
@@ -409,23 +414,65 @@ ApplicationWindow {
                     showInIndicator: true
                     title: nameArtist + "-" + name
                 }
-                onDownloadIdChanged: {
-                    activeTransfer = contentPeer.request()
-                    activeTransfer.downloadId = downloadId
-                    activeTransfer.state = ContentTransfer.Downloading
-                }
 
                 onFinished: {
-                    var nameComb = nameArtist + "-" + name + ".mp3"
-                    var fileDir = Api.splitFileName(path)
-                    contentItemTransfer.url = fileDir[0] + fileDir[1]
-                    var resultMove = contentItemTransfer.move(fileDir[0], nameComb)
-                    contentItemTransfer.url = fileDir[0] + nameComb
+                    console.log("Download finished. Path: " + path)
+                    
+                    // Validate that path is not empty
+                    if (!path || path === "") {
+                        console.error("Download error: file path is empty")
+                        messager.show_message(i18n.tr("Download failed: invalid file path"), 3)
+                        destroy()
+                        return
+                    }
+                    
+                    // Generate nice filename from artist and song name
+                    var niceName = nameArtist + "-" + name + ".mp3"
+                    console.log("Nice filename: " + niceName)
+                    
+                    // Try to rename the file using fileManager
+                    var finalPath = path
+                    try {
+                        if (fileMgr && typeof fileMgr.moveFile === 'function') {
+                            console.log("Attempting to rename file: " + niceName)
+                            var moveResult = fileMgr.moveFile(path, niceName)
+                            if (moveResult) {
+                                // Extract directory and build new path
+                                var lastSlash = path.lastIndexOf("/")
+                                var directory = path.substring(0, lastSlash + 1)
+                                finalPath = directory + niceName
+                                console.log("File renamed successfully to: " + finalPath)
+                            } else {
+                                console.warn("FileManager moveFile failed, using original path")
+                            }
+                        } else {
+                            console.warn("FileManager moveFile not available, using original path")
+                        }
+                    } catch (e) {
+                        console.warn("Error renaming file: " + e)
+                    }
+                    
+                    // Convert to file:// URL if needed
+                    var fileUrl = finalPath
+                    if (!fileUrl.startsWith("file://")) {
+                        fileUrl = "file://" + fileUrl
+                    }
+                    
+                    console.log("Using downloaded file: " + fileUrl)
+                    
+                    // Set up content item with the saved file
+                    contentItemTransfer.url = fileUrl
+                    
+                    // Open transfer dialog to let user choose destination
                     PopupUtils.open(transferFileDialog, cloudMusic, {
                                         "contentType": ContentType.Music,
                                         "fileUrl": contentItemTransfer.url
                     })
                     destroy()
+                }
+                
+                Component.onCompleted: {
+                    console.log("SingleDownload component created")
                 }
             }
         }

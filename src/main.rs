@@ -32,6 +32,7 @@ mod qrc;
 #[derive(QObject, Default)]
 struct FileManager {
     base: qt_base_class!(trait QObject),
+    #[allow(non_snake_case)]
     changeFileName: qt_method!(
         fn changeFileName(&self, url_file: String, file_dir: String, name_song: String) {
             let src = PathBuf::from(url_file);
@@ -40,6 +41,32 @@ struct FileManager {
             dest.push(file_name);
             if let Err(err) = fs::rename(&src, &dest) {
                 eprintln!("Failed to rename {:?} -> {:?}: {err}", src, dest);
+            }
+        }
+    ),
+    #[allow(non_snake_case)]
+    moveFile: qt_method!(
+        fn moveFile(&self, source_path: String, new_name: String) -> bool {
+            let src = PathBuf::from(&source_path);
+            
+            // Get the directory from the source path
+            if let Some(parent) = src.parent() {
+                let mut dest = parent.to_path_buf();
+                dest.push(new_name);
+                
+                match fs::rename(&src, &dest) {
+                    Ok(_) => {
+                        eprintln!("File renamed successfully: {:?} -> {:?}", src, dest);
+                        true
+                    }
+                    Err(err) => {
+                        eprintln!("Failed to rename {:?} -> {:?}: {err}", src, dest);
+                        false
+                    }
+                }
+            } else {
+                eprintln!("Failed to get parent directory from path: {source_path}");
+                false
             }
         }
     ),
