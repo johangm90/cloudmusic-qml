@@ -120,10 +120,6 @@ ApplicationWindow {
             }
         }
 
-        ChangeLogDialog {
-            id: changelog_dialog
-        }
-
         // Main Actions for page header
         actions: [
             Action {
@@ -153,9 +149,6 @@ ApplicationWindow {
 
             Component.onCompleted: {
                 Db.init()
-                if (settings.current_version != app_version) {
-                    PopupUtils.open(changelog_dialog)
-                }
                 push(searchLoader)
             }
         }

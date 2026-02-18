@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cloudmusic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 05:16+0000\n"
+"POT-Creation-Date: 2026-02-17 21:15-0500\n"
 "PO-Revision-Date: 2016-07-25 09:57+0000\n"
 "Last-Translator: Joan CiberSheep <cibersheep@gmail.com>\n"
 "Language-Team: Catalan <ca@li.org>\n"
@@ -18,18 +18,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2017-03-19 06:51+0000\n"
 "X-Generator: Launchpad (build 18332)\n"
-
-#: qml/components/ChangeLogDialog.qml:11
-msgid "What's new?"
-msgstr ""
-
-#: qml/components/ChangeLogDialog.qml:39 qml/ui/About.qml:109
-msgid "Donate"
-msgstr ""
-
-#: qml/components/ChangeLogDialog.qml:46
-msgid "Close"
-msgstr ""
 
 #: qml/components/SongDialog.qml:36
 msgid "Album added to playlist"
@@ -57,7 +45,7 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #: qml/components/SongDialog.qml:95 qml/ui/Search.qml:446 qml/ui/Artist.qml:105
-#: qml/ui/Album.qml:100 qml/Main.qml:278
+#: qml/ui/Album.qml:100 qml/Main.qml:271
 msgid "Add to playlist"
 msgstr "Afegeix a la llista de reproducció"
 
@@ -74,7 +62,7 @@ msgid "Add"
 msgstr "Afegeix"
 
 #: qml/components/TabsList.qml:21 qml/ui/SearchHistory.qml:13
-#: qml/ui/Search.qml:28 qml/ui/Search.qml:32 qml/Main.qml:131
+#: qml/ui/Search.qml:28 qml/ui/Search.qml:32 qml/Main.qml:127
 msgid "Search"
 msgstr "Cerca"
 
@@ -106,6 +94,10 @@ msgstr "Versió %1"
 msgid "Released under the terms of the GNU GPL v3"
 msgstr "Publicat sota els termes de la llicència GNU GPL v3"
 
+#: qml/ui/About.qml:109
+msgid "Donate"
+msgstr ""
+
 #: qml/ui/About.qml:119
 msgid "Report bugs on %1"
 msgstr "Comuniqueu els errors a %1"
@@ -134,7 +126,7 @@ msgstr ""
 "S'ha produït un error\n"
 "Toqueu per tornar a provar"
 
-#: qml/ui/NowPlaying.qml:129 qml/ui/Queue.qml:13 qml/Main.qml:328
+#: qml/ui/NowPlaying.qml:129 qml/ui/Queue.qml:13 qml/Main.qml:321
 msgid "Queue"
 msgstr "Cua"
 
@@ -148,7 +140,7 @@ msgid "Available offline"
 msgstr "Disponible sense connexió"
 
 #: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:438 qml/ui/Artist.qml:97
-#: qml/ui/Album.qml:92 qml/Main.qml:139
+#: qml/ui/Album.qml:92 qml/Main.qml:135
 msgid "Download"
 msgstr "Baixa"
 
@@ -297,19 +289,19 @@ msgstr ""
 msgid "0 songs played today"
 msgstr ""
 
-#: qml/Main.qml:252
+#: qml/Main.qml:245
 msgid "Artist"
 msgstr "Artista"
 
-#: qml/Main.qml:272
+#: qml/Main.qml:265
 msgid "Album"
 msgstr "Àlbum"
 
-#: qml/Main.qml:305
+#: qml/Main.qml:298
 msgid "Playlist"
 msgstr "Llista de reproducció"
 
-#: qml/Main.qml:324
+#: qml/Main.qml:317
 msgid "Now Playing"
 msgstr "S'està reproduint"
 

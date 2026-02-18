@@ -2,8 +2,6 @@ qrc!(qml_resources,
     "/" {
         "assets/logo.svg",
         "qml/Main.qml",
-        "qml/components/ChangeLogDialog.qml",
-        "qml/components/ChangeLogListItem.qml",
         "qml/components/DownloadDialog.qml",
         "qml/components/HeaderListItem.qml",
         "qml/components/Messager.qml",
