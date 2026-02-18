@@ -1,10 +1,10 @@
 import QtQuick 2.12
 import Lomiri.Components 1.3
 import QtMultimedia 5.6
-import "../logic/Api.js" as Api
 
 MediaPlayer {
     id: playMusic
+    property bool debugLogs: false
     property int queue: 0
     property bool autoplayPending: false
     property int autoplayAttempts: 0
@@ -13,6 +13,12 @@ MediaPlayer {
     property int autoplayProgressTicks: 0
     property bool autoplayPauseIssued: false
     property bool autoplayHardFailed: false
+
+    function logDebug(message) {
+        if (debugLogs) {
+            console.log(message)
+        }
+    }
 
     function stopAutoplayRetry(success, silent) {
         autoplayPending = false
@@ -23,9 +29,9 @@ MediaPlayer {
         autoplayRetry.stop()
         if (!silent) {
             if (success) {
-                console.log("Autoplay ready.")
+                logDebug("Autoplay ready.")
             } else {
-                console.log("Autoplay failed after retries.")
+                logDebug("Autoplay failed after retries.")
             }
         }
     }
@@ -102,7 +108,7 @@ MediaPlayer {
         id: playlist
         onCurrentItemSourceChanged: {
             playing_page.setIndex(currentIndex)
-            console.log(playlist.currentItemSource);
+            logDebug(playlist.currentItemSource);
             cloud_music_metric.increment(1)
             if (playMusic.autoplayPending &&
                 (playMusic.autoplayTargetIndex < 0 || currentIndex === playMusic.autoplayTargetIndex) &&
@@ -117,7 +123,7 @@ MediaPlayer {
     }
 
     onStatusChanged: {
-        console.log("[Status] " + status)
+        logDebug("[Status] " + status)
         if (status === MediaPlayer.InvalidMedia) {
             stopAutoplayRetry(false, false)
             return
@@ -130,7 +136,7 @@ MediaPlayer {
             }
         }
         if (status == 2){
-            console.log("[Status] changed to: " + status)
+            logDebug("[Status] changed to: " + status)
             //cloud_music_metric.increment(1)
         }
     }
@@ -183,10 +189,16 @@ MediaPlayer {
         }
     }
 
-    function setSuffleMode(value){
+    function setShuffleMode(value){
         if(value){
             playlist.playbackMode = Playlist.Random
+        } else {
+            playlist.playbackMode = Playlist.Sequential
         }
+    }
+
+    function setSuffleMode(value){
+        setShuffleMode(value)
     }
 
     function setRepeatMode(mode){
@@ -199,8 +211,8 @@ MediaPlayer {
         }
     }
 
-    function togle(){
-        console.log('[Playing] ' + MediaPlayer.PlayingState)
+    function toggle(){
+        logDebug('[Playing] ' + MediaPlayer.PlayingState)
         if(playMusic.playbackState === MediaPlayer.PlayingState){
             try {
                 playMusic.pause()
@@ -216,12 +228,20 @@ MediaPlayer {
         }
     }
 
-    function previuos(){
+    function togle(){
+        toggle()
+    }
+
+    function previous(){
         try {
             playlist.previous()
         } catch(e) {
            console.log(e)
         }
+    }
+
+    function previuos(){
+        previous()
     }
 
     function next(){
@@ -238,7 +258,7 @@ MediaPlayer {
 
     function setIndex(index){
         playlist.currentIndex = index
-        console.log('[Playing] ' + MediaPlayer.PlayingState)
+        logDebug('[Playing] ' + MediaPlayer.PlayingState)
         if(playMusic.playbackState != MediaPlayer.PlayingState){
             try{
                 playMusic.play()

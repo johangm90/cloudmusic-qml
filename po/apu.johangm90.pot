@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-18 08:02-0500\n"
+"POT-Creation-Date: 2026-02-18 11:17-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,300 +18,242 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: qml/components/TabsList.qml:21 qml/ui/SearchHistory.qml:13
-#: qml/ui/Search.qml:27 qml/ui/Search.qml:31 qml/Main.qml:172
-msgid "Search"
-msgstr ""
-
-#: qml/components/TabsList.qml:30 qml/ui/NewAlbums.qml:26
-msgid "New Albums"
-msgstr ""
-
-#: qml/components/TabsList.qml:39 qml/ui/TopArtists.qml:24
-msgid "Top Artists"
-msgstr ""
-
-#: qml/components/TabsList.qml:48 qml/ui/Library.qml:42
-msgid "Library"
-msgstr ""
-
-#: qml/components/TabsList.qml:57 qml/ui/SettingsPage.qml:15
-msgid "Settings"
-msgstr ""
-
-#: qml/components/TabsList.qml:66 qml/ui/About.qml:29 qml/ui/About.qml:179
-msgid "About"
-msgstr ""
-
-#: qml/components/SongDialog.qml:37
+#: qml/components/SongDialog.qml:36
 msgid "Album added to playlist"
 msgstr ""
 
-#: qml/components/SongDialog.qml:40
+#: qml/components/SongDialog.qml:39
 msgid "Song added to playlist"
 msgstr ""
 
-#: qml/components/SongDialog.qml:58 qml/ui/Library.qml:63
+#: qml/components/SongDialog.qml:57 qml/ui/Library.qml:66
 msgid "New playlist"
 msgstr ""
 
-#: qml/components/SongDialog.qml:62 qml/ui/Library.qml:66
+#: qml/components/SongDialog.qml:61 qml/ui/Library.qml:69
 msgid "Enter playlist name"
 msgstr ""
 
-#: qml/components/SongDialog.qml:72 qml/ui/Library.qml:71
+#: qml/components/SongDialog.qml:71 qml/ui/Library.qml:74
 msgid "Create"
 msgstr ""
 
-#: qml/components/SongDialog.qml:82 qml/components/SongDialog.qml:148
-#: qml/ui/Library.qml:80 qml/ui/Library.qml:114 qml/ui/Library.qml:137
+#: qml/components/SongDialog.qml:83 qml/components/SongDialog.qml:149
+#: qml/ui/Library.qml:83 qml/ui/Library.qml:117 qml/ui/Library.qml:140
 msgid "Cancel"
 msgstr ""
 
-#: qml/components/SongDialog.qml:96 qml/ui/Search.qml:460 qml/ui/Artist.qml:132
-#: qml/ui/Album.qml:112 qml/Main.qml:316
+#: qml/components/SongDialog.qml:97 qml/ui/Album.qml:164 qml/ui/Artist.qml:209
+#: qml/ui/Search.qml:524 qml/Main.qml:377
 msgid "Add to playlist"
 msgstr ""
 
-#: qml/components/SongDialog.qml:97
+#: qml/components/SongDialog.qml:98
 msgid "Select one playlist to add"
 msgstr ""
 
-#: qml/components/SongDialog.qml:111
+#: qml/components/SongDialog.qml:112
 msgid "Create new playlist"
 msgstr ""
 
-#: qml/components/SongDialog.qml:138
+#: qml/components/SongDialog.qml:139
 msgid "Add"
 msgstr ""
 
-#: qml/ui/About.qml:78
+#: qml/components/TabsList.qml:26 qml/ui/Search.qml:30 qml/ui/Search.qml:34
+#: qml/ui/SearchHistory.qml:15 qml/Main.qml:185
+msgid "Search"
+msgstr ""
+
+#: qml/components/TabsList.qml:35 qml/ui/NewAlbums.qml:28
+msgid "New Albums"
+msgstr ""
+
+#: qml/components/TabsList.qml:44 qml/ui/TopArtists.qml:26
+msgid "Top Artists"
+msgstr ""
+
+#: qml/components/TabsList.qml:53 qml/ui/Library.qml:45
+msgid "Library"
+msgstr ""
+
+#: qml/components/TabsList.qml:62 qml/ui/SettingsPage.qml:17
+msgid "Settings"
+msgstr ""
+
+#: qml/components/TabsList.qml:71 qml/ui/About.qml:34 qml/ui/About.qml:167
+msgid "About"
+msgstr ""
+
+#: qml/ui/About.qml:83
 msgid "Version %1"
 msgstr ""
 
-#: qml/ui/About.qml:101
+#: qml/ui/About.qml:106
 msgid "Released under the terms of the GNU GPL v3"
 msgstr ""
 
-#: qml/ui/About.qml:109
+#: qml/ui/About.qml:114
 msgid "Donate"
 msgstr ""
 
-#: qml/ui/About.qml:119
+#: qml/ui/About.qml:124
 msgid "Report bugs on %1"
 msgstr ""
 
-#: qml/ui/About.qml:201
+#: qml/ui/About.qml:167
 msgid "Credits"
 msgstr ""
 
-#: qml/ui/NewAlbums.qml:60 qml/ui/TopArtists.qml:58
-msgid ""
-"An error occurred\n"
-"Touch to retry"
+#: qml/ui/Album.qml:50
+msgid "Release Date:"
 msgstr ""
 
-#: qml/ui/Queue.qml:14 qml/ui/NowPlaying.qml:208 qml/Main.qml:442
-msgid "Queue"
-msgstr ""
-
-#: qml/ui/SettingsPage.qml:32
-msgid "Download quality"
-msgstr ""
-
-#: qml/ui/SettingsPage.qml:38
-msgid "Streaming quality"
-msgstr ""
-
-#: qml/ui/SettingsPage.qml:57 qml/ui/SettingsPage.qml:89
-msgid "Normal"
-msgstr ""
-
-#: qml/ui/SettingsPage.qml:57 qml/ui/SettingsPage.qml:89
-msgid "High"
-msgstr ""
-
-#: qml/ui/SettingsPage.qml:57 qml/ui/SettingsPage.qml:89
-msgid "Extreme"
-msgstr ""
-
-#: qml/ui/SettingsPage.qml:108
-msgid "Theme"
-msgstr ""
-
-#: qml/ui/Credits.qml:19 qml/ui/Credits.qml:20
-msgid "Developers"
-msgstr ""
-
-#: qml/ui/Credits.qml:21
-msgid "Icon"
-msgstr ""
-
-#: qml/ui/Credits.qml:22
-msgid "Translators"
-msgstr ""
-
-#: qml/ui/NowPlaying.qml:218 qml/ui/Artist.qml:442 qml/ui/Artist.qml:562
-#: qml/ui/Album.qml:319
-msgid "%1 total"
-msgstr ""
-
-#: qml/ui/PlaylistDetail.qml:42
-msgid "Available offline"
-msgstr ""
-
-#: qml/ui/PlaylistDetail.qml:145 qml/ui/Search.qml:452 qml/ui/Artist.qml:124
-#: qml/ui/Album.qml:104 qml/Main.qml:180
+#: qml/ui/Album.qml:150 qml/ui/Artist.qml:195 qml/ui/PlaylistDetail.qml:231
+#: qml/ui/Search.qml:510 qml/Main.qml:193
 msgid "Download"
 msgstr ""
 
-#: qml/ui/PlaylistDetail.qml:153
-msgid "Remove"
-msgstr ""
-
-#: qml/ui/PlaylistDetail.qml:159
-msgid "Song removed"
-msgstr ""
-
-#: qml/ui/PlaylistDetail.qml:163 qml/ui/Search.qml:471 qml/ui/Artist.qml:143
-#: qml/ui/Album.qml:123 qml/ui/LibrarySongs.qml:115
+#: qml/ui/Album.qml:175 qml/ui/Artist.qml:220 qml/ui/LibrarySongs.qml:115
+#: qml/ui/PlaylistDetail.qml:255 qml/ui/Search.qml:535
 msgid "Add to queue"
 msgstr ""
 
-#: qml/ui/PlaylistDetail.qml:173 qml/ui/Search.qml:478 qml/ui/Artist.qml:152
-#: qml/ui/Album.qml:132 qml/ui/LibrarySongs.qml:125
+#: qml/ui/Album.qml:184 qml/ui/Artist.qml:229 qml/ui/LibrarySongs.qml:125
+#: qml/ui/PlaylistDetail.qml:265 qml/ui/Search.qml:542
 msgid "Song added to queue"
 msgstr ""
 
-#: qml/ui/PlaylistDetail.qml:177 qml/ui/Search.qml:495 qml/ui/Artist.qml:169
-#: qml/ui/LibrarySongs.qml:156
-msgid "Go to album"
-msgstr ""
-
-#: qml/ui/PlaylistDetail.qml:186 qml/ui/Search.qml:504 qml/ui/Album.qml:149
-#: qml/ui/LibrarySongs.qml:166
-msgid "Go to artist"
-msgstr ""
-
-#: qml/ui/Search.qml:228
-msgid "Item deletion"
-msgstr ""
-
-#: qml/ui/Search.qml:229
-msgid "The selected element to be deleted from the search list is: "
-msgstr ""
-
-#: qml/ui/Search.qml:231 qml/ui/Library.qml:128
-msgid "Delete"
-msgstr ""
-
-#: qml/ui/Search.qml:241
-msgid "Return"
-msgstr ""
-
-#: qml/ui/Search.qml:327 qml/ui/Search.qml:410
-msgid "Songs"
-msgstr ""
-
-#: qml/ui/Search.qml:348 qml/ui/Search.qml:593 qml/ui/Artist.qml:379
-#: qml/ui/Artist.qml:552
-msgid "Albums"
-msgstr ""
-
-#: qml/ui/Search.qml:369 qml/ui/Search.qml:657
-msgid "Artists"
-msgstr ""
-
-#: qml/ui/Search.qml:483 qml/ui/Artist.qml:157 qml/ui/Album.qml:137
-#: qml/ui/LibrarySongs.qml:131 qml/Main.qml:451
+#: qml/ui/Album.qml:189 qml/ui/Artist.qml:234 qml/ui/LibrarySongs.qml:131
+#: qml/ui/Search.qml:547 qml/Main.qml:512
 msgid "Remove from Favorites"
 msgstr ""
 
-#: qml/ui/Search.qml:484 qml/ui/Artist.qml:158 qml/ui/Album.qml:138
-#: qml/ui/LibrarySongs.qml:132 qml/Main.qml:451
+#: qml/ui/Album.qml:190 qml/ui/Artist.qml:235 qml/ui/LibrarySongs.qml:132
+#: qml/ui/Search.qml:548 qml/Main.qml:512
 msgid "Add to Favorites"
 msgstr ""
 
-#: qml/ui/Search.qml:490 qml/ui/Artist.qml:164 qml/ui/Album.qml:144
-#: qml/ui/LibrarySongs.qml:148 qml/Main.qml:455
+#: qml/ui/Album.qml:196 qml/ui/Artist.qml:241 qml/ui/LibrarySongs.qml:148
+#: qml/ui/Search.qml:554 qml/Main.qml:516
 msgid "Added to Favorites"
 msgstr ""
 
-#: qml/ui/Search.qml:490 qml/ui/Artist.qml:164 qml/ui/Album.qml:144
-#: qml/ui/LibrarySongs.qml:148 qml/Main.qml:455
+#: qml/ui/Album.qml:196 qml/ui/Artist.qml:241 qml/ui/LibrarySongs.qml:148
+#: qml/ui/Search.qml:554 qml/Main.qml:516
 msgid "Removed from Favorites"
 msgstr ""
 
-#: qml/ui/Search.qml:618 qml/ui/Artist.qml:625 qml/ui/Album.qml:273
-#: qml/ui/Library.qml:320
+#: qml/ui/Album.qml:201 qml/ui/LibrarySongs.qml:166
+#: qml/ui/PlaylistDetail.qml:278 qml/ui/Search.qml:568
+msgid "Go to artist"
+msgstr ""
+
+#: qml/ui/Album.qml:325 qml/ui/Artist.qml:702 qml/ui/Library.qml:323
+#: qml/ui/Search.qml:682
 msgid "%1 song"
 msgid_plural "%1 songs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: qml/ui/Artist.qml:288
-msgid "Artist profile"
-msgstr ""
-
-#: qml/ui/Artist.qml:306
-msgid "%1 tracks"
-msgstr ""
-
-#: qml/ui/Artist.qml:320
-msgid "%1 albums"
-msgstr ""
-
-#: qml/ui/Artist.qml:357 qml/ui/Artist.qml:432
-msgid "Top Songs"
-msgstr ""
-
-#: qml/ui/Album.qml:309
+#: qml/ui/Album.qml:361
 msgid "Tracks"
 msgstr ""
 
-#: qml/ui/Album.qml:396
+#: qml/ui/Album.qml:371 qml/ui/Artist.qml:519 qml/ui/Artist.qml:639
+#: qml/ui/NowPlaying.qml:340
+msgid "%1 total"
+msgstr ""
+
+#: qml/ui/Album.qml:448
 msgid ""
 "I'm sorry, list is empty because none of the songs included in this album "
 "are of a supported format :("
 msgstr ""
 
-#: qml/ui/Library.qml:50
+#: qml/ui/Artist.qml:43 qml/ui/Artist.qml:72 qml/Main.qml:351
+msgid "Artist"
+msgstr ""
+
+#: qml/ui/Artist.qml:246 qml/ui/LibrarySongs.qml:156
+#: qml/ui/PlaylistDetail.qml:269 qml/ui/Search.qml:559
+msgid "Go to album"
+msgstr ""
+
+#: qml/ui/Artist.qml:365
+msgid "Artist profile"
+msgstr ""
+
+#: qml/ui/Artist.qml:383
+msgid "%1 tracks"
+msgstr ""
+
+#: qml/ui/Artist.qml:397
+msgid "%1 albums"
+msgstr ""
+
+#: qml/ui/Artist.qml:434 qml/ui/Artist.qml:509
+msgid "Top Songs"
+msgstr ""
+
+#: qml/ui/Artist.qml:456 qml/ui/Artist.qml:629 qml/ui/Search.qml:429
+#: qml/ui/Search.qml:657
+msgid "Albums"
+msgstr ""
+
+#: qml/ui/Credits.qml:22 qml/ui/Credits.qml:23
+msgid "Developers"
+msgstr ""
+
+#: qml/ui/Credits.qml:24
+msgid "Icon"
+msgstr ""
+
+#: qml/ui/Credits.qml:25
+msgid "Translators"
+msgstr ""
+
+#: qml/ui/Library.qml:53
 msgid "Add Playlist"
 msgstr ""
 
-#: qml/ui/Library.qml:91
+#: qml/ui/Library.qml:94
 msgid "Edit playlist"
 msgstr ""
 
-#: qml/ui/Library.qml:95
+#: qml/ui/Library.qml:98
 msgid "Edit playlist name"
 msgstr ""
 
-#: qml/ui/Library.qml:105
+#: qml/ui/Library.qml:108
 msgid "Save"
 msgstr ""
 
-#: qml/ui/Library.qml:125
+#: qml/ui/Library.qml:128
 msgid "Delete playlist"
 msgstr ""
 
-#: qml/ui/Library.qml:126
+#: qml/ui/Library.qml:129
 msgid "This cannot be undone"
 msgstr ""
 
-#: qml/ui/Library.qml:190 qml/Main.qml:362
+#: qml/ui/Library.qml:131 qml/ui/Search.qml:350
+msgid "Delete"
+msgstr ""
+
+#: qml/ui/Library.qml:193 qml/Main.qml:423
 msgid "Favorites"
 msgstr ""
 
-#: qml/ui/Library.qml:195 qml/ui/Library.qml:239
+#: qml/ui/Library.qml:198 qml/ui/Library.qml:242
 msgid "%1 songs"
 msgstr ""
 
-#: qml/ui/Library.qml:234 qml/Main.qml:400
+#: qml/ui/Library.qml:237 qml/Main.qml:461
 msgid "Recently Played"
 msgstr ""
 
-#: qml/ui/Library.qml:271
+#: qml/ui/Library.qml:274
 msgid "Playlists"
 msgstr ""
 
@@ -327,38 +269,121 @@ msgstr ""
 msgid "No favorites yet"
 msgstr ""
 
-#: qml/Main.qml:112
-msgid "%1 songs played today"
+#: qml/ui/NewAlbums.qml:120 qml/ui/TopArtists.qml:114
+msgid ""
+"An error occurred\n"
+"Touch to retry"
 msgstr ""
 
-#: qml/Main.qml:113
-msgid "0 songs played today"
-msgstr ""
-
-#: qml/Main.qml:290
-msgid "Artist"
-msgstr ""
-
-#: qml/Main.qml:310
-msgid "Album"
-msgstr ""
-
-#: qml/Main.qml:343
-msgid "Playlist"
-msgstr ""
-
-#: qml/Main.qml:366
-msgid "Search in Favorites"
-msgstr ""
-
-#: qml/Main.qml:404
-msgid "Search in Recently Played"
-msgstr ""
-
-#: qml/Main.qml:438
+#: qml/ui/NowPlaying.qml:168 qml/ui/NowPlaying.qml:169
+#: qml/ui/NowPlaying.qml:188 qml/Main.qml:499
 msgid "Now Playing"
 msgstr ""
 
-#: qml/Main.qml:548
+#: qml/ui/NowPlaying.qml:232 qml/ui/NowPlaying.qml:251
+msgid "No lyrics available"
+msgstr ""
+
+#: qml/ui/NowPlaying.qml:237
+msgid "I'm sorry but I forgot that lyric :("
+msgstr ""
+
+#: qml/ui/NowPlaying.qml:330 qml/ui/Queue.qml:14 qml/Main.qml:503
+msgid "Queue"
+msgstr ""
+
+#: qml/ui/PlaylistDetail.qml:128
+msgid "Available offline"
+msgstr ""
+
+#: qml/ui/PlaylistDetail.qml:245
+msgid "Remove"
+msgstr ""
+
+#: qml/ui/PlaylistDetail.qml:251
+msgid "Song removed"
+msgstr ""
+
+#: qml/ui/Search.qml:347
+msgid "Item deletion"
+msgstr ""
+
+#: qml/ui/Search.qml:348
+msgid "The selected element to be deleted from the search list is: "
+msgstr ""
+
+#: qml/ui/Search.qml:360
+msgid "Return"
+msgstr ""
+
+#: qml/ui/Search.qml:429 qml/ui/Search.qml:468
+msgid "Songs"
+msgstr ""
+
+#: qml/ui/Search.qml:429 qml/ui/Search.qml:721
+msgid "Artists"
+msgstr ""
+
+#: qml/ui/SettingsPage.qml:39
+msgid "Download quality"
+msgstr ""
+
+#: qml/ui/SettingsPage.qml:45
+msgid "Streaming quality"
+msgstr ""
+
+#: qml/ui/SettingsPage.qml:64 qml/ui/SettingsPage.qml:96
+msgid "Normal"
+msgstr ""
+
+#: qml/ui/SettingsPage.qml:64 qml/ui/SettingsPage.qml:96
+msgid "High"
+msgstr ""
+
+#: qml/ui/SettingsPage.qml:64 qml/ui/SettingsPage.qml:96
+msgid "Extreme"
+msgstr ""
+
+#: qml/ui/SettingsPage.qml:116
+msgid "Theme"
+msgstr ""
+
+#: qml/Main.qml:117
+msgid "%1 songs played today"
+msgstr ""
+
+#: qml/Main.qml:118
+msgid "0 songs played today"
+msgstr ""
+
+#: qml/Main.qml:209
+msgid "Download failed: missing song id"
+msgstr ""
+
+#: qml/Main.qml:216
+msgid "Unknown"
+msgstr ""
+
+#: qml/Main.qml:224 qml/Main.qml:233 qml/Main.qml:240
+msgid "Download failed"
+msgstr ""
+
+#: qml/Main.qml:371
+msgid "Album"
+msgstr ""
+
+#: qml/Main.qml:404
+msgid "Playlist"
+msgstr ""
+
+#: qml/Main.qml:427
+msgid "Search in Favorites"
+msgstr ""
+
+#: qml/Main.qml:465
+msgid "Search in Recently Played"
+msgstr ""
+
+#: qml/Main.qml:609
 msgid "Download failed: invalid file path"
 msgstr ""

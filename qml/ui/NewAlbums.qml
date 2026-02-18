@@ -3,7 +3,6 @@ import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import "../components"
-import "../logic/Api.js" as Api
 import "../logic/CoverCache.js" as CoverCache
 
 Page {
@@ -17,6 +16,14 @@ Page {
     property real pagePadding: appRoot ? appRoot.pagePadding : units.gu(1.2)
     property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
     property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real gridBreakpoint: units.gu(25)
+    property real albumMetaHeight: units.gu(8)
+    property real albumTitleHeight: units.gu(4)
+    property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
+    property string bodySmallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
+    property int requestSeq: 0
+    property string activeRequestId: ""
+    property bool initialLoadDone: false
 
     TabsList {
         id: tabsList
@@ -31,18 +38,76 @@ Page {
     }
 
     function getNewAlbums(limit) {
-        Api.getNewAlbums(limit, {
-            model: newAlbumsModel,
-            loader: new_albums_loader,
-            errorItem: new_albums_error
-        })
+        if (!appRoot || !appRoot.cloudApi) {
+            new_albums_error.visible = true
+            return
+        }
+        new_albums_error.visible = false
+        newAlbumsModel.clear()
+        new_albums_loader.running = true
+        requestSeq += 1
+        activeRequestId = "new_albums_" + requestSeq
+        appRoot.cloudApi.getNewAlbumsAsync(Number(limit), activeRequestId)
+    }
+
+    function ensureInitialLoad() {
+        if (initialLoadDone) {
+            return
+        }
+        if (!appRoot || !appRoot.cloudApi) {
+            return
+        }
+        initialLoadDone = true
+        getNewAlbums(50)
+    }
+
+    onAppRootChanged: ensureInitialLoad()
+
+    Component.onCompleted: {
+        Qt.callLater(ensureInitialLoad)
+    }
+
+    Connections {
+        target: appRoot && appRoot.cloudApi ? appRoot.cloudApi : null
+        onRequestFinished: function(requestId, ok, payloadJson, error) {
+            if (String(requestId) !== activeRequestId) {
+                return
+            }
+            new_albums_loader.running = false
+            if (!ok) {
+                console.log(error)
+                new_albums_error.visible = true
+                return
+            }
+            try {
+                var data = JSON.parse(payloadJson)
+                if (!data || !data.albums) {
+                    new_albums_error.visible = true
+                    return
+                }
+                for (var i = 0; i < data.albums.length; i++) {
+                    var album = data.albums[i]
+                    var date = new Date(album.publish_time ? album.publish_time : 0)
+                    var releaseDate = date.getFullYear() + "-" + ((date.getMonth() + 1 < 10) ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1)) + "-" + ((date.getDate() < 10) ? ("0" + date.getDate()) : date.getDate())
+                    newAlbumsModel.append({
+                        id: album.id,
+                        name: album.name,
+                        artist: album.artist,
+                        date: releaseDate,
+                        image: album.image ? album.image : "../graphics/default.png",
+                        big_image: album.big_image ? album.big_image : "../graphics/default.png",
+                        source: "netease"
+                    })
+                }
+            } catch (e) {
+                console.log(e)
+                new_albums_error.visible = true
+            }
+        }
     }
 
     ListModel {
         id: newAlbumsModel
-        Component.onCompleted: {
-            getNewAlbums(50)
-        }
     }
 
     MouseArea {
@@ -75,7 +140,7 @@ Page {
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-            bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+            bottomMargin: media_player.playbackState != 0 ? (appRoot && appRoot.layoutPlayerInset ? appRoot.layoutPlayerInset : units.gu(7.25)) : 0
         }
 
         GridView {
@@ -88,8 +153,8 @@ Page {
             z: 1
             width: parent.width
             height: parent.height
-            cellWidth: (appRoot && appRoot.width > units.gu(25)) ? (width / Math.ceil(width / units.gu(25))) : width
-            cellHeight: cellWidth + units.gu(8)
+            cellWidth: (appRoot && appRoot.width > gridBreakpoint) ? (width / Math.ceil(width / gridBreakpoint)) : width
+            cellHeight: cellWidth + albumMetaHeight
             model: newAlbumsModel
             cacheBuffer: 50
             interactive: true
@@ -130,7 +195,7 @@ Page {
                         Image {
                             id: wimage
                             width: parent.width
-                            height: parent.height - units.gu(8)
+                            height: parent.height - albumMetaHeight
                             source: CoverCache.resolve(id, image, "../graphics/default.png")
                             clip: true
                             cache: true
@@ -140,11 +205,11 @@ Page {
                         Label {
                             text: name
                             width: parent.width
-                            height: units.gu(4)
+                            height: albumTitleHeight
                             horizontalAlignment: Label.AlignHCenter
                             verticalAlignment: Label.AlignBottom
                             elide: Label.ElideRight
-                            fontSize: "medium"
+                            fontSize: bodyTextSize
                             color: primaryTextColor
                         }
 
@@ -152,11 +217,11 @@ Page {
                         Label {
                             text: artist
                             width: parent.width
-                            height: units.gu(4)
+                            height: albumTitleHeight
                             horizontalAlignment: Label.AlignHCenter
                             verticalAlignment: Label.AlignTop
                             elide: Label.ElideRight
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             color: secondaryTextColor
                         }
                     }

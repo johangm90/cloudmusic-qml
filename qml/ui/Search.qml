@@ -2,7 +2,8 @@ import QtQuick 2.12
 import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import QtQuick.Layouts 1.2
-import "../logic/Api.js" as Api
+import "../logic/Format.js" as Format
+import "../logic/RequestBus.js" as RequestBus
 import "../logic/Database.js" as Db
 import "../components"
 
@@ -16,12 +17,26 @@ Page {
     property color sectionColor: appRoot ? appRoot.sectionColor : "#333333"
     property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
+    property color overlayColor: appRoot && appRoot.designTokens ? appRoot.designTokens.color.overlay : "#55000000"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real sideInset: spacingMedium + spacingSmall
+    property real popupItemMargin: spacingSmall * 0.6
+    property real sectionTabsHeight: units.gu(6)
+    property real sectionTitleHeight: units.gu(5)
+    property real sectionTitleInset: spacingSmall + units.gu(0.2)
+    property real gridBreakpoint: units.gu(25)
+    property real artistCaptionHeight: units.gu(4)
+    property string titleTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
+    property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
     property var searchModel: refineDataModel()
     property int numKeys : dataModel.count
     property var showPopup : true
     property int currentTab: 0
     property int tabAnimDuration: LomiriAnimation.FastDuration
     property bool searchLoading: false
+    property int pendingSearchRequests: 0
+    property string requestContext: "search_" + String(Date.now())
 
     header: PageHeader {
         title: i18n.tr("Search")
@@ -38,9 +53,9 @@ Page {
                 }
             }
             anchors.fill: parent
-            anchors.rightMargin: units.gu(2)
-            anchors.topMargin: units.gu(1)
-            anchors.bottomMargin: units.gu(1)
+            anchors.rightMargin: sideInset
+            anchors.topMargin: spacingSmall + units.gu(0.2)
+            anchors.bottomMargin: spacingSmall + units.gu(0.2)
             onTextChanged: {
                       closePopover();
                       if (numKeys>0) {
@@ -49,7 +64,7 @@ Page {
                                   var properties = {
                                       "model": searchModel,
                                       "itemHeight": search_query.height,
-                                      "itemMargins": units.gu(0.5),
+                                      "itemMargins": popupItemMargin,
                                       "contentWidth": search_query.width,
                                       "textRole": "searchkey",
                                   }
@@ -70,7 +85,7 @@ Page {
                                   var properties = {
                                       "model": dataModel,
                                       "itemHeight": search_query.height,
-                                      "itemMargins": units.gu(0.5),
+                                      "itemMargins": popupItemMargin,
                                       "contentWidth": search_query.width,
                                       "textRole": "searchkey",
                                   }
@@ -109,12 +124,16 @@ Page {
               var properties = {
                   "model": dataModel,
                   "itemHeight": search_query.height,
-                  "itemMargins": units.gu(0.5),
+                  "itemMargins": popupItemMargin,
                   "contentWidth": search_query.width,
                   "textRole": "searchkey",
               }
               PopupUtils.open(comboBoxPopup, search_query, properties); 
               search_query.cursorVisible = true
+    }
+
+    Component.onDestruction: {
+        RequestBus.cancelContext(requestContext)
     }
 
     Timer {
@@ -125,6 +144,115 @@ Page {
             if (search_query.text && search_query.text.length >= 2) {
                 executeSearch(search_query.text, false)
             }
+        }
+    }
+
+    function formatDate(date) {
+        var y = date.getFullYear()
+        var m = date.getMonth() + 1
+        var d = date.getDate()
+        return y + "-" + (m < 10 ? ("0" + m) : m) + "-" + (d < 10 ? ("0" + d) : d)
+    }
+
+    function finishSearchRequest() {
+        pendingSearchRequests -= 1
+        if (pendingSearchRequests <= 0) {
+            is_visible(true)
+            searchLoading = false
+        }
+    }
+
+    function runSearchRust(query, limit) {
+        if (!appRoot || !appRoot.cloudApi) {
+            return false
+        }
+        RequestBus.cancelContext(requestContext)
+        is_visible(false)
+        searchSongsModel.clear()
+        searchAlbumsModel.clear()
+        searchArtistsModel.clear()
+        search_songs_loader.running = true
+        search_albums_loader.running = true
+        search_artists_loader.running = true
+        searchLoading = true
+        pendingSearchRequests = 3
+        var songsRequestId = RequestBus.createId("search_songs")
+        var albumsRequestId = RequestBus.createId("search_albums")
+        var artistsRequestId = RequestBus.createId("search_artists")
+
+        RequestBus.registerRequest(songsRequestId, {
+            context: requestContext,
+            onSuccess: function(data) {
+                if (data && data.songs) {
+                    for (var i = 0; i < data.songs.length; i++) {
+                        searchSongsModel.append(data.songs[i])
+                    }
+                }
+            },
+            onError: function(err) {
+                console.log(err)
+            },
+            onFinally: function() {
+                search_songs_loader.running = false
+                finishSearchRequest()
+            }
+        })
+        RequestBus.registerRequest(albumsRequestId, {
+            context: requestContext,
+            onSuccess: function(data) {
+                if (data && data.albums) {
+                    for (var j = 0; j < data.albums.length; j++) {
+                        var album = data.albums[j]
+                        var publishTime = album.publish_time ? album.publish_time : 0
+                        searchAlbumsModel.append({
+                            id: album.id,
+                            name: album.name,
+                            artist: album.artist,
+                            date: formatDate(new Date(publishTime)),
+                            size: album.size,
+                            image: album.image ? album.image : "../graphics/default.png",
+                            big_image: album.big_image ? album.big_image : "../graphics/default.png",
+                            source: "netease"
+                        })
+                    }
+                }
+            },
+            onError: function(err2) {
+                console.log(err2)
+            },
+            onFinally: function() {
+                search_albums_loader.running = false
+                finishSearchRequest()
+            }
+        })
+        RequestBus.registerRequest(artistsRequestId, {
+            context: requestContext,
+            onSuccess: function(data) {
+                if (data && data.artists) {
+                    for (var k = 0; k < data.artists.length; k++) {
+                        searchArtistsModel.append(data.artists[k])
+                    }
+                }
+            },
+            onError: function(err3) {
+                console.log(err3)
+            },
+            onFinally: function() {
+                search_artists_loader.running = false
+                finishSearchRequest()
+            }
+        })
+
+        appRoot.cloudApi.searchAsync(String(query), "1", Number(limit), songsRequestId)
+        appRoot.cloudApi.searchAsync(String(query), "10", Number(limit), albumsRequestId)
+        appRoot.cloudApi.searchAsync(String(query), "100", Number(limit), artistsRequestId)
+        return true
+    }
+
+    Connections {
+        target: appRoot && appRoot.cloudApi ? appRoot.cloudApi : null
+        onRequestFinished: function(requestId, ok, payloadJson, error) {
+            RequestBus.dispatch(requestId, ok, payloadJson, error)
         }
     }
 
@@ -186,7 +314,7 @@ Page {
           
               implicitHeight: (numKeys * itemHeight <= searchPage.height - searchPage.header.height*2) ? numKeys * itemHeight : (numKeys - Math.floor((numKeys * itemHeight - searchPage.height + searchPage.header.height*2)/itemHeight)) * itemHeight
               contentHeight: Math.min(implicitHeight, listView.count * itemHeight)
-              callerMargin: -units.gu(1)
+              callerMargin: -(spacingSmall + units.gu(0.2))
           
               property var model
               property real itemHeight
@@ -254,7 +382,7 @@ Page {
                             Rectangle {
                                 visible: mouseArea.containsMouse
                                 anchors.fill: parent
-                                color: searchPage.appRoot ? searchPage.appRoot.primaryColor : "red"
+                                color: accentColor
                                 border.width: units.dp(1)
                                 border.color: Qt.darker(color, 1.02)
                                 antialiasing: true
@@ -292,7 +420,7 @@ Page {
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-            bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+            bottomMargin: media_player.playbackState != 0 ? (appRoot && appRoot.layoutPlayerInset ? appRoot.layoutPlayerInset : units.gu(7.25)) : 0
         }
 
         ColumnLayout {
@@ -305,80 +433,19 @@ Page {
                 Layout.leftMargin: 0
                 Layout.rightMargin: 0
                 Layout.topMargin: 0
-                height: units.gu(6)
-                color: cardColor
-                border.color: borderColor
-                border.width: 1
-                radius: units.gu(1)
-                clip: true
+                height: sectionTabsHeight
+                color: "transparent"
 
-                Row {
+                SegmentedTabs {
                     anchors.fill: parent
-                    anchors.margins: units.gu(0.6)
-                    spacing: units.gu(0.6)
-
-                    Rectangle {
-                        id: tabSongs
-                        width: (parent.width - units.gu(1.2)) / 3
-                        height: parent.height
-                        radius: units.gu(0.8)
-                        color: searchPage.currentTab === 0 ? accentColor : "transparent"
-                        border.color: searchPage.currentTab === 0 ? accentColor : borderColor
-                        border.width: 1
-                        Label {
-                            anchors.centerIn: parent
-                            text: i18n.tr("Songs")
-                            color: searchPage.currentTab === 0 ? (appRoot ? appRoot.inverseTextColor : "#fff") : textColor
-                            fontSize: "small"
-                            font.weight: Font.DemiBold
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: searchPage.currentTab = 0
-                        }
-                    }
-
-                    Rectangle {
-                        id: tabAlbums
-                        width: (parent.width - units.gu(1.2)) / 3
-                        height: parent.height
-                        radius: units.gu(0.8)
-                        color: searchPage.currentTab === 1 ? accentColor : "transparent"
-                        border.color: searchPage.currentTab === 1 ? accentColor : borderColor
-                        border.width: 1
-                        Label {
-                            anchors.centerIn: parent
-                            text: i18n.tr("Albums")
-                            color: searchPage.currentTab === 1 ? (appRoot ? appRoot.inverseTextColor : "#fff") : textColor
-                            fontSize: "small"
-                            font.weight: Font.DemiBold
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: searchPage.currentTab = 1
-                        }
-                    }
-
-                    Rectangle {
-                        id: tabArtists
-                        width: (parent.width - units.gu(1.2)) / 3
-                        height: parent.height
-                        radius: units.gu(0.8)
-                        color: searchPage.currentTab === 2 ? accentColor : "transparent"
-                        border.color: searchPage.currentTab === 2 ? accentColor : borderColor
-                        border.width: 1
-                        Label {
-                            anchors.centerIn: parent
-                            text: i18n.tr("Artists")
-                            color: searchPage.currentTab === 2 ? (appRoot ? appRoot.inverseTextColor : "#fff") : textColor
-                            fontSize: "small"
-                            font.weight: Font.DemiBold
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: searchPage.currentTab = 2
-                        }
-                    }
+                    labels: [i18n.tr("Songs"), i18n.tr("Albums"), i18n.tr("Artists")]
+                    currentIndex: searchPage.currentTab
+                    activeColor: accentColor
+                    textColor: searchPage.textColor
+                    activeTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
+                    borderColor: searchPage.borderColor
+                    backgroundColor: searchPage.cardColor
+                    onSelected: function(index) { searchPage.currentTab = index }
                 }
             }
 
@@ -405,13 +472,13 @@ Page {
                         id: songs_title
                         color: sectionColor
                         width: parent.width
-                        height: units.gu(5)
+                        height: sectionTitleHeight
                         Label {
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(1)
+                            anchors.leftMargin: sectionTitleInset
                             anchors.verticalCenter: parent.verticalCenter
                             text: i18n.tr("Songs")
-                            fontSize: "large"
+                            fontSize: titleTextSize
                             color: textColor
                         }
                     }
@@ -428,8 +495,8 @@ Page {
                         delegate: ListItem {
 
                             contentItem.anchors {
-                                leftMargin: units.gu(2)
-                                rightMargin: units.gu(2)
+                                leftMargin: sideInset
+                                rightMargin: sideInset
                             }
 
                             Icon {
@@ -444,7 +511,7 @@ Page {
                             Label {
                                 text: action.text
                                 anchors.left: icon.right
-                                anchors.leftMargin: units.gu(2)
+                                anchors.leftMargin: sideInset
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
@@ -455,7 +522,13 @@ Page {
                                 text: i18n.tr("Download")
                                 name: "save"
                                 onTriggered: {
-                                    Api.download(searchSongsModel.get(songsList.index).id, searchSongsModel.get(songsList.index).name, searchSongsModel.get(songsList.index).artist)
+                                    if (searchPage.appRoot && searchPage.appRoot.requestSongDownload) {
+                                        searchPage.appRoot.requestSongDownload(
+                                            searchSongsModel.get(songsList.index).id,
+                                            searchSongsModel.get(songsList.index).name,
+                                            searchSongsModel.get(songsList.index).artist
+                                        )
+                                    }
                                     context_menu.close()
                                 }
                             }
@@ -535,7 +608,7 @@ Page {
                                 delegate: SongListItem {
                                     title: name
                                     subtitle: artist
-                                    durationText: Api.durationToString(duration)
+                                    durationText: Format.durationToString(duration)
                                     coverSource: image
                                     albumId: album_id
                                     selected: songsList.index == index
@@ -588,13 +661,13 @@ Page {
                         id: albums_title
                         color: sectionColor
                         width: parent.width
-                        height: units.gu(5)
+                        height: sectionTitleHeight
                         Label {
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(1)
+                            anchors.leftMargin: sectionTitleInset
                             anchors.verticalCenter: parent.verticalCenter
                             text: i18n.tr("Albums")
-                            fontSize: "large"
+                            fontSize: titleTextSize
                             color: textColor
                         }
                     }
@@ -652,13 +725,13 @@ Page {
                         id: artists_title
                         color: sectionColor
                         width: parent.width
-                        height: units.gu(5)
+                        height: sectionTitleHeight
                         Label {
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(1)
+                            anchors.leftMargin: sectionTitleInset
                             anchors.verticalCenter: parent.verticalCenter
                             text: i18n.tr("Artists")
-                            fontSize: "large"
+                            fontSize: titleTextSize
                             color: textColor
                         }
                     }
@@ -684,8 +757,8 @@ Page {
                             z: 1
                             width: parent.width
                             height: parent.height
-                            cellWidth: (searchPage.appRoot ? searchPage.appRoot.width : width) > units.gu(25) ? (parent.width/Math.ceil(parent.width/units.gu(25))) : (parent.width)
-                            cellHeight: cellWidth + units.gu(4)
+                            cellWidth: (searchPage.appRoot ? searchPage.appRoot.width : width) > gridBreakpoint ? (parent.width/Math.ceil(parent.width/gridBreakpoint)) : (parent.width)
+                            cellHeight: cellWidth + artistCaptionHeight
                             model: searchArtistsModel
                             cacheBuffer: 1000
 
@@ -698,7 +771,7 @@ Page {
                                     Image {
                                         id: wimage
                                         width: parent.width
-                                        height: parent.height - units.gu(4)
+                                        height: parent.height - artistCaptionHeight
                                         source: image ? image : "../graphics/default.png"
                                         clip: true
                                         cache: true
@@ -709,15 +782,15 @@ Page {
                                         border.color: borderColor
                                         border.width: 1
                                         width: artistsView.cellWidth
-                                        height: units.gu(4)
+                                        height: artistCaptionHeight
                                         Label {
                                             text: name
                                             width: artistsView.cellWidth
-                                            anchors.margins: units.gu(2)
+                                            anchors.margins: sideInset
                                             horizontalAlignment: Text.AlignHCenter
                                             anchors.verticalCenter: parent.verticalCenter
                                             elide: Text.ElideRight
-                                            fontSize: "medium"
+                                            fontSize: bodyTextSize
                                             color: textColor
                                         }
                                     }
@@ -736,7 +809,7 @@ Page {
 
         Rectangle {
             anchors.fill: parent
-            color: "#55000000"
+            color: overlayColor
             visible: searchLoading
             z: 200
 
@@ -755,20 +828,6 @@ Page {
         }
     }
 
-    function searchApiContext() {
-        return {
-            setVisible: is_visible,
-            songsModel: searchSongsModel,
-            albumsModel: searchAlbumsModel,
-            artistsModel: searchArtistsModel,
-            songsLoader: search_songs_loader,
-            albumsLoader: search_albums_loader,
-            artistsLoader: search_artists_loader,
-            onStarted: function() { searchLoading = true },
-            onFinished: function() { searchLoading = false }
-        }
-    }
-
     function executeSearch(query, saveHistory) {
         if (!query || query.length === 0) {
             return
@@ -777,7 +836,9 @@ Page {
             Db.insertSearchHistory(query, 20)
             populateDataModel()
         }
-        Api.apiSearch(query, 0, 50, searchApiContext())
+        if (!runSearchRust(query, 50)) {
+            searchLoading = false
+        }
     }
 
     function refineDataModel() {

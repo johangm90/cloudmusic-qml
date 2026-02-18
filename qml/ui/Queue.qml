@@ -1,14 +1,16 @@
 import QtQuick 2.12
 import Lomiri.Components 1.3
-import "../logic/Api.js" as Api
+import "../logic/Format.js" as Format
 import "../components"
 
 Page {
     id: queuePage
     property var appRoot
+    property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
     property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
+    property real layoutPlayerInset: appRoot ? appRoot.layoutPlayerInset : units.gu(7.25)
 
     header: PageHeader {
         title: i18n.tr("Queue")
@@ -16,13 +18,13 @@ Page {
 
     Rectangle {
         id: songs_view
-        color: "transparent"
+        color: pageColor
         anchors {
             top: queuePage.header.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-            bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+            bottomMargin: media_player.playbackState != 0 ? layoutPlayerInset : 0
         }
 
         Item {
@@ -44,7 +46,7 @@ Page {
                 delegate: SongListItem {
                     title: name
                     subtitle: artist
-                    durationText: Api.durationToString(duration)
+                    durationText: Format.durationToString(duration)
                     coverSource: image
                     albumId: album_id
                     selected: playing_page.current_index == index

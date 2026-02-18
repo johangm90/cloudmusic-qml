@@ -1,4 +1,12 @@
 .import QtQuick.LocalStorage 2.0 as Sql
+.import "AppContext.js" as AppCtx
+
+function showMessage(text, duration) {
+    var messenger = AppCtx.get("messager")
+    if (messenger && typeof messenger.show_message === "function") {
+        messenger.show_message(text, duration || 3)
+    }
+}
 
 function db() {
     return Sql.LocalStorage.openDatabaseSync("apu", "", "Cloud Music DB", 1000000);
@@ -175,10 +183,13 @@ function getPlaylists() {
     return records;
 }
 
-function getLastPlaylist() {
+function getLastPlaylist(onResolved) {
     db().transaction(function(tx) {
         var rs = tx.executeSql('SELECT MAX(id) AS id FROM playlists;');
-        song_dialog.add_song(rs.rows.item(0).id);
+        var playlistId = rs.rows.item(0).id
+        if (typeof onResolved === "function") {
+            onResolved(playlistId)
+        }
     })
 }
 
@@ -188,7 +199,7 @@ function insertPlaylist(content) {
             tx.executeSql('INSERT INTO playlists VALUES(NULL, ?, 0);', [content]);
         } catch (e) {
             console.log(e);
-            messager.show_message(e.message, 3);
+            showMessage(e.message, 3)
         }
     })
 }
@@ -218,7 +229,7 @@ function insertSong(content) {
             );
         } catch (e) {
             console.log(e);
-            messager.show_message(e.message, 3);
+            showMessage(e.message, 3)
         }
     })
 }

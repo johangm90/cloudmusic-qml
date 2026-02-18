@@ -11,6 +11,15 @@ Item {
     property color sectionColor: appRoot ? appRoot.sectionColor : "#ececec"
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#666666"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real compactSpacing: spacingSmall + units.gu(0.2)
+    property real sectionHeaderHeight: units.gu(4.5)
+    property real itemHeight: units.gu(6)
+    property real footerHeight: units.gu(8)
+    property real labelInset: spacingMedium + units.gu(0.3)
+    property real chevronSize: units.gu(2.4)
+    property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
 
     ListModel {
         id: creditsModel
@@ -39,16 +48,16 @@ Item {
         section.labelPositioning: ViewSection.InlineLabels
         section.delegate: Rectangle {
             width: credits.width
-            height: units.gu(4.5)
+            height: sectionHeaderHeight
             color: sectionColor
             border.color: borderColor
             border.width: 1
 
             Label {
                 anchors.fill: parent
-                anchors.leftMargin: units.gu(1.5)
+                anchors.leftMargin: labelInset
                 verticalAlignment: Text.AlignVCenter
-                fontSize: "small"
+                fontSize: smallTextSize
                 font.weight: Font.DemiBold
                 text: section
                 color: textColor
@@ -59,12 +68,12 @@ Item {
         // can hide a setting if not for this footer.
         footer: Item {
             width: parent.width
-            height: units.gu(8)
+            height: footerHeight
         }
 
         delegate: Rectangle {
             width: credits.width
-            height: units.gu(6)
+            height: itemHeight
             color: cardColor
             border.color: borderColor
             border.width: 1
@@ -72,8 +81,8 @@ Item {
             Label {
                 anchors.left: parent.left
                 anchors.right: chevron.left
-                anchors.leftMargin: units.gu(1.5)
-                anchors.rightMargin: units.gu(1)
+                anchors.leftMargin: labelInset
+                anchors.rightMargin: compactSpacing
                 anchors.verticalCenter: parent.verticalCenter
                 elide: Text.ElideRight
                 text: model.name
@@ -83,9 +92,9 @@ Item {
             Icon {
                 id: chevron
                 anchors.right: parent.right
-                anchors.rightMargin: units.gu(1.2)
+                anchors.rightMargin: spacingMedium
                 anchors.verticalCenter: parent.verticalCenter
-                width: units.gu(2.4)
+                width: chevronSize
                 height: width
                 name: "go-next"
                 color: secondaryTextColor

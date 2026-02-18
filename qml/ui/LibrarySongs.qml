@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
-import "../logic/Api.js" as Api
+import "../logic/Format.js" as Format
 import "../logic/Database.js" as Db
 import "../components"
 
@@ -15,6 +15,10 @@ Item {
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
     property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real sideInset: spacingMedium + spacingSmall
+    property real layoutPlayerInset: appRoot ? appRoot.layoutPlayerInset : units.gu(7.25)
     property int selectedIndex: -1
     property string query: ""
 
@@ -91,8 +95,8 @@ Item {
 
         delegate: ListItem {
             contentItem.anchors {
-                leftMargin: units.gu(2)
-                rightMargin: units.gu(2)
+                leftMargin: sideInset
+                rightMargin: sideInset
             }
             Icon {
                 id: icon
@@ -105,7 +109,7 @@ Item {
             Label {
                 text: action.text
                 anchors.left: icon.right
-                anchors.leftMargin: units.gu(2)
+                anchors.leftMargin: sideInset
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -203,7 +207,7 @@ Item {
                 delegate: SongListItem {
                     title: name
                     subtitle: artist
-                    durationText: Api.durationToString(duration)
+                    durationText: Format.durationToString(duration)
                     coverSource: image ? image : "../graphics/default.png"
                     albumId: album_id
                     selected: selectedIndex === index

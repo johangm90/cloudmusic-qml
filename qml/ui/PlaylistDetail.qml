@@ -5,7 +5,8 @@ import Lomiri.Components.ListItems 1.0 as UListItem
 import Lomiri.DownloadManager 1.2
 import FileManager 1.0
 import "../components"
-import "../logic/Api.js" as Api
+import "../logic/Format.js" as Format
+import "../logic/RequestBus.js" as RequestBus
 import "../logic/Database.js" as Db
 
 Item {
@@ -14,6 +15,14 @@ Item {
     property color selectedColor: appRoot ? appRoot.selectedColor : "#5d5d5d"
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#898B8C"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real layoutPlayerInset: appRoot ? appRoot.layoutPlayerInset : units.gu(7.25)
+    property real compactSpacing: spacingSmall + units.gu(0.2)
+    property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
+    property int offlinePendingCount: 0
+    property int offlineResolvedCount: 0
+    property string offlineRequestContext: "playlist_offline_" + String(Date.now())
 
     function cargar(id) {
         Db.getPlaylist(id);
@@ -22,6 +31,85 @@ Item {
 
     function setStatus(status) {
         swdownload.isOffline = status
+    }
+
+    function downloadImageAt(index) {
+        if (index < 0 || index >= downloadqueue.count) {
+            return
+        }
+        imageDownloader.songId = downloadqueue.get(index).songId
+        imageDownloader.download(downloadqueue.get(index).img)
+    }
+
+    function downloadSongAt(index) {
+        if (index < 0 || index >= downloadqueue.count) {
+            return
+        }
+        musicDownloader.songId = downloadqueue.get(index).songId
+        musicDownloader.songName = downloadqueue.get(index).songName
+        musicDownloader.download(downloadqueue.get(index).url)
+    }
+
+    function startOfflineDownloadQueue() {
+        if (!appRoot || !appRoot.cloudApi) {
+            return
+        }
+        RequestBus.cancelContext(offlineRequestContext)
+        downloadqueue.clear()
+        offlinePendingCount = 0
+        offlineResolvedCount = 0
+        imageDownloader.counter = 0
+        musicDownloader.counter = 0
+        var quality = (appRoot.settings && appRoot.settings.download_quality) ? appRoot.settings.download_quality : "96"
+        for (var i = 0; i < songsModel.count; i++) {
+            var song = songsModel.get(i)
+            if (song.local) {
+                continue
+            }
+            (function(songId, songName) {
+                var requestId = RequestBus.createId("offline_url")
+                offlinePendingCount += 1
+                RequestBus.registerRequest(requestId, {
+                    context: offlineRequestContext,
+                    onSuccess: function(payload) {
+                        if (payload && payload.url) {
+                            downloadqueue.append({
+                                songId: songId,
+                                songName: songName,
+                                url: payload.url,
+                                img: payload.img || ""
+                            })
+                        } else {
+                            console.error("Offline download payload invalid for request " + requestId)
+                        }
+                    },
+                    onError: function(err) {
+                        console.error("Offline download URL request failed: " + err)
+                    },
+                    onFinally: function() {
+                        offlineResolvedCount += 1
+                        if (offlinePendingCount > 0 && offlineResolvedCount >= offlinePendingCount) {
+                            if (downloadqueue.count > 0) {
+                                playlist.downloadSongAt(0)
+                                playlist.downloadImageAt(0)
+                            }
+                        }
+                    }
+                })
+                appRoot.cloudApi.downloadUrlAsync(String(songId), String(quality), requestId)
+            })(song.song_id, song.name)
+        }
+    }
+
+    Component.onDestruction: {
+        RequestBus.cancelContext(offlineRequestContext)
+    }
+
+    Connections {
+        target: appRoot ? appRoot.cloudApi : null
+        onRequestFinished: function(requestId, ok, payloadJson, error) {
+            RequestBus.dispatch(requestId, ok, payloadJson, error)
+        }
     }
 
     ListModel {
@@ -37,10 +125,10 @@ Item {
         Label {
             id: lblOffline
             anchors.left: parent.left
-            anchors.leftMargin: units.gu(2)
+            anchors.leftMargin: spacingMedium + spacingSmall
             anchors.verticalCenter: parent.verticalCenter
             text: i18n.tr("Available offline")
-            fontSize: "medium"
+            fontSize: bodyTextSize
         }
 
         SingleDownload {
@@ -53,7 +141,7 @@ Item {
                 Db.setlocalArt(finalLocation, songId);
                 console.log("Downloaded Image: " + finalLocation);
                 if(downloadqueue.count>counter){
-                    Api.downloadImage(counter);
+                    playlist.downloadImageAt(counter);
                 }
             }
         }
@@ -75,7 +163,7 @@ Item {
                 Db.setlocal(finalLocation, songId);
                 console.log("Download Queue: " + downloadqueue.count);
                 if (downloadqueue.count>counter) {
-                    Api.downloadSong(counter);
+                    playlist.downloadSongAt(counter);
                 } else {
                     //progreso.value=0;
                     //progreso.visible=false;
@@ -91,14 +179,14 @@ Item {
             id: swdownload
             property int isOffline: 0;
             anchors.right: parent.right
-            anchors.rightMargin: units.gu(2)
+            anchors.rightMargin: spacingMedium + spacingSmall
             anchors.verticalCenter: parent.verticalCenter
             checked: (isOffline == 1) ? true : false
             onCheckedChanged: {
                 if (swdownload.checked==true) {
                     Db.setOffline(songsList.currentId, 1)
                     musicDownloader.counter=0;
-                    Api.adddownloads();
+                    playlist.startOfflineDownloadQueue()
                 } else {
                     Db.setOffline(songsList.currentId, 0)
                 }
@@ -119,8 +207,8 @@ Item {
         delegate: ListItem {
 
             contentItem.anchors {
-                leftMargin: units.gu(2)
-                rightMargin: units.gu(2)
+                leftMargin: spacingMedium + spacingSmall
+                rightMargin: spacingMedium + spacingSmall
             }
 
             Icon {
@@ -135,7 +223,7 @@ Item {
             Label {
                 text: action.text
                 anchors.left: icon.right
-                anchors.leftMargin: units.gu(2)
+                anchors.leftMargin: spacingMedium + spacingSmall
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -145,7 +233,13 @@ Item {
                 text: i18n.tr("Download")
                 name: "save"
                 onTriggered: {
-                    Api.download(songsModel.get(songsList.index).song_id, songsModel.get(songsList.index).name)
+                    if (appRoot && appRoot.requestSongDownload) {
+                        appRoot.requestSongDownload(
+                            songsModel.get(songsList.index).song_id,
+                            songsModel.get(songsList.index).name,
+                            songsModel.get(songsList.index).artist
+                        )
+                    }
                     context_menu.close()
                 }
             }
@@ -196,9 +290,9 @@ Item {
 
     Column {
         id: playlist_wrapper
-        spacing: units.gu(1)
+        spacing: compactSpacing
         anchors {
-            bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+            bottomMargin: media_player.playbackState != 0 ? layoutPlayerInset : 0
             right: parent.right
             left: parent.left
             top: offlineView.bottom
@@ -207,7 +301,7 @@ Item {
 
         UListItem.ThinDivider {
             anchors.top: lblOffline.botton
-            anchors.topMargin: units.gu(2)
+            anchors.topMargin: spacingMedium + spacingSmall
         }
 
         Item {
@@ -225,7 +319,7 @@ Item {
                 delegate: SongListItem {
                     title: name
                     subtitle: artist
-                    durationText: Api.durationToString(duration)
+                    durationText: Format.durationToString(duration)
                     coverSource: image
                     albumId: album_id
                     selected: songsList.index == index

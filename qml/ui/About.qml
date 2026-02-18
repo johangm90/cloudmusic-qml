@@ -17,6 +17,17 @@ Page {
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
     property color primaryTextColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#666666"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real spacingLarge: appRoot ? appRoot.spacingLarge : units.gu(1.8)
+    property real compactSpacing: spacingSmall + units.gu(0.2)
+    property real contentBottomInset: units.gu(10)
+    property real headerOffset: spacingLarge + units.gu(3.2)
+    property real sectionSpacing: spacingLarge + spacingMedium
+    property real tabsHeight: units.gu(6)
+    property real tabsBottomGap: units.gu(1)
+    property string headingTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.heading : "x-large"
+    property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
     property string versionText: appRoot && appRoot.app_version ? appRoot.app_version : Qt.application.version
 
     TabsList {
@@ -42,13 +53,13 @@ Page {
             Flickable {
                 id: flickable
                 anchors.fill: parent
-                contentHeight: dataColumn.height + units.gu(10) + dataColumn.anchors.topMargin
+                contentHeight: dataColumn.height + contentBottomInset + dataColumn.anchors.topMargin
 
                 Column {
                     id: dataColumn
-                    spacing: units.gu(3)
+                    spacing: sectionSpacing
                     anchors {
-                        top: parent.top; left: parent.left; right: parent.right; topMargin: units.gu(5)
+                        top: parent.top; left: parent.left; right: parent.right; topMargin: headerOffset
                     }
 
                     LomiriShape {
@@ -65,7 +76,7 @@ Page {
                         width: parent.width
                         Label {
                             width: parent.width
-                            fontSize: "x-large"
+                            fontSize: headingTextSize
                             font.weight: Font.DemiBold
                             horizontalAlignment: Text.AlignHCenter
                             text: "Cloud Music"
@@ -84,7 +95,7 @@ Page {
                         anchors {
                             left: parent.left
                             right: parent.right
-                            margins: units.gu(2)
+                            margins: spacingMedium + spacingSmall
                         }
                         Label {
                             width: parent.width
@@ -94,7 +105,7 @@ Page {
                             color: secondaryTextColor
                         }
                         Label {
-                            fontSize: "small"
+                            fontSize: smallTextSize
                             width: parent.width
                             wrapMode: Text.WordWrap
                             horizontalAlignment: Text.AlignHCenter
@@ -105,7 +116,7 @@ Page {
 
                     Button {
                         x: (parent.width - width) / 2
-                        color: appRoot ? appRoot.primaryColor : "#e53446"
+                        color: accentColor
                         text: i18n.tr("Donate")
                         onClicked: Qt.openUrlExternally("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4CRZUPJYLN8G2")
                     }
@@ -113,7 +124,7 @@ Page {
                     Label {
                         width: parent.width
                         wrapMode: Text.WordWrap
-                        fontSize: "small"
+                        fontSize: smallTextSize
                         horizontalAlignment: Text.AlignHCenter
                         linkColor: LomiriColors.blue
                         text: i18n.tr("Report bugs on %1").arg("<a href=\"https://github.com/johangm90/cloudmusic-qml/issues\">github.com</a>")
@@ -149,72 +160,30 @@ Page {
             bottom: parent.bottom
             margins: 0
         }
-        spacing: units.gu(1)
+        spacing: compactSpacing
 
         Rectangle {
             id: aboutTabs
             width: parent.width
-            height: units.gu(6)
-            color: cardColor
-            border.color: borderColor
-            border.width: 1
-            radius: units.gu(1)
-            clip: true
+            height: tabsHeight
+            color: "transparent"
 
-            Row {
+            SegmentedTabs {
                 anchors.fill: parent
-                anchors.margins: units.gu(0.6)
-                spacing: units.gu(0.6)
-
-                Rectangle {
-                    width: (parent.width - units.gu(0.6)) / 2
-                    height: parent.height
-                    radius: units.gu(0.8)
-                    color: currentTab === 0 ? accentColor : "transparent"
-                    border.color: currentTab === 0 ? accentColor : borderColor
-                    border.width: 1
-
-                    Label {
-                        anchors.centerIn: parent
-                        text: i18n.tr("About")
-                        fontSize: "small"
-                        font.weight: Font.DemiBold
-                        color: currentTab === 0 ? inverseTextColor : textColor
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: currentTab = 0
-                    }
-                }
-
-                Rectangle {
-                    width: (parent.width - units.gu(0.6)) / 2
-                    height: parent.height
-                    radius: units.gu(0.8)
-                    color: currentTab === 1 ? accentColor : "transparent"
-                    border.color: currentTab === 1 ? accentColor : borderColor
-                    border.width: 1
-
-                    Label {
-                        anchors.centerIn: parent
-                        text: i18n.tr("Credits")
-                        fontSize: "small"
-                        font.weight: Font.DemiBold
-                        color: currentTab === 1 ? inverseTextColor : textColor
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: currentTab = 1
-                    }
-                }
+                labels: [i18n.tr("About"), i18n.tr("Credits")]
+                currentIndex: aboutPage.currentTab
+                activeColor: aboutPage.accentColor
+                textColor: aboutPage.textColor
+                activeTextColor: aboutPage.inverseTextColor
+                borderColor: aboutPage.borderColor
+                backgroundColor: aboutPage.cardColor
+                onSelected: function(index) { aboutPage.currentTab = index }
             }
         }
 
         Item {
             width: parent.width
-            height: parent.height - aboutTabs.height - units.gu(1)
+            height: parent.height - aboutTabs.height - tabsBottomGap
 
             Loader {
                 id: aboutLoader

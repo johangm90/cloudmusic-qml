@@ -12,7 +12,9 @@ import CloudMusic 1.0
 import "components"
 import "graphics"
 import "ui"
-import "logic/Api.js" as Api
+import "logic/AppContext.js" as AppContext
+import "logic/DesignTokens.js" as DesignTokens
+import "logic/RequestBus.js" as RequestBus
 import "logic/Database.js" as Db
 
 ApplicationWindow {
@@ -99,7 +101,10 @@ ApplicationWindow {
             interval: 30
             running: true
             repeat: true
-            onTriggered: cloudApiBridge.pumpResponses()
+            onTriggered: {
+                cloudApiBridge.pumpResponses()
+                RequestBus.prune()
+            }
         }
         
         property var fileManager: fileMgr
@@ -116,6 +121,7 @@ ApplicationWindow {
 
         property
         var server: "http://127.0.0.1:39876/";
+        property var designTokens: DesignTokens.build(isDarkTheme, appWindow.primaryColor)
         property bool isDarkTheme: {
             var mode = appWindow.normalizedThemeMode()
             if (mode === "SuruDark") {
@@ -128,27 +134,34 @@ ApplicationWindow {
             var effectiveTheme = Theme.name ? Theme.name : ""
             return effectiveTheme.indexOf("SuruDark") !== -1
         }
-        property color pageColor: isDarkTheme ? "#1f1f1f" : "#f5f5f5"
-        property color cardColor: isDarkTheme ? "#232323" : "#ffffff"
-        property color borderColor: isDarkTheme ? "#3a3a3a" : "#d8d8d8"
-        property color sectionColor: isDarkTheme ? "#1a1a1a" : "#ececec"
-        property color textColor: isDarkTheme ? "#f2f2f2" : "#1f1f1f"
-        property color secondaryTextColor: isDarkTheme ? "#b8b8b8" : "#666666"
-        property color inverseTextColor: "#ffffff"
-        property color selectedColor: Qt.rgba(0.9, 0.2, 0.28, isDarkTheme ? 0.22 : 0.16)
-        property color tileColor: isDarkTheme ? "#252525" : "#ffffff"
-        property color tileBorderColor: isDarkTheme ? "#3a3a3a" : "#dcdcdc"
-        property real radiusSmall: units.gu(0.8)
-        property real radiusMedium: units.gu(1.2)
-        property real spacingSmall: units.gu(0.8)
-        property real spacingMedium: units.gu(1.2)
-        property real spacingLarge: units.gu(1.8)
-        property real pagePadding: units.gu(1.2)
+        property color pageColor: designTokens.color.page
+        property color cardColor: designTokens.color.card
+        property color borderColor: designTokens.color.border
+        property color sectionColor: designTokens.color.section
+        property color textColor: designTokens.color.text
+        property color secondaryTextColor: designTokens.color.textMuted
+        property color inverseTextColor: designTokens.color.textInverse
+        property color selectedColor: designTokens.color.selected
+        property color tileColor: designTokens.color.tile
+        property color tileBorderColor: designTokens.color.tileBorder
+        property real radiusSmall: units.gu(designTokens.radius.sm)
+        property real radiusMedium: units.gu(designTokens.radius.md)
+        property real spacingSmall: units.gu(designTokens.spacing.sm)
+        property real spacingMedium: units.gu(designTokens.spacing.md)
+        property real spacingLarge: units.gu(designTokens.spacing.lg)
+        property real pagePadding: units.gu(designTokens.spacing.page)
+        property real layoutPlayerInset: units.gu(designTokens.layout.playerToolbarHeight)
 
         Component.onCompleted: {
             appWindow.applyThemeMode()
             appWindow.settings.download_quality = appWindow.normalizeQuality(appWindow.settings.download_quality)
             appWindow.settings.streaming_quality = appWindow.normalizeQuality(appWindow.settings.streaming_quality)
+            AppContext.set("appRoot", cloudMusic)
+            AppContext.set("settings", appWindow.settings)
+            AppContext.set("cloudApi", cloudApiBridge)
+            AppContext.set("designTokens", cloudMusic.designTokens)
+            AppContext.set("messager", messager)
+            AppContext.set("downloadComponent", downloadComponent)
         }
 
         Component {
@@ -187,6 +200,54 @@ ApplicationWindow {
 
         function setdialogtext(text) {
             dialog_sub_label.text = text
+        }
+
+        property string downloadRequestContext: "main_download"
+
+        function requestSongDownload(songId, songName, artistName) {
+            if (!songId) {
+                messager.show_message(i18n.tr("Download failed: missing song id"), 3)
+                return
+            }
+            var requestId = RequestBus.createId("download_url")
+            var pending = {
+                id: String(songId),
+                name: songName ? String(songName) : "",
+                artist: artistName ? String(artistName) : i18n.tr("Unknown")
+            }
+            var q = (appWindow.settings && appWindow.settings.download_quality) ? appWindow.settings.download_quality : "96"
+            RequestBus.registerRequest(requestId, {
+                context: downloadRequestContext,
+                onSuccess: function(payload) {
+                    if (!payload || payload.error || !payload.url) {
+                        console.error("Download URL payload invalid")
+                        messager.show_message(i18n.tr("Download failed"), 3)
+                        return
+                    }
+                    var singleDownload = downloadComponent.createObject(cloudMusic, {
+                        "name": pending.name,
+                        "nameArtist": pending.artist.replace(/\s+/g, "_")
+                    })
+                    if (!singleDownload) {
+                        console.error("Download component creation failed")
+                        messager.show_message(i18n.tr("Download failed"), 3)
+                        return
+                    }
+                    singleDownload.download(payload.url)
+                },
+                onError: function(err) {
+                    console.error("Download URL request failed: " + err)
+                    messager.show_message(i18n.tr("Download failed"), 3)
+                }
+            })
+            cloudApiBridge.downloadUrlAsync(String(songId), String(q), requestId)
+        }
+
+        Connections {
+            target: cloudApiBridge
+            onRequestFinished: function(requestId, ok, payloadJson, error) {
+                RequestBus.dispatch(requestId, ok, payloadJson, error)
+            }
         }
 
         PageStack {
@@ -298,7 +359,7 @@ ApplicationWindow {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
-                    bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+                    bottomMargin: media_player.playbackState != 0 ? cloudMusic.layoutPlayerInset : 0
                 }
             }
         }
@@ -331,7 +392,7 @@ ApplicationWindow {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
-                    bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+                    bottomMargin: media_player.playbackState != 0 ? cloudMusic.layoutPlayerInset : 0
                 }
             }
         }
@@ -388,7 +449,7 @@ ApplicationWindow {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
-                    bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+                    bottomMargin: media_player.playbackState != 0 ? cloudMusic.layoutPlayerInset : 0
                 }
             }
         }
@@ -426,7 +487,7 @@ ApplicationWindow {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
-                    bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+                    bottomMargin: media_player.playbackState != 0 ? cloudMusic.layoutPlayerInset : 0
                 }
             }
         }

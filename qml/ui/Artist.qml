@@ -3,7 +3,8 @@ import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
-import "../logic/Api.js" as Api
+import "../logic/Format.js" as Format
+import "../logic/RequestBus.js" as RequestBus
 import "../logic/CoverCache.js" as CoverCache
 import "../logic/Database.js" as Db
 import "../components"
@@ -26,12 +27,95 @@ Item {
     property color inverseTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
     property color selectedColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.18)
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real radiusSmall: appRoot ? appRoot.radiusSmall : units.gu(0.8)
+    property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
+    property real layoutGap: spacingSmall + units.gu(0.2)
+    property real sectionHeaderHeight: units.gu(6)
+    property real sectionAccentWidth: units.gu(0.6)
+    property real sectionAccentHeight: units.gu(3.2)
+    property real gridBreakpoint: units.gu(90)
+    property real albumsGridBreakpoint: units.gu(25)
+    property real tabsInnerMargin: units.gu(0.6)
+    property string titleTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
+    property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
+    property string bodySmallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
+    property int pendingRequests: 0
+    property string requestContext: "artist_" + String(Date.now())
 
     function cargar(id) {
+        if (!appRoot || !appRoot.cloudApi) {
+            return
+        }
+        RequestBus.cancelContext(requestContext)
         activeTab = 0
         contentReady = false
-        Api.getArtistTopSongs(id, artistSongsContext())
-        Api.getArtistAlbums(id, artistAlbumsContext())
+        songsModel.clear()
+        albumsModel.clear()
+        photo.source = "../graphics/default.png"
+        setArtistTitle(i18n.tr("Artist"))
+        artist_songs_loader.running = true
+        artist_albums_loader.running = true
+        var songsRequestId = RequestBus.createId("artist_songs")
+        var albumsRequestId = RequestBus.createId("artist_albums")
+        pendingRequests = 2
+        RequestBus.registerRequest(songsRequestId, {
+            context: requestContext,
+            onSuccess: function(data) {
+                if (data && data.songs) {
+                    for (var i = 0; i < data.songs.length; i++) {
+                        songsModel.append(data.songs[i])
+                    }
+                }
+            },
+            onError: function(err) {
+                console.log(err)
+            },
+            onFinally: function() {
+                artist_songs_loader.running = false
+                finishArtistRequest()
+            }
+        })
+        RequestBus.registerRequest(albumsRequestId, {
+            context: requestContext,
+            onSuccess: function(data) {
+                if (data) {
+                    if (data.artist) {
+                        photo.source = data.artist.big_image ? data.artist.big_image : "../graphics/default.png"
+                        setArtistTitle(data.artist.name ? data.artist.name : i18n.tr("Artist"))
+                    }
+                    if (data.albums) {
+                        for (var j = 0; j < data.albums.length; j++) {
+                            var album = data.albums[j]
+                            albumsModel.append({
+                                id: album.id,
+                                name: album.name,
+                                artist: album.artist,
+                                date: formatDate(new Date(album.publish_time ? album.publish_time : 0)),
+                                size: album.size,
+                                image: album.image ? album.image : "../graphics/default.png",
+                                big_image: album.big_image ? album.big_image : "../graphics/default.png",
+                                source: "netease"
+                            })
+                        }
+                    }
+                }
+            },
+            onError: function(err2) {
+                console.log(err2)
+            },
+            onFinally: function() {
+                artist_albums_loader.running = false
+                finishArtistRequest()
+            }
+        })
+        appRoot.cloudApi.getArtistTopSongsAsync(String(id), songsRequestId)
+        appRoot.cloudApi.getArtistAlbumsAsync(String(id), albumsRequestId)
+    }
+
+    Component.onDestruction: {
+        RequestBus.cancelContext(requestContext)
     }
 
     function setArtistTitle(title) {
@@ -39,23 +123,17 @@ Item {
         artistPage.header.title = title
     }
 
-    function artistSongsContext() {
-        return {
-            songsModel: songsModel,
-            songsLoader: artist_songs_loader,
-            setPageTitle: setArtistTitle,
-            setPhoto: function(source) { photo.source = source },
-            setVisible: is_visible
-        }
+    function formatDate(date) {
+        var y = date.getFullYear()
+        var m = date.getMonth() + 1
+        var d = date.getDate()
+        return y + "-" + (m < 10 ? ("0" + m) : m) + "-" + (d < 10 ? ("0" + d) : d)
     }
 
-    function artistAlbumsContext() {
-        return {
-            albumsModel: albumsModel,
-            albumsLoader: artist_albums_loader,
-            setPageTitle: setArtistTitle,
-            setPhoto: function(source) { photo.source = source },
-            setVisible: is_visible
+    function finishArtistRequest() {
+        pendingRequests -= 1
+        if (pendingRequests <= 0) {
+            is_visible(true)
         }
     }
 
@@ -73,6 +151,13 @@ Item {
 
     function is_visible(value) {
         contentReady = value
+    }
+
+    Connections {
+        target: appRoot && appRoot.cloudApi ? appRoot.cloudApi : null
+        onRequestFinished: function(requestId, ok, payloadJson, error) {
+            RequestBus.dispatch(requestId, ok, payloadJson, error)
+        }
     }
 
     ListModel {
@@ -98,8 +183,8 @@ Item {
 
         delegate: ListItem {
             contentItem.anchors {
-                leftMargin: units.gu(2)
-                rightMargin: units.gu(2)
+                leftMargin: spacingMedium + spacingSmall
+                rightMargin: spacingMedium + spacingSmall
             }
 
             Icon {
@@ -114,7 +199,7 @@ Item {
             Label {
                 text: action.text
                 anchors.left: icon.right
-                anchors.leftMargin: units.gu(2)
+                anchors.leftMargin: spacingMedium + spacingSmall
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -124,7 +209,13 @@ Item {
                 text: i18n.tr("Download")
                 name: "save"
                 onTriggered: {
-                    Api.download(songsModel.get(songsList.index).id, songsModel.get(songsList.index).name, songsModel.get(songsList.index).artist)
+                    if (appRoot && appRoot.requestSongDownload) {
+                        appRoot.requestSongDownload(
+                            songsModel.get(songsList.index).id,
+                            songsModel.get(songsList.index).name,
+                            songsModel.get(songsList.index).artist
+                        )
+                    }
                     context_menu.close()
                 }
             }
@@ -182,7 +273,7 @@ Item {
         anchors.fill: parent
         clip: true
         contentWidth: width
-        contentHeight: Math.max(height, mainLayout.implicitHeight + units.gu(2))
+        contentHeight: Math.max(height, mainLayout.implicitHeight + spacingMedium + spacingSmall)
 
         GridLayout {
             id: mainLayout
@@ -191,9 +282,9 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 0
-            columns: width < units.gu(90) ? 1 : 2
-            rowSpacing: units.gu(1)
-            columnSpacing: units.gu(1)
+            columns: width < gridBreakpoint ? 1 : 2
+            rowSpacing: layoutGap
+            columnSpacing: layoutGap
 
             Rectangle {
                 id: image_layout
@@ -204,7 +295,7 @@ Item {
                 Layout.column: 0
                 Layout.preferredWidth: mainLayout.columns === 1 ? mainLayout.width : mainLayout.width / 3
                 Layout.preferredHeight: mainLayout.columns === 1 ? units.gu(34) : units.gu(28)
-                radius: units.gu(1)
+                radius: radiusMedium
                 color: cardColor
                 border.color: cardBorder
                 border.width: 1
@@ -235,14 +326,14 @@ Item {
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: units.gu(2)
-                    spacing: units.gu(2)
+                    anchors.margins: spacingMedium + spacingSmall
+                    spacing: spacingMedium + spacingSmall
 
                     Rectangle {
                         width: Math.min(units.gu(20), parent.height - units.gu(2))
                         height: width
                         radius: width / 2
-                        color: "#202020"
+                        color: sectionColor
                         border.color: Qt.rgba(1, 1, 1, 0.2)
                         border.width: 1
                         anchors.verticalCenter: parent.verticalCenter
@@ -272,13 +363,13 @@ Item {
                     Column {
                         width: Math.max(units.gu(12), parent.width - (parent.height - units.gu(2)) - units.gu(4))
                         anchors.verticalCenter: parent.verticalCenter
-                        spacing: units.gu(0.8)
+                        spacing: spacingSmall
 
                         Label {
                             text: artistPage.header.title
                             width: parent.width
                             elide: Text.ElideRight
-                            fontSize: "large"
+                            fontSize: titleTextSize
                             font.weight: Font.DemiBold
                             color: inverseTextColor
                         }
@@ -286,36 +377,36 @@ Item {
                         Label {
                             width: parent.width
                             text: i18n.tr("Artist profile")
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             color: mutedTextColor
                         }
 
                         Row {
-                            spacing: units.gu(1)
+                            spacing: layoutGap
 
                             Rectangle {
-                                radius: units.gu(0.8)
+                                radius: radiusSmall
                                 color: Qt.rgba(1, 1, 1, 0.15)
                                 height: units.gu(3)
                                 width: units.gu(14)
 
                                 Label {
                                     anchors.centerIn: parent
-                                    fontSize: "small"
+                                    fontSize: bodySmallTextSize
                                     color: inverseTextColor
                                     text: i18n.tr("%1 tracks").arg(songsModel.count)
                                 }
                             }
 
                             Rectangle {
-                                radius: units.gu(0.8)
+                                radius: radiusSmall
                                 color: Qt.rgba(1, 1, 1, 0.15)
                                 height: units.gu(3)
                                 width: units.gu(14)
 
                                 Label {
                                     anchors.centerIn: parent
-                                    fontSize: "small"
+                                    fontSize: bodySmallTextSize
                                     color: inverseTextColor
                                     text: i18n.tr("%1 albums").arg(albumsModel.count)
                                 }
@@ -333,7 +424,7 @@ Item {
                 Layout.column: 0
                 Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
                 Layout.preferredHeight: units.gu(6)
-                radius: units.gu(1)
+                radius: radiusMedium
                 color: cardColor
                 border.color: cardBorder
                 border.width: 1
@@ -341,13 +432,13 @@ Item {
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: units.gu(0.6)
-                    spacing: units.gu(0.6)
+                    anchors.margins: tabsInnerMargin
+                    spacing: tabsInnerMargin
 
                     Rectangle {
-                        width: (parent.width - units.gu(0.6)) / 2
+                        width: (parent.width - tabsInnerMargin) / 2
                         height: parent.height
-                        radius: units.gu(0.8)
+                        radius: radiusSmall
                         color: activeTab === 0 ? accentColor : "transparent"
                         border.color: activeTab === 0 ? accentColor : cardBorder
                         border.width: 1
@@ -355,7 +446,7 @@ Item {
                         Label {
                             anchors.centerIn: parent
                             text: i18n.tr("Top Songs")
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             font.weight: Font.DemiBold
                             color: activeTab === 0 ? inverseTextColor : primaryTextColor
                         }
@@ -367,9 +458,9 @@ Item {
                     }
 
                     Rectangle {
-                        width: (parent.width - units.gu(0.6)) / 2
+                        width: (parent.width - tabsInnerMargin) / 2
                         height: parent.height
-                        radius: units.gu(0.8)
+                        radius: radiusSmall
                         color: activeTab === 1 ? accentColor : "transparent"
                         border.color: activeTab === 1 ? accentColor : cardBorder
                         border.width: 1
@@ -377,7 +468,7 @@ Item {
                         Label {
                             anchors.centerIn: parent
                             text: i18n.tr("Albums")
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             font.weight: Font.DemiBold
                             color: activeTab === 1 ? inverseTextColor : primaryTextColor
                         }
@@ -399,7 +490,7 @@ Item {
                 Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
                 Layout.preferredWidth: mainLayout.width
                 Layout.preferredHeight: activeTab === 0 ? units.gu(66) : 0
-                radius: units.gu(1)
+                radius: radiusMedium
                 color: cardColor
                 border.color: cardBorder
                 border.width: 1
@@ -415,25 +506,25 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: units.gu(6)
+                        height: sectionHeaderHeight
                         color: sectionColor
 
                         Rectangle {
-                            width: units.gu(0.6)
-                            height: units.gu(3.2)
+                            width: sectionAccentWidth
+                            height: sectionAccentHeight
                             radius: width / 2
                             color: accentColor
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(2)
+                            anchors.leftMargin: spacingMedium + spacingSmall
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Label {
                             text: i18n.tr("Top Songs")
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(3.4)
+                            anchors.leftMargin: spacingMedium + spacingSmall + units.gu(1.4)
                             anchors.verticalCenter: parent.verticalCenter
-                            fontSize: "medium"
+                            fontSize: bodyTextSize
                             font.weight: Font.DemiBold
                             color: primaryTextColor
                         }
@@ -441,9 +532,9 @@ Item {
                         Label {
                             text: i18n.tr("%1 total").arg(songsModel.count)
                             anchors.right: parent.right
-                            anchors.rightMargin: units.gu(2)
+                            anchors.rightMargin: spacingMedium + spacingSmall
                             anchors.verticalCenter: parent.verticalCenter
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             color: mutedTextColor
                         }
                     }
@@ -451,14 +542,14 @@ Item {
                     Item {
                         id: songsView
                         width: parent.width
-                        height: parent.height - units.gu(6)
+                        height: parent.height - sectionHeaderHeight
 
                         ListView {
                             id: songsList
                             property int index: -1
                             anchors.fill: parent
-                            anchors.leftMargin: units.gu(0.6)
-                            anchors.rightMargin: units.gu(0.6)
+                            anchors.leftMargin: layoutGap
+                            anchors.rightMargin: layoutGap
                             clip: true
                             spacing: units.gu(0.2)
                             model: songsModel
@@ -467,7 +558,7 @@ Item {
                             delegate: SongListItem {
                                 title: name
                                 subtitle: artist
-                                durationText: Api.durationToString(duration)
+                                durationText: Format.durationToString(duration)
                                 coverSource: image
                                 albumId: album_id
                                 leadingText: (index + 1) + "."
@@ -519,7 +610,7 @@ Item {
                 Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
                 Layout.preferredWidth: mainLayout.width
                 Layout.preferredHeight: activeTab === 1 ? units.gu(66) : 0
-                radius: units.gu(1)
+                radius: radiusMedium
                 color: cardColor
                 border.color: cardBorder
                 border.width: 1
@@ -535,25 +626,25 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: units.gu(6)
+                        height: sectionHeaderHeight
                         color: sectionColor
 
                         Rectangle {
-                            width: units.gu(0.6)
-                            height: units.gu(3.2)
+                            width: sectionAccentWidth
+                            height: sectionAccentHeight
                             radius: width / 2
                             color: accentColor
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(2)
+                            anchors.leftMargin: spacingMedium + spacingSmall
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Label {
                             text: i18n.tr("Albums")
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(3.4)
+                            anchors.leftMargin: spacingMedium + spacingSmall + units.gu(1.4)
                             anchors.verticalCenter: parent.verticalCenter
-                            fontSize: "medium"
+                            fontSize: bodyTextSize
                             font.weight: Font.DemiBold
                             color: primaryTextColor
                         }
@@ -561,9 +652,9 @@ Item {
                         Label {
                             text: i18n.tr("%1 total").arg(albumsModel.count)
                             anchors.right: parent.right
-                            anchors.rightMargin: units.gu(2)
+                            anchors.rightMargin: spacingMedium + spacingSmall
                             anchors.verticalCenter: parent.verticalCenter
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             color: mutedTextColor
                         }
                     }
@@ -571,9 +662,9 @@ Item {
                     GridView {
                         id: albumsView
                         width: parent.width
-                        height: parent.height - units.gu(6)
+                        height: parent.height - sectionHeaderHeight
                         clip: true
-                        cellWidth: width > units.gu(25) ? (width / Math.ceil(width / units.gu(25))) : width
+                        cellWidth: width > albumsGridBreakpoint ? (width / Math.ceil(width / albumsGridBreakpoint)) : width
                         cellHeight: cellWidth + units.gu(7.5)
                         model: albumsModel
                         boundsBehavior: Flickable.StopAtBounds
@@ -585,14 +676,14 @@ Item {
 
                             Column {
                                 anchors.fill: parent
-                                anchors.margins: units.gu(0.8)
+                                anchors.margins: spacingSmall
                                 spacing: units.gu(0.4)
 
                                 Rectangle {
                                     width: parent.width
                                     height: parent.height - units.gu(5.2)
-                                    radius: units.gu(0.8)
-                                    color: "#202020"
+                                    radius: radiusSmall
+                                    color: sectionColor
                                     border.color: Qt.rgba(1, 1, 1, 0.1)
                                     border.width: 1
                                     clip: true
@@ -611,7 +702,7 @@ Item {
                                     width: parent.width
                                     horizontalAlignment: Text.AlignHCenter
                                     elide: Text.ElideRight
-                                    fontSize: "small"
+                                    fontSize: bodySmallTextSize
                                     font.weight: Font.DemiBold
                                     color: primaryTextColor
                                 }
@@ -620,7 +711,7 @@ Item {
                                     width: parent.width
                                     horizontalAlignment: Text.AlignHCenter
                                     elide: Text.ElideRight
-                                    fontSize: "small"
+                                    fontSize: bodySmallTextSize
                                     color: mutedTextColor
                                     text: i18n.tr("%1 song", "%1 songs", size).arg(size)
                                 }

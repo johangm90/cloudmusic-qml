@@ -51,7 +51,7 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
                 ("limit", limit),
             ];
             music_post_form(&client, "/api/search/get", &body)
-                .and_then(|raw| parse_json_loose(&raw).map(|v| v.to_string()))
+                .and_then(|raw| parse_json_loose(&raw).map(|v| normalize_search_payload(&v).to_string()))
         }
         "getNewAlbums" => {
             let limit = get_i64("limit", 50);
@@ -59,7 +59,15 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
                 &client,
                 &format!("/api/album/new?area=ALL&offset=0&total=true&limit={limit}"),
             )
-            .and_then(|raw| parse_json_loose(&raw).map(|v| v.to_string()))
+            .and_then(|raw| parse_json_loose(&raw).map(|v| {
+                let albums = v
+                    .get("albums")
+                    .and_then(Value::as_array)
+                    .map(|arr| arr.iter().map(normalize_album).collect::<Vec<Value>>())
+                    .unwrap_or_default();
+                json!({ "albums": albums })
+            }))
+            .map(|v| v.to_string())
         }
         "getTopArtists" => {
             let limit = get_i64("limit", 50);
@@ -67,22 +75,60 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
                 &client,
                 &format!("/api/artist/top?offset=0&total=false&limit={limit}"),
             )
-            .and_then(|raw| parse_json_loose(&raw).map(|v| v.to_string()))
+            .and_then(|raw| parse_json_loose(&raw).map(|v| {
+                let artists = v
+                    .get("artists")
+                    .and_then(Value::as_array)
+                    .map(|arr| arr.iter().map(normalize_artist).collect::<Vec<Value>>())
+                    .unwrap_or_default();
+                json!({ "artists": artists })
+            }))
+            .map(|v| v.to_string())
         }
         "getArtistTopSongs" => {
             let id = get_str("id");
             music_get(&client, &format!("/api/artist/{id}?offset=0&limit=100"))
-                .and_then(|raw| parse_json_loose(&raw).map(|v| v.to_string()))
+                .and_then(|raw| parse_json_loose(&raw).map(|v| {
+                    let artist = normalize_artist(v.get("artist").unwrap_or(&Value::Null));
+                    let songs = v
+                        .get("hotSongs")
+                        .and_then(Value::as_array)
+                        .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
+                        .unwrap_or_default();
+                    json!({ "artist": artist, "songs": songs })
+                }))
+                .map(|v| v.to_string())
         }
         "getArtistAlbums" => {
             let id = get_str("id");
             music_get(&client, &format!("/api/artist/albums/{id}?offset=0&limit=100"))
-                .and_then(|raw| parse_json_loose(&raw).map(|v| v.to_string()))
+                .and_then(|raw| parse_json_loose(&raw).map(|v| {
+                    let artist = normalize_artist(v.get("artist").unwrap_or(&Value::Null));
+                    let albums = v
+                        .get("hotAlbums")
+                        .and_then(Value::as_array)
+                        .map(|arr| arr.iter().map(normalize_album).collect::<Vec<Value>>())
+                        .unwrap_or_default();
+                    json!({ "artist": artist, "albums": albums })
+                }))
+                .map(|v| v.to_string())
         }
         "getAlbumDetail" => {
             let id = get_str("id");
             music_get(&client, &format!("/api/album/{id}"))
-                .and_then(|raw| parse_json_loose(&raw).map(|v| v.to_string()))
+                .and_then(|raw| parse_json_loose(&raw).map(|v| {
+                    let album_src = v.get("album").unwrap_or(&Value::Null);
+                    let songs = album_src
+                        .get("songs")
+                        .and_then(Value::as_array)
+                        .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
+                        .unwrap_or_default();
+                    json!({
+                        "album": normalize_album(album_src),
+                        "songs": songs
+                    })
+                }))
+                .map(|v| v.to_string())
         }
         "songDetail" => {
             let id = get_str("id");
@@ -91,6 +137,13 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
         "lyric" => {
             let id = get_str("id");
             lyric_value(&id, &client).map(|v| v.to_string())
+        }
+        "downloadUrl" => {
+            let id = get_str("id");
+            let quality = get_str("quality");
+            let q = if quality.is_empty() { "96" } else { quality.as_str() };
+            resolve_stream_data(&id, q, &client)
+                .map(|data| json!({"url": data.mp3, "img": data.img}).to_string())
         }
         _ => Err("unsupported action".to_string()),
     };
@@ -356,31 +409,153 @@ fn handle_song_detail_legacy(id: &str, client: &Client) -> Response<std::io::Cur
     }
 }
 
-fn song_detail_value(id: &str, client: &Client) -> Result<Value, String> {
-    let song = get_song_detail_raw(id, client)?;
-    let artists = song
+fn normalize_search_payload(raw: &Value) -> Value {
+    let result = raw.get("result").unwrap_or(&Value::Null);
+    let songs = result
+        .get("songs")
+        .and_then(Value::as_array)
+        .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
+        .unwrap_or_default();
+    let albums = result
+        .get("albums")
+        .and_then(Value::as_array)
+        .map(|arr| arr.iter().map(normalize_album).collect::<Vec<Value>>())
+        .unwrap_or_default();
+    let artists = result
         .get("artists")
         .and_then(Value::as_array)
-        .map(|arr| {
-            arr.iter()
-                .filter_map(|a| a.get("name").and_then(Value::as_str).map(str::to_string))
-                .collect::<Vec<String>>()
-        })
+        .map(|arr| arr.iter().map(normalize_artist).collect::<Vec<Value>>())
         .unwrap_or_default();
-    let album = song.get("album").cloned().unwrap_or(Value::Null);
-    let pic_id = extract_pic_id(&album);
-    let duration = read_song_duration_ms(&song);
-    Ok(json!([{
+    json!({
+        "songs": songs,
+        "albums": albums,
+        "artists": artists
+    })
+}
+
+fn normalize_artist(artist: &Value) -> Value {
+    let pic_url = artist
+        .get("picUrl")
+        .or_else(|| artist.get("img1v1Url"))
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let image = if pic_url.is_empty() {
+        "../graphics/default.png".to_string()
+    } else {
+        format!("{pic_url}?param=200y200")
+    };
+    let big_image = if pic_url.is_empty() {
+        "../graphics/default.png".to_string()
+    } else {
+        pic_url
+    };
+    json!({
+        "id": artist.get("id").and_then(Value::as_i64).unwrap_or(0),
+        "name": artist.get("name").and_then(Value::as_str).unwrap_or(""),
+        "image": image,
+        "big_image": big_image,
+        "source": "netease"
+    })
+}
+
+fn normalize_album(album: &Value) -> Value {
+    let artist_name = album
+        .get("artist")
+        .and_then(|a| a.get("name"))
+        .and_then(Value::as_str)
+        .or_else(|| {
+            album
+                .get("artists")
+                .and_then(Value::as_array)
+                .and_then(|arr| arr.first())
+                .and_then(|a| a.get("name"))
+                .and_then(Value::as_str)
+        })
+        .unwrap_or("")
+        .to_string();
+    let pic_url = album
+        .get("picUrl")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let image = if pic_url.is_empty() {
+        "../graphics/default.png".to_string()
+    } else {
+        format!("{pic_url}?param=200y200")
+    };
+    let big_image = if pic_url.is_empty() {
+        "../graphics/default.png".to_string()
+    } else {
+        pic_url
+    };
+    json!({
+        "id": album.get("id").and_then(Value::as_i64).unwrap_or(0),
+        "name": album.get("name").and_then(Value::as_str).unwrap_or(""),
+        "artist": artist_name,
+        "size": album.get("size").and_then(Value::as_i64).unwrap_or(0),
+        "publish_time": album.get("publishTime").and_then(Value::as_i64).unwrap_or(0),
+        "image": image,
+        "big_image": big_image,
+        "source": "netease"
+    })
+}
+
+fn normalize_song(song: &Value) -> Value {
+    let artists = song
+        .get("artists")
+        .or_else(|| song.get("ar"))
+        .and_then(Value::as_array);
+    let artist_id = artists
+        .and_then(|arr| arr.first())
+        .and_then(|a| a.get("id"))
+        .and_then(Value::as_i64)
+        .unwrap_or(0);
+    let artist_name = artists
+        .and_then(|arr| arr.first())
+        .and_then(|a| a.get("name"))
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let album = song
+        .get("album")
+        .or_else(|| song.get("al"))
+        .cloned()
+        .unwrap_or(Value::Null);
+    let pic_url = album
+        .get("picUrl")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let image = if pic_url.is_empty() {
+        "../graphics/default.png".to_string()
+    } else {
+        format!("{pic_url}?param=120y120")
+    };
+    let big_image = if pic_url.is_empty() {
+        "../graphics/default.png".to_string()
+    } else {
+        pic_url
+    };
+    json!({
         "id": song.get("id").and_then(Value::as_i64).unwrap_or(0),
         "name": song.get("name").and_then(Value::as_str).unwrap_or(""),
-        "artist": artists,
+        "album_id": album.get("id").and_then(Value::as_i64).unwrap_or(0),
         "album": album.get("name").and_then(Value::as_str).unwrap_or(""),
-        "pic_id": pic_id,
-        "url_id": song.get("id").and_then(Value::as_i64).unwrap_or(0),
-        "lyric_id": song.get("id").and_then(Value::as_i64).unwrap_or(0),
-        "duration": duration,
+        "artist_id": artist_id,
+        "artist": artist_name,
+        "duration": read_song_duration_ms(song),
+        "image": image,
+        "big_image": big_image,
         "source": "netease"
-    }]))
+    })
+}
+
+fn song_detail_value(id: &str, client: &Client) -> Result<Value, String> {
+    let song = get_song_detail_raw(id, client)?;
+    Ok(json!({
+        "song": normalize_song(&song)
+    }))
 }
 
 fn handle_song_detail_endpoint(path: &str, client: &Client) -> Response<std::io::Cursor<Vec<u8>>> {
@@ -412,7 +587,7 @@ fn handle_play(path: &str, client: &Client) -> Response<std::io::Cursor<Vec<u8>>
     let id = chunks[2];
     let quality = chunks[3];
     match resolve_stream_data(id, quality, client) {
-        Ok(data) => proxy_audio_response(&data.mp3, client),
+        Ok(data) => redirect_response(&data.mp3),
         Err(err) => {
             eprintln!("local_api /play failed song {} q={}: {}", id, quality, err);
             json_response(StatusCode(502), json!({"error":err}))
@@ -457,39 +632,6 @@ fn handle_pic(path: &str, query: &str) -> Response<std::io::Cursor<Vec<u8>>> {
         .unwrap_or(300);
     let enc = decrypt_id(pic_id);
     redirect_response(&format!("{MEDIA_BASE}{enc}/{pic_id}.jpg?param={size}y{size}"))
-}
-
-fn proxy_audio_response(url: &str, client: &Client) -> Response<std::io::Cursor<Vec<u8>>> {
-    eprintln!("local_api /play resolved url: {url}");
-    match client.get(url).send() {
-        Ok(resp) => {
-            let status = resp.status();
-            if !status.is_success() {
-                return json_response(
-                    StatusCode(502),
-                    json!({"error": format!("upstream audio status {}", status.as_u16())}),
-                );
-            }
-            let content_type = resp
-                .headers()
-                .get("content-type")
-                .and_then(|v| v.to_str().ok())
-                .unwrap_or("audio/mpeg")
-                .to_string();
-            match resp.bytes() {
-                Ok(bytes) => {
-                    let mut response =
-                        Response::from_data(bytes.to_vec()).with_status_code(StatusCode(200));
-                    if let Ok(h) = Header::from_bytes(b"Content-Type", content_type.as_bytes()) {
-                        response = response.with_header(h);
-                    }
-                    response
-                }
-                Err(err) => json_response(StatusCode(502), json!({"error": err.to_string()})),
-            }
-        }
-        Err(err) => json_response(StatusCode(502), json!({"error": err.to_string()})),
-    }
 }
 
 struct StreamData {
@@ -558,47 +700,6 @@ fn read_song_duration_ms(song: &Value) -> i64 {
         .and_then(Value::as_i64)
         .or_else(|| song.get("dt").and_then(Value::as_i64))
         .unwrap_or(0)
-}
-
-fn extract_pic_id(album: &Value) -> String {
-    if let Some(url) = album.get("picUrl").and_then(Value::as_str) {
-        if let Some(id) = extract_numeric_id_from_pic_url(url) {
-            return id;
-        }
-    }
-    if let Some(s) = album.get("picId_str").and_then(Value::as_str) {
-        if !s.is_empty() {
-            return s.to_string();
-        }
-    }
-    if let Some(s) = album.get("pic_str").and_then(Value::as_str) {
-        if !s.is_empty() {
-            return s.to_string();
-        }
-    }
-    if let Some(v) = album.get("picId").and_then(Value::as_i64) {
-        if v > 0 {
-            return v.to_string();
-        }
-    }
-    if let Some(v) = album.get("pic").and_then(Value::as_i64) {
-        if v > 0 {
-            return v.to_string();
-        }
-    }
-    "0".to_string()
-}
-
-fn extract_numeric_id_from_pic_url(url: &str) -> Option<String> {
-    let slash = url.rfind('/')?;
-    let tail = &url[slash + 1..];
-    let dot = tail.find('.')?;
-    let id = &tail[..dot];
-    if !id.is_empty() && id.chars().all(|c| c.is_ascii_digit()) {
-        Some(id.to_string())
-    } else {
-        None
-    }
 }
 
 fn resolve_outer_url(id: &str, client: &Client) -> Result<String, String> {
@@ -685,7 +786,10 @@ fn resolve_play_url_weapi(id: &str, quality: &str, client: &Client) -> Result<St
         ("params", params),
         ("encSecKey", WEAPI_ENCSEC_KEY.to_string()),
     ];
-    let endpoints = [format!("{MUSIC_BASE}/weapi/song/enhance/player/url")];
+    let endpoints = [
+        format!("{MUSIC_BASE}/api/song/enhance/player/url"),
+        format!("{MUSIC_BASE}/weapi/song/enhance/player/url"),
+    ];
     let mut last_err = String::new();
     for endpoint in endpoints {
         let req = default_headers(client.post(endpoint.clone())).form(&form);

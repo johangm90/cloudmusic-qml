@@ -4,6 +4,8 @@ import "../components"
 
 Page {
     id: searchHistoryPage
+    property var appRoot
+    property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
 
     TabsList {
         id: tabsList
@@ -16,5 +18,12 @@ Page {
             actions: tabsList.actions
         }
         trailingActionBar.actions: [searchAction]
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        anchors.topMargin: searchHistoryPage.header ? searchHistoryPage.header.height : 0
+        color: pageColor
+        z: -1
     }
 }

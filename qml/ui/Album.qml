@@ -3,7 +3,8 @@ import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
-import "../logic/Api.js" as Api
+import "../logic/Format.js" as Format
+import "../logic/RequestBus.js" as RequestBus
 import "../logic/Database.js" as Db
 import "../components"
 
@@ -22,19 +23,76 @@ Item {
     property color inverseTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
     property color selectedColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.18)
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real radiusSmall: appRoot ? appRoot.radiusSmall : units.gu(0.8)
+    property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
+    property real layoutGap: spacingSmall + units.gu(0.2)
+    property real sectionHeaderHeight: units.gu(6)
+    property real sectionAccentWidth: units.gu(0.6)
+    property real sectionAccentHeight: units.gu(3.2)
+    property real gridBreakpoint: units.gu(90)
+    property string titleTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
+    property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
+    property string bodySmallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
+    property string requestContext: "album_" + String(Date.now())
 
     function cargar(id) {
-        Api.getAlbumDetail(id, albumApiContext())
+        if (!appRoot || !appRoot.cloudApi) {
+            return
+        }
+        RequestBus.cancelContext(requestContext)
+        var activeRequestId = RequestBus.createId("album_detail")
+        album_loader.running = true
+        is_visible(false)
+        albumModel.clear()
+        photo.source = "../graphics/default.png"
+        lbl_album_title.text = ""
+        lbl_album_date.text = ""
+        RequestBus.registerRequest(activeRequestId, {
+            context: requestContext,
+            onSuccess: function(data) {
+                if (!data || !data.album) {
+                    is_visible(true)
+                    return
+                }
+                photo.source = data.album.big_image ? data.album.big_image : "../graphics/default.png"
+                lbl_album_title.text = data.album.name ? data.album.name : ""
+                var publishTime = data.album.publish_time ? data.album.publish_time : 0
+                lbl_album_date.text = i18n.tr("Release Date:") + " " + formatDate(new Date(publishTime))
+                if (data.songs) {
+                    for (var i = 0; i < data.songs.length; i++) {
+                        albumModel.append(data.songs[i])
+                    }
+                }
+                is_visible(true)
+            },
+            onError: function(err) {
+                console.log(err)
+                is_visible(true)
+            },
+            onFinally: function() {
+                album_loader.running = false
+            }
+        })
+        appRoot.cloudApi.getAlbumDetailAsync(String(id), activeRequestId)
     }
 
-    function albumApiContext() {
-        return {
-            albumModel: albumModel,
-            loader: album_loader,
-            setVisible: is_visible,
-            setPhoto: function(source) { photo.source = source },
-            setAlbumTitle: function(title) { lbl_album_title.text = title },
-            setAlbumDate: function(dateText) { lbl_album_date.text = dateText }
+    Component.onDestruction: {
+        RequestBus.cancelContext(requestContext)
+    }
+
+    function formatDate(date) {
+        var y = date.getFullYear()
+        var m = date.getMonth() + 1
+        var d = date.getDate()
+        return y + "-" + (m < 10 ? ("0" + m) : m) + "-" + (d < 10 ? ("0" + d) : d)
+    }
+
+    Connections {
+        target: appRoot && appRoot.cloudApi ? appRoot.cloudApi : null
+        onRequestFinished: function(requestId, ok, payloadJson, error) {
+            RequestBus.dispatch(requestId, ok, payloadJson, error)
         }
     }
 
@@ -78,8 +136,8 @@ Item {
 
         delegate: ListItem {
             contentItem.anchors {
-                leftMargin: units.gu(2)
-                rightMargin: units.gu(2)
+                leftMargin: spacingMedium + spacingSmall
+                rightMargin: spacingMedium + spacingSmall
             }
 
             Icon {
@@ -94,7 +152,7 @@ Item {
             Label {
                 text: action.text
                 anchors.left: icon.right
-                anchors.leftMargin: units.gu(2)
+                anchors.leftMargin: spacingMedium + spacingSmall
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -104,7 +162,13 @@ Item {
                 text: i18n.tr("Download")
                 name: "save"
                 onTriggered: {
-                    Api.download(albumModel.get(albumList.index).id, albumModel.get(albumList.index).name, albumModel.get(albumList.index).artist)
+                    if (appRoot && appRoot.requestSongDownload) {
+                        appRoot.requestSongDownload(
+                            albumModel.get(albumList.index).id,
+                            albumModel.get(albumList.index).name,
+                            albumModel.get(albumList.index).artist
+                        )
+                    }
                     context_menu.close()
                 }
             }
@@ -162,7 +226,7 @@ Item {
         anchors.fill: parent
         clip: true
         contentWidth: width
-        contentHeight: Math.max(height, mainLayout.implicitHeight + units.gu(2))
+        contentHeight: Math.max(height, mainLayout.implicitHeight + spacingMedium + spacingSmall)
 
         GridLayout {
             id: mainLayout
@@ -171,9 +235,9 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 0
-            columns: width < units.gu(90) ? 1 : 2
-            rowSpacing: units.gu(1)
-            columnSpacing: units.gu(1)
+            columns: width < gridBreakpoint ? 1 : 2
+            rowSpacing: layoutGap
+            columnSpacing: layoutGap
 
             Rectangle {
                 id: image_layout
@@ -181,7 +245,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: mainLayout.columns === 1 ? mainLayout.width : mainLayout.width / 3
                 Layout.preferredHeight: mainLayout.columns === 1 ? units.gu(35) : Math.max(units.gu(44), albumContainer.height - units.gu(2))
-                radius: units.gu(1)
+                radius: radiusMedium
                 color: cardColor
                 border.color: cardBorder
                 border.width: 1
@@ -212,14 +276,14 @@ Item {
 
                 Column {
                     anchors.fill: parent
-                    anchors.margins: units.gu(2)
-                    spacing: units.gu(1.5)
+                    anchors.margins: spacingMedium + spacingSmall
+                    spacing: spacingMedium + layoutGap
 
                     Rectangle {
-                        width: Math.min(parent.width - units.gu(4), units.gu(22))
+                        width: Math.min(parent.width - (spacingMedium + spacingSmall) * 2, units.gu(22))
                         height: width
-                        radius: units.gu(0.8)
-                        color: "#202020"
+                        radius: radiusSmall
+                        color: sectionColor
                         border.color: Qt.rgba(1, 1, 1, 0.15)
                         border.width: 1
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -241,7 +305,7 @@ Item {
                             maskSource: Rectangle {
                                 width: photo.width
                                 height: photo.height
-                                radius: units.gu(0.8)
+                                radius: radiusSmall
                             }
                         }
                     }
@@ -251,7 +315,7 @@ Item {
                         width: parent.width
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
-                        fontSize: "large"
+                        fontSize: titleTextSize
                         color: inverseTextColor
                         font.weight: Font.DemiBold
                     }
@@ -261,14 +325,14 @@ Item {
                         width: parent.width
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
-                        fontSize: "small"
+                        fontSize: bodySmallTextSize
                         color: mutedTextColor
                     }
 
                     Label {
                         width: parent.width
                         horizontalAlignment: Text.AlignHCenter
-                        fontSize: "small"
+                        fontSize: bodySmallTextSize
                         color: mutedTextColor
                         text: i18n.tr("%1 song", "%1 songs", albumModel.count).arg(albumModel.count)
                     }
@@ -281,7 +345,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: mainLayout.columns === 1 ? mainLayout.width : (mainLayout.width / 3) * 2
                 Layout.preferredHeight: mainLayout.columns === 1 ? units.gu(70) : Math.max(units.gu(44), albumContainer.height - units.gu(2))
-                radius: units.gu(1)
+                radius: radiusMedium
                 color: cardColor
                 border.color: cardBorder
                 border.width: 1
@@ -292,25 +356,25 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: units.gu(6)
+                        height: sectionHeaderHeight
                         color: sectionColor
 
                         Rectangle {
-                            width: units.gu(0.6)
-                            height: units.gu(3.2)
+                            width: sectionAccentWidth
+                            height: sectionAccentHeight
                             radius: width / 2
                             color: accentColor
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(2)
+                            anchors.leftMargin: spacingMedium + spacingSmall
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Label {
                             text: i18n.tr("Tracks")
                             anchors.left: parent.left
-                            anchors.leftMargin: units.gu(3.4)
+                            anchors.leftMargin: spacingMedium + spacingSmall + units.gu(1.4)
                             anchors.verticalCenter: parent.verticalCenter
-                            fontSize: "medium"
+                            fontSize: bodyTextSize
                             font.weight: Font.DemiBold
                             color: primaryTextColor
                         }
@@ -318,9 +382,9 @@ Item {
                         Label {
                             text: i18n.tr("%1 total").arg(albumModel.count)
                             anchors.right: parent.right
-                            anchors.rightMargin: units.gu(2)
+                            anchors.rightMargin: spacingMedium + spacingSmall
                             anchors.verticalCenter: parent.verticalCenter
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             color: mutedTextColor
                         }
                     }
@@ -328,14 +392,14 @@ Item {
                     Item {
                         id: albumView
                         width: parent.width
-                        height: parent.height - units.gu(6)
+                        height: parent.height - sectionHeaderHeight
 
                         ListView {
                             id: albumList
                             property int index: -1
                             anchors.fill: parent
-                            anchors.leftMargin: units.gu(0.6)
-                            anchors.rightMargin: units.gu(0.6)
+                            anchors.leftMargin: layoutGap
+                            anchors.rightMargin: layoutGap
                             clip: true
                             spacing: units.gu(0.2)
                             model: albumModel
@@ -344,7 +408,7 @@ Item {
                             delegate: SongListItem {
                                 title: name
                                 subtitle: artist
-                                durationText: Api.durationToString(duration)
+                                durationText: Format.durationToString(duration)
                                 coverSource: image
                                 albumId: album_id
                                 leadingText: (index + 1) + "."
@@ -391,7 +455,7 @@ Item {
                             width: parent.width - units.gu(6)
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            fontSize: "small"
+                            fontSize: bodySmallTextSize
                             color: mutedTextColor
                             text: i18n.tr("I'm sorry, list is empty because none of the songs included in this album are of a supported format :(")
                         }

@@ -3,6 +3,12 @@ import Lomiri.Components 1.3
 
 Item {
     anchors.fill: parent
+    property var appRoot: (typeof cloudMusic !== "undefined" ? cloudMusic : null)
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real layoutPlayerInset: appRoot ? appRoot.layoutPlayerInset : units.gu(7.25)
+    property real bubblePadding: units.gu(4)
+    property real messageSideInset: units.gu(6)
 
     function show_message(text, duration) {
         lbl_message.text = text
@@ -33,23 +39,23 @@ Item {
         color: "transparent"
         width: parent.width
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: units.gu(5)
+        anchors.bottomMargin: layoutPlayerInset - units.gu(2.25)
         z : 999
 
         Rectangle {
             id: message_bg
-            color: "#000"
-            width: lbl_message.contentWidth + units.gu(4)
-            height: units.gu(4) * lbl_message.lineCount
+            color: cloudMusic && cloudMusic.designTokens ? cloudMusic.designTokens.color.toastBg : "#000"
+            width: lbl_message.contentWidth + bubblePadding
+            height: bubblePadding * lbl_message.lineCount
             opacity: 0.8
-            radius: (lbl_message.height + units.gu(4)) / 2;
+            radius: (lbl_message.height + bubblePadding) / 2;
             anchors.centerIn: parent
         }
 
         Label {
             id: lbl_message
-            color: "#fff"
-            width: parent.width - units.gu(6)
+            color: cloudMusic && cloudMusic.designTokens ? cloudMusic.designTokens.color.toastText : "#fff"
+            width: parent.width - messageSideInset
             anchors {
                 centerIn: parent
             }
@@ -60,4 +66,3 @@ Item {
     }
 
 }
-

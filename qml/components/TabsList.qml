@@ -12,7 +12,12 @@ ActionList {
         if (!loader || isCurrentPage(loader)) {
             return
         }
-        pagestack.push(loader)
+        while (pagestack.depth && pagestack.depth > 1) {
+            pagestack.pop()
+        }
+        if (!isCurrentPage(loader)) {
+            pagestack.push(loader)
+        }
     }
 
     children: [

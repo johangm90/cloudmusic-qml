@@ -26,6 +26,7 @@ use std::path::PathBuf;
 use gettextrs::{bindtextdomain, textdomain};
 use qmetaobject::*;
 use cpp::cpp;
+use serde_json::json;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 
@@ -93,29 +94,123 @@ struct CloudMusic {
     ),
     callAsync: qt_method!(
         fn callAsync(&self, action: QString, params_json: QString, request_id: QString) {
-            let tx = self.tx.clone();
-            let action_s = action.to_string();
-            let params_s = params_json.to_string();
-            let request_s = request_id.to_string();
-            thread::spawn(move || {
-                let raw = local_api::direct_call(&action_s, &params_s);
-                let (ok, error) = match serde_json::from_str::<serde_json::Value>(&raw) {
-                    Ok(v) => {
-                        if let Some(e) = v.get("error").and_then(serde_json::Value::as_str) {
-                            (false, e.to_string())
-                        } else {
-                            (true, String::new())
-                        }
-                    }
-                    Err(e) => (false, format!("invalid json response: {e}")),
-                };
-                let _ = tx.send(AsyncResult {
-                    request_id: request_s,
-                    ok,
-                    payload_json: raw,
-                    error,
-                });
+            spawn_action_request(
+                self.tx.clone(),
+                action.to_string(),
+                params_json.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    searchAsync: qt_method!(
+        fn searchAsync(&self, query: QString, kind: QString, limit: i32, request_id: QString) {
+            let mut kind_s = kind.to_string();
+            if kind_s.is_empty() {
+                kind_s = "1".to_string();
+            }
+            let params = json!({
+                "query": query.to_string(),
+                "type": kind_s,
+                "limit": limit,
             });
+            spawn_action_request(
+                self.tx.clone(),
+                "search".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    getNewAlbumsAsync: qt_method!(
+        fn getNewAlbumsAsync(&self, limit: i32, request_id: QString) {
+            let params = json!({ "limit": limit });
+            spawn_action_request(
+                self.tx.clone(),
+                "getNewAlbums".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    getTopArtistsAsync: qt_method!(
+        fn getTopArtistsAsync(&self, limit: i32, request_id: QString) {
+            let params = json!({ "limit": limit });
+            spawn_action_request(
+                self.tx.clone(),
+                "getTopArtists".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    getAlbumDetailAsync: qt_method!(
+        fn getAlbumDetailAsync(&self, id: QString, request_id: QString) {
+            let params = json!({ "id": id.to_string() });
+            spawn_action_request(
+                self.tx.clone(),
+                "getAlbumDetail".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    getArtistTopSongsAsync: qt_method!(
+        fn getArtistTopSongsAsync(&self, id: QString, request_id: QString) {
+            let params = json!({ "id": id.to_string() });
+            spawn_action_request(
+                self.tx.clone(),
+                "getArtistTopSongs".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    getArtistAlbumsAsync: qt_method!(
+        fn getArtistAlbumsAsync(&self, id: QString, request_id: QString) {
+            let params = json!({ "id": id.to_string() });
+            spawn_action_request(
+                self.tx.clone(),
+                "getArtistAlbums".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    songDetailAsync: qt_method!(
+        fn songDetailAsync(&self, id: QString, request_id: QString) {
+            let params = json!({ "id": id.to_string() });
+            spawn_action_request(
+                self.tx.clone(),
+                "songDetail".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    lyricAsync: qt_method!(
+        fn lyricAsync(&self, id: QString, request_id: QString) {
+            let params = json!({ "id": id.to_string() });
+            spawn_action_request(
+                self.tx.clone(),
+                "lyric".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
+        }
+    ),
+    downloadUrlAsync: qt_method!(
+        fn downloadUrlAsync(&self, id: QString, quality: QString, request_id: QString) {
+            let mut q = quality.to_string();
+            if q.is_empty() {
+                q = "96".to_string();
+            }
+            let params = json!({ "id": id.to_string(), "quality": q });
+            spawn_action_request(
+                self.tx.clone(),
+                "downloadUrl".to_string(),
+                params.to_string(),
+                request_id.to_string(),
+            );
         }
     ),
     pumpResponses: qt_method!(
@@ -144,6 +239,28 @@ struct AsyncResult {
     error: String,
 }
 
+fn spawn_action_request(tx: Sender<AsyncResult>, action: String, params_json: String, request_id: String) {
+    thread::spawn(move || {
+        let raw = local_api::direct_call(&action, &params_json);
+        let (ok, error) = match serde_json::from_str::<serde_json::Value>(&raw) {
+            Ok(v) => {
+                if let Some(e) = v.get("error").and_then(serde_json::Value::as_str) {
+                    (false, e.to_string())
+                } else {
+                    (true, String::new())
+                }
+            }
+            Err(e) => (false, format!("invalid json response: {e}")),
+        };
+        let _ = tx.send(AsyncResult {
+            request_id,
+            ok,
+            payload_json: raw,
+            error,
+        });
+    });
+}
+
 impl Default for CloudMusic {
     fn default() -> Self {
         let (tx, rx) = channel::<AsyncResult>();
@@ -154,6 +271,15 @@ impl Default for CloudMusic {
             rx,
             call: Default::default(),
             callAsync: Default::default(),
+            searchAsync: Default::default(),
+            getNewAlbumsAsync: Default::default(),
+            getTopArtistsAsync: Default::default(),
+            getAlbumDetailAsync: Default::default(),
+            getArtistTopSongsAsync: Default::default(),
+            getArtistAlbumsAsync: Default::default(),
+            songDetailAsync: Default::default(),
+            lyricAsync: Default::default(),
+            downloadUrlAsync: Default::default(),
             pumpResponses: Default::default(),
         }
     }

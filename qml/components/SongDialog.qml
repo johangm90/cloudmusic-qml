@@ -2,10 +2,13 @@ import QtQuick 2.12
 import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import Lomiri.Layouts 1.0
-import "../logic/Api.js" as Api
 import "../logic/Database.js" as Db
 
 Item {
+    property var appRoot: (typeof cloudMusic !== "undefined" ? cloudMusic : null)
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real sideInset: spacingMedium + spacingSmall
 
     function open_dialog() {
         PopupUtils.open(addsong)
@@ -73,7 +76,9 @@ Item {
                 color: LomiriColors.green
                 onClicked: {
                     Db.insertPlaylist(txt_playlist.text)
-                    Db.getLastPlaylist()
+                    Db.getLastPlaylist(function(playlistId) {
+                        add_song(playlistId)
+                    })
                     PopupUtils.close(create_playlist)
                 }
             }
@@ -110,7 +115,7 @@ Item {
                 Label {
                     text: i18n.tr("Create new playlist")
                     anchors.left: icon.right
-                    anchors.leftMargin: units.gu(2)
+                    anchors.leftMargin: sideInset
                     anchors.verticalCenter: parent.verticalCenter
                 }
 

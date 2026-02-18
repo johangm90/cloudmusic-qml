@@ -10,6 +10,14 @@ Rectangle {
     property color accentColor: cloudMusic.primaryColor
     property color textColor: cloudMusic.textColor
     property color secondaryTextColor: cloudMusic.secondaryTextColor
+    property real spacingMedium: cloudMusic ? cloudMusic.spacingMedium : units.gu(1.2)
+    property real spacingSmall: cloudMusic ? cloudMusic.spacingSmall : units.gu(0.8)
+    property real sideInset: spacingSmall + units.gu(0.2)
+    property real controlSize: units.gu(5)
+    property real controlIconSize: units.gu(3)
+    property real controlRadius: controlSize / 2
+    property real progressHeight: units.gu(0.1)
+    property string bodySmallTextSize: cloudMusic && cloudMusic.designTokens ? cloudMusic.designTokens.typography.bodySmall : "small"
     visible: media_player.queue > 0 && !playingPage.visible && !aboutLoader.visible && !settingsLoader.visible ? true : false
     anchors {
         bottom: parent.bottom
@@ -17,7 +25,7 @@ Rectangle {
         right: parent.right
     }
     color: "transparent"
-    height: units.gu(7.25)
+    height: cloudMusic && cloudMusic.layoutPlayerInset ? cloudMusic.layoutPlayerInset : units.gu(7.25)
 
     function cargar(name, artist, image){
         coverArt.source = image
@@ -34,7 +42,7 @@ Rectangle {
 
     Column {
         anchors {
-            margins: units.gu(2)
+            margins: spacingMedium + spacingSmall
             left: coverArt.right
             right: playerControl.left
             verticalCenter: parent.verticalCenter
@@ -52,7 +60,7 @@ Rectangle {
             id: lbl_toolbar_artist
             width: parent.width
             elide: Text.ElideRight
-            fontSize: "small"
+            fontSize: bodySmallTextSize
             color: secondaryTextColor
             opacity: 0.9
         }
@@ -62,18 +70,18 @@ Rectangle {
         id: playerControl
         z: 2
         anchors.right: parent.right
-        anchors.rightMargin: units.gu(1)
+        anchors.rightMargin: sideInset
         anchors.verticalCenter: parent.verticalCenter
         color: "transparent"
         border.color: accentColor
         border.width: 1
-        width: units.gu(5)
-        height: units.gu(5)
-        radius: units.gu(2.5)
+        width: controlSize
+        height: controlSize
+        radius: controlRadius
 
         Icon {
-            width: units.gu(3)
-            height: units.gu(3)
+            width: controlIconSize
+            height: controlIconSize
             name: media_player.playbackState === 1 ? "media-playback-pause" : "media-playback-start"
             color: accentColor
             anchors.centerIn: parent
@@ -81,7 +89,7 @@ Rectangle {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: media_player.togle()
+            onClicked: media_player.toggle()
         }
     }
 
@@ -99,7 +107,7 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
-        height: units.gu(0.1)
+        height: progressHeight
 
         UListItem.ThinDivider {
             id: divider

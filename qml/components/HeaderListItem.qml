@@ -3,12 +3,14 @@ import Lomiri.Components 1.3
 
 ListItem {
     id: headerListItem
+    property var appRoot: (typeof cloudMusic !== "undefined" ? cloudMusic : null)
+    property real dividerInset: appRoot ? (appRoot.spacingMedium + appRoot.spacingSmall) : units.gu(2)
 
     property alias title: headerText.title
 
     height: headerText.height + divider.height
-    divider.anchors.leftMargin: units.gu(2)
-    divider.anchors.rightMargin: units.gu(2)
+    divider.anchors.leftMargin: dividerInset
+    divider.anchors.rightMargin: dividerInset
 
     ListItemLayout {
         id: headerText

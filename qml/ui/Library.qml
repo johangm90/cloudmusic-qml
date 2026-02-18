@@ -15,6 +15,19 @@ Page {
     property color accentColor: appRoot ? appRoot.primaryColor : "#e53446"
     property real pagePadding: appRoot ? appRoot.pagePadding : units.gu(1.2)
     property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
+    property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
+    property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
+    property real layoutPlayerInset: appRoot ? appRoot.layoutPlayerInset : units.gu(7.25)
+    property real cardHeight: units.gu(10)
+    property real iconSize: units.gu(3.2)
+    property real compactSpacing: units.gu(0.2)
+    property real playlistsHeaderHeight: units.gu(6)
+    property real playlistRowHeight: units.gu(7.6)
+    property real playlistRowHorizontalPadding: spacingMedium + spacingSmall
+    property real playlistRowVerticalPadding: 0
+    property real playlistRowTextGap: compactSpacing
+    property real playlistChevronSize: units.gu(2.2)
+    property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
     property int favoritesCount: 0
     property int recentCount: 0
 
@@ -148,7 +161,7 @@ Page {
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-            bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+            bottomMargin: media_player.playbackState != 0 ? layoutPlayerInset : 0
         }
 
         Flickable {
@@ -163,29 +176,29 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: pagePadding
-                spacing: units.gu(1.2)
+                spacing: spacingMedium
 
                 Rectangle {
                     width: parent.width
-                    height: units.gu(10)
+                    height: cardHeight
                     radius: radiusMedium
                     color: cardColor
                     border.color: borderColor
                     border.width: 1
                     Row {
                         anchors.fill: parent
-                        anchors.margins: units.gu(1.6)
-                        spacing: units.gu(1.4)
+                        anchors.margins: spacingMedium + (spacingSmall / 2)
+                        spacing: spacingMedium + compactSpacing
                         Icon {
-                            width: units.gu(3.2)
-                            height: units.gu(3.2)
+                            width: iconSize
+                            height: iconSize
                             name: "like"
                             color: accentColor
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Column {
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: units.gu(0.2)
+                            spacing: compactSpacing
                             Label {
                                 text: i18n.tr("Favorites")
                                 color: textColor
@@ -194,7 +207,7 @@ Page {
                             Label {
                                 text: i18n.tr("%1 songs").arg(favoritesCount)
                                 color: secondaryTextColor
-                                fontSize: "small"
+                                fontSize: smallTextSize
                             }
                         }
                     }
@@ -211,25 +224,25 @@ Page {
 
                 Rectangle {
                     width: parent.width
-                    height: units.gu(10)
+                    height: cardHeight
                     radius: radiusMedium
                     color: cardColor
                     border.color: borderColor
                     border.width: 1
                     Row {
                         anchors.fill: parent
-                        anchors.margins: units.gu(1.6)
-                        spacing: units.gu(1.4)
+                        anchors.margins: spacingMedium + (spacingSmall / 2)
+                        spacing: spacingMedium + compactSpacing
                         Icon {
-                            width: units.gu(3.2)
-                            height: units.gu(3.2)
+                            width: iconSize
+                            height: iconSize
                             name: "history"
                             color: accentColor
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Column {
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: units.gu(0.2)
+                            spacing: compactSpacing
                             Label {
                                 text: i18n.tr("Recently Played")
                                 color: textColor
@@ -238,7 +251,7 @@ Page {
                             Label {
                                 text: i18n.tr("%1 songs").arg(recentCount)
                                 color: secondaryTextColor
-                                fontSize: "small"
+                                fontSize: smallTextSize
                             }
                         }
                     }
@@ -259,18 +272,18 @@ Page {
                     color: cardColor
                     border.color: borderColor
                     border.width: 1
-                    height: Math.max(units.gu(12), units.gu(6) + modelo_playlists.count * units.gu(7))
+                    height: Math.max(units.gu(12), playlistsHeaderHeight + modelo_playlists.count * playlistRowHeight)
                     clip: true
                     Column {
                         anchors.fill: parent
                         Rectangle {
                             width: parent.width
-                            height: units.gu(6)
+                            height: playlistsHeaderHeight
                             color: "transparent"
                             Label {
                                 text: i18n.tr("Playlists")
                                 anchors.left: parent.left
-                                anchors.leftMargin: units.gu(2)
+                                anchors.leftMargin: spacingMedium + spacingSmall
                                 anchors.verticalCenter: parent.verticalCenter
                                 color: textColor
                                 font.weight: Font.DemiBold
@@ -281,12 +294,16 @@ Page {
                             property int currentId: 0
                             property string current: ""
                             width: parent.width
-                            height: parent.height - units.gu(6)
+                            height: parent.height - playlistsHeaderHeight
                             model: modelo_playlists
                             clip: true
                             delegate: ListItem {
-                                contentItem.anchors.leftMargin: units.gu(2)
-                                contentItem.anchors.rightMargin: units.gu(2)
+                                id: playlistRow
+                                contentItem.anchors.leftMargin: playlistRowHorizontalPadding
+                                contentItem.anchors.rightMargin: playlistRowHorizontalPadding
+                                contentItem.anchors.topMargin: playlistRowVerticalPadding
+                                contentItem.anchors.bottomMargin: playlistRowVerticalPadding
+                                color: pressed ? Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.14) : "transparent"
                                 leadingActions: ListItemActions {
                                     actions: [
                                         Action {
@@ -310,18 +327,39 @@ Page {
                                         }
                                     ]
                                 }
-                                Label {
-                                    text: playlistName
-                                    color: textColor
-                                    anchors.left: parent.left
-                                    elide: Text.ElideRight
-                                }
-                                Label {
-                                    text: i18n.tr("%1 song", "%1 songs", playlistCount).arg(playlistCount)
+
+                                Icon {
+                                    id: playlistChevron
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: playlistChevronSize
+                                    height: width
+                                    name: "go-next"
                                     color: secondaryTextColor
-                                    fontSize: "small"
+                                }
+
+                                Column {
                                     anchors.left: parent.left
-                                    anchors.bottom: parent.bottom
+                                    anchors.right: playlistChevron.left
+                                    anchors.rightMargin: spacingSmall
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: playlistRowTextGap
+
+                                    Label {
+                                        text: playlistName
+                                        color: textColor
+                                        elide: Text.ElideRight
+                                        width: parent.width
+                                        font.weight: Font.DemiBold
+                                    }
+
+                                    Label {
+                                        text: i18n.tr("%1 song", "%1 songs", playlistCount).arg(playlistCount)
+                                        color: secondaryTextColor
+                                        fontSize: smallTextSize
+                                        width: parent.width
+                                        elide: Text.ElideRight
+                                    }
                                 }
                                 onClicked: {
                                     playlistDetailPage.title = playlistName
