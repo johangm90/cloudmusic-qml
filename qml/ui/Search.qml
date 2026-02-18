@@ -461,6 +461,19 @@ Page {
                                 }
                             }
                             Action {
+                                text: (songsList.index >= 0 && Db.isLikedSong(searchSongsModel.get(songsList.index).id))
+                                      ? i18n.tr("Remove from Favorites")
+                                      : i18n.tr("Add to Favorites")
+                                name: (songsList.index >= 0 && Db.isLikedSong(searchSongsModel.get(songsList.index).id))
+                                      ? "like"
+                                      : "unlike"
+                                onTriggered: {
+                                    var liked = Db.toggleLikedSong(searchSongsModel.get(songsList.index))
+                                    messager.show_message(liked ? i18n.tr("Added to Favorites") : i18n.tr("Removed from Favorites"), 3)
+                                    context_menu.close()
+                                }
+                            }
+                            Action {
                                 text: i18n.tr("Go to album")
                                 name: "slideshow"
                                 onTriggered: {
@@ -498,71 +511,25 @@ Page {
                                 width: parent.width
                                 height: parent.height
                                 boundsBehavior: Flickable.StopAtBounds
-                                delegate: ListItem {
-                                    contentItem.anchors {
-                                        leftMargin: units.gu(2)
-                                        rightMargin: units.gu(2)
-                                        topMargin: units.gu(1)
-                                        bottomMargin: units.gu(1)
-                                    }
-
-                                    color: songsList.index == index ? selectedColor : "transparent"
-
-                                    Label {
-                                        id: lbl_name
-                                        text: name
-                                        elide: Label.ElideRight
-                                        anchors.left: parent.left
-                                        anchors.right: lbl_duration.left
-                                        color: textColor
-                                    }
-
-                                    Label {
-                                        id: lbl_artist
-                                        text: artist
-                                        fontSize: "small"
-                                        color: secondaryTextColor
-                                        elide: Label.ElideRight
-                                        anchors.left: parent.left
-                                        anchors.right: lbl_duration.left
-                                        anchors.bottom: parent.bottom
-                                    }
-
-                                    Label {
-                                        id: lbl_duration
-                                        text: Api.durationToString(duration)
-                                        width: units.gu(5)
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.right: item_menu.left
-                                        horizontalAlignment: Text.AlignRight
-                                        color: secondaryTextColor
-                                    }
-
-                                    MouseArea {
-                                        id: item_menu
-                                        width: units.gu(5)
-                                        height: parent.height
-                                        anchors.right: parent.right
-                                        onClicked: {
-                                            if(songsList.index == index) {
-                                                context_menu.close()
-                                            } else {
-                                                songsList.index = index
-                                            }
-
-                                            context_menu.caller = item_menu
-                                            context_menu.show()
+                                delegate: SongListItem {
+                                    title: name
+                                    subtitle: artist
+                                    durationText: Api.durationToString(duration)
+                                    coverSource: image
+                                    albumId: album_id
+                                    selected: songsList.index == index
+                                    rowTextColor: textColor
+                                    rowSecondaryTextColor: secondaryTextColor
+                                    selectedColor: searchPage.selectedColor
+                                    onMenuClicked: {
+                                        if (songsList.index == index) {
+                                            context_menu.close()
+                                        } else {
+                                            songsList.index = index
                                         }
-
-                                        Icon {
-                                            height: units.gu(3)
-                                            width: height
-                                            anchors.right: parent.right
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            name: "contextual-menu"
-                                        }
+                                        context_menu.caller = caller
+                                        context_menu.show()
                                     }
-
                                     onClicked: {
                                         var songs = [];
                                         var songs_ids = [];

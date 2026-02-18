@@ -72,6 +72,32 @@ Item {
         Api.getLyric(current_id, lyricApiContext());
     }
 
+    function currentSongRecord() {
+        return {
+            id: current_id,
+            name: playingPage.title,
+            artist: lbl_artistaDetalle.text,
+            album: lbl_albumDetalle.text,
+            duration: seek.maximumValue,
+            image: albumImage.source
+        }
+    }
+
+    function toggleCurrentSongLike() {
+        if (current_id <= 0) {
+            return false
+        }
+        var liked = Db.toggleLikedSong(currentSongRecord())
+        return liked
+    }
+
+    function isCurrentSongLiked() {
+        if (current_id <= 0) {
+            return false
+        }
+        return Db.isLikedSong(current_id)
+    }
+
     function lyricApiContext() {
         return {
             lyricModel: model_lyric,
@@ -94,7 +120,8 @@ Item {
             setAlbumImage: function(source) { albumImage.source = source },
             setSeekMaximum: function(value) { seek.maximumValue = value },
             setCurrentId: function(value) { current_id = value },
-            updateToolbar: function(name, artist, image) { player_toolbar.cargar(name, artist, image) }
+            updateToolbar: function(name, artist, image) { player_toolbar.cargar(name, artist, image) },
+            onSongResolved: function(song) { Db.addRecentlyPlayed(song) }
         }
     }
 
@@ -187,47 +214,17 @@ Item {
                                     height: parent.height
                                     boundsBehavior: Flickable.StopAtBounds
 
-                                    delegate: ListItem {
-                                        contentItem.anchors {
-                                            leftMargin: units.gu(1.4)
-                                            rightMargin: units.gu(1.4)
-                                            topMargin: units.gu(0.9)
-                                            bottomMargin: units.gu(0.9)
-                                        }
-
-                                        color: current_index == index ? selectedColor : "transparent"
-                                        divider.visible: false
-
-                                        Label {
-                                            id: lbl_name
-                                            text: name
-                                            elide: Label.ElideRight
-                                            anchors.left: parent.left
-                                            anchors.right: lbl_duration.left
-                                            color: textColor
-                                        }
-
-                                        Label {
-                                            id: lbl_artist
-                                            text: artist
-                                            fontSize: "small"
-                                            color: secondaryTextColor
-                                            elide: Label.ElideRight
-                                            anchors.left: parent.left
-                                            anchors.right: lbl_duration.left
-                                            anchors.bottom: parent.bottom
-                                        }
-
-                                        Label {
-                                            id: lbl_duration
-                                            text: Api.durationToString(duration)
-                                            width: units.gu(5)
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            anchors.right: parent.right
-                                            horizontalAlignment: Text.AlignRight
-                                            color: secondaryTextColor
-                                        }
-
+                                    delegate: SongListItem {
+                                        title: name
+                                        subtitle: artist
+                                        durationText: Api.durationToString(duration)
+                                        coverSource: image
+                                        albumId: album_id
+                                        selected: current_index == index
+                                        showMenu: false
+                                        rowTextColor: textColor
+                                        rowSecondaryTextColor: secondaryTextColor
+                                        selectedColor: playingContainer.selectedColor
                                         onClicked: {
                                             media_player.setIndex(index)
                                         }

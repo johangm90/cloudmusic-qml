@@ -208,11 +208,11 @@ ApplicationWindow {
         }
 
         Loader {
-            id: playlistsLoader
+            id: libraryLoader
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            source: (pagestack.currentPage === playlistsLoader) ? Qt.resolvedUrl("ui/Playlists.qml") : ""
+            source: (pagestack.currentPage === libraryLoader) ? Qt.resolvedUrl("ui/Library.qml") : ""
             onLoaded: {
                 try {
                     item.appRoot = cloudMusic
@@ -323,6 +323,82 @@ ApplicationWindow {
         }
 
         Page {
+            id: favoritesPage
+            visible: false
+            header: PageHeader {
+                title: i18n.tr("Favorites")
+                contents: TextField {
+                    id: favorites_query
+                    inputMethodHints: Qt.ImhNoPredictiveText
+                    placeholderText: i18n.tr("Search in Favorites")
+                    anchors.fill: parent
+                    anchors.rightMargin: units.gu(2)
+                    anchors.topMargin: units.gu(1)
+                    anchors.bottomMargin: units.gu(1)
+                    onVisibleChanged: {
+                        if (visible) {
+                            forceActiveFocus()
+                        }
+                    }
+                    onTextChanged: {
+                        favorites_page.setQuery(text)
+                    }
+                }
+            }
+
+            LibrarySongs {
+                id: favorites_page
+                appRoot: cloudMusic
+                mode: "favorites"
+                anchors {
+                    top: favoritesPage.header.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+                }
+            }
+        }
+
+        Page {
+            id: recentPage
+            visible: false
+            header: PageHeader {
+                title: i18n.tr("Recently Played")
+                contents: TextField {
+                    id: recent_query
+                    inputMethodHints: Qt.ImhNoPredictiveText
+                    placeholderText: i18n.tr("Search in Recently Played")
+                    anchors.fill: parent
+                    anchors.rightMargin: units.gu(2)
+                    anchors.topMargin: units.gu(1)
+                    anchors.bottomMargin: units.gu(1)
+                    onVisibleChanged: {
+                        if (visible) {
+                            forceActiveFocus()
+                        }
+                    }
+                    onTextChanged: {
+                        recent_page.setQuery(text)
+                    }
+                }
+            }
+
+            LibrarySongs {
+                id: recent_page
+                appRoot: cloudMusic
+                mode: "recent"
+                anchors {
+                    top: recentPage.header.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    bottomMargin: media_player.playbackState != 0 ? units.gu(7.25) : 0
+                }
+            }
+        }
+
+        Page {
             id: playingPage
             visible: false
             header: PageHeader {
@@ -336,6 +412,15 @@ ApplicationWindow {
                             pagestack.push(queuePage)
                         }
                         visible: cloudMusic.width < units.gu(100) ? true : false
+                    },
+                    Action {
+                        id: likeAction
+                        text: playing_page.isCurrentSongLiked() ? i18n.tr("Remove from Favorites") : i18n.tr("Add to Favorites")
+                        iconName: playing_page.isCurrentSongLiked() ? "like" : "unlike"
+                        onTriggered: {
+                            var liked = playing_page.toggleCurrentSongLike()
+                            messager.show_message(liked ? i18n.tr("Added to Favorites") : i18n.tr("Removed from Favorites"), 3)
+                        }
                     }
                 ]
             }

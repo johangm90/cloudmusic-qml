@@ -35,7 +35,8 @@ function apiSearch(query, type, limit, context) {
                     'album': song.album.name,
                     'artist_id': song.artists[0].id,
                     'artist': song.artists[0].name,
-                    'duration': song.duration
+                    'duration': song.duration,
+                    'image': (song.album && song.album.picUrl) ? (song.album.picUrl + '?param=120y120') : "../graphics/default.png"
                 });
             }
             songsLoaderRef.running = false;
@@ -226,7 +227,8 @@ function getArtistTopSongs(id, context) {
                         'album': song.album.name,
                         'artist_id': song.artists[0].id,
                         'artist': song.artists[0].name,
-                        'duration': song.duration
+                        'duration': song.duration,
+                        'image': (song.album && song.album.picUrl) ? (song.album.picUrl + '?param=120y120') : "../graphics/default.png"
                     })
                 }
             } catch (e) {
@@ -331,7 +333,8 @@ function getAlbumDetail(id, context) {
                         'album': song.album.name,
                         'artist_id': song.artists[0].id,
                         'artist': song.artists[0].name,
-                        'duration': song.duration
+                        'duration': song.duration,
+                        'image': (song.album && song.album.picUrl) ? (song.album.picUrl + '?param=120y120') : "../graphics/default.png"
                     })
                 }
                 albumLoaderRef.running = false
@@ -371,6 +374,7 @@ function getSongDetail(id, context) {
     var updateToolbar = ctx.updateToolbar || function(name, artist, image) {
         player_toolbar.cargar(name, artist, image)
     }
+    var onSongResolved = ctx.onSongResolved || null
     var lyricsEnabled = ctx.lyricsEnabled
     if (lyricsEnabled === undefined) {
         lyricsEnabled = playing_page.settings.lyrics
@@ -387,21 +391,43 @@ function getSongDetail(id, context) {
     }
     playingLoaderRef.running = true
     var cn = new XMLHttpRequest();
-    var url = server + '?action=getSongDetail&id=' + id;
+    var url = api2 + 'song/' + id;
     cn.open('GET', url);
     cn.onreadystatechange = function () {
         if (cn.readyState == XMLHttpRequest.DONE && cn.status == 200) {
             var data = cn.responseText;
             data = JSON.parse(data);
             try {
-                var cover = data.picUrl ? data.picUrl : "../graphics/default.png"
-                setPageTitle(data.name)
+                var song = data
+                if (data && data.length && data.length > 0) {
+                    song = data[0]
+                }
+                var artistName = ""
+                if (song.artist && song.artist.length && song.artist.length > 0) {
+                    artistName = song.artist.join(", ")
+                } else if (typeof song.artist === "string") {
+                    artistName = song.artist
+                }
+                var cover = song.pic_id ? (api2 + "pic/" + song.pic_id) : "../graphics/default.png"
+                setPageTitle(song.name || i18n.tr("Now Playing"))
                 setAlbumImage(cover)
-                setArtistText(data.artist)
-                setAlbumText(data.album)
-                setSeekMaximum(data.duration)
-                updateToolbar(data.name, data.artist, cover)
-                setCurrentId(id)
+                setArtistText(artistName)
+                setAlbumText(song.album || "")
+                if (song.duration) {
+                    setSeekMaximum(song.duration)
+                }
+                updateToolbar(song.name || i18n.tr("Now Playing"), artistName, cover)
+                setCurrentId(song.id ? song.id : id)
+                if (onSongResolved) {
+                    onSongResolved({
+                        id: song.id ? song.id : id,
+                        name: song.name || "",
+                        artist: artistName,
+                        album: song.album || "",
+                        duration: song.duration || 0,
+                        image: cover
+                    })
+                }
             } catch (e) {
                 console.log(e);
             }

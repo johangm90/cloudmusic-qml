@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import Lomiri.Components 1.3
 import "../logic/Api.js" as Api
+import "../components"
 
 Page {
     id: queuePage
@@ -40,45 +41,17 @@ Page {
                     queue_list.positionViewAtIndex(playing_page.current_index, ListView.Beginning)
                 }
 
-                delegate: ListItem {
-                    contentItem.anchors {
-                        leftMargin: units.gu(2)
-                        rightMargin: units.gu(2)
-                        topMargin: units.gu(1)
-                        bottomMargin: units.gu(1)
-                    }
-
-                    color: playing_page.current_index == index ? selectedColor : "transparent"
-
-                    Label {
-                        id: lbl_name
-                        text: name
-                        elide: Label.ElideRight
-                        anchors.left: parent.left
-                        anchors.right: lbl_duration.left
-                        color: textColor
-                    }
-
-                    Label {
-                        id: lbl_artist
-                        text: artist
-                        fontSize: "small"
-                        color: secondaryTextColor
-                        elide: Label.ElideRight
-                        anchors.left: parent.left
-                        anchors.right: lbl_duration.left
-                        anchors.bottom: parent.bottom
-                    }
-
-                    Label {
-                        id: lbl_duration
-                        text: Api.durationToString(duration)
-                        width: units.gu(5)
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        horizontalAlignment: Text.AlignRight
-                    }
-
+                delegate: SongListItem {
+                    title: name
+                    subtitle: artist
+                    durationText: Api.durationToString(duration)
+                    coverSource: image
+                    albumId: album_id
+                    selected: playing_page.current_index == index
+                    showMenu: false
+                    rowTextColor: textColor
+                    rowSecondaryTextColor: secondaryTextColor
+                    selectedColor: queuePage.selectedColor
                     onClicked: {
                         media_player.setIndex(index)
                     }

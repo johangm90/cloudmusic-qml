@@ -20,10 +20,14 @@ function create_tables(tx) {
     tx.executeSql('CREATE TABLE IF NOT EXISTS playlists(id INTEGER PRIMARY KEY, name TEXT UNIQUE, offline NUMERIC);');
     tx.executeSql('CREATE TABLE IF NOT EXISTS songs(id INTEGER PRIMARY KEY, sid INTEGER, name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration TEXT, playlist INTEGER, song_order INTEGER, local TEXT, local_art TEXT, lyric TEXT);');
     tx.executeSql('CREATE TABLE IF NOT EXISTS search_history(id INTEGER PRIMARY KEY, search TEXT UNIQUE, created_at INTEGER);');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS liked_songs(id INTEGER PRIMARY KEY, sid INTEGER UNIQUE, name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration INTEGER, art TEXT, added_at INTEGER);');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS recently_played(id INTEGER PRIMARY KEY, sid INTEGER UNIQUE, name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration INTEGER, art TEXT, played_at INTEGER);');
 }
 
 function migrate_schema(tx) {
     ensure_search_history_created_at(tx)
+    ensure_liked_songs_schema(tx)
+    ensure_recently_played_schema(tx)
 }
 
 function ensure_search_history_created_at(tx) {
@@ -42,19 +46,51 @@ function ensure_search_history_created_at(tx) {
     }
 }
 
+function ensure_column_exists(tx, tableName, columnName, definition) {
+    var hasColumn = false
+    var info = tx.executeSql('PRAGMA table_info(' + tableName + ');')
+    for (var i = 0; i < info.rows.length; i++) {
+        if (info.rows.item(i).name === columnName) {
+            hasColumn = true
+            break
+        }
+    }
+    if (!hasColumn) {
+        tx.executeSql('ALTER TABLE ' + tableName + ' ADD COLUMN ' + columnName + ' ' + definition + ';')
+    }
+}
+
+function ensure_liked_songs_schema(tx) {
+    ensure_column_exists(tx, "liked_songs", "art", "TEXT")
+    ensure_column_exists(tx, "liked_songs", "added_at", "INTEGER")
+    tx.executeSql('UPDATE liked_songs SET added_at=? WHERE added_at IS NULL;', [Date.now()])
+}
+
+function ensure_recently_played_schema(tx) {
+    ensure_column_exists(tx, "recently_played", "art", "TEXT")
+    ensure_column_exists(tx, "recently_played", "played_at", "INTEGER")
+    tx.executeSql('UPDATE recently_played SET played_at=? WHERE played_at IS NULL;', [Date.now()])
+}
+
 function delete_tables(tx) {
     tx.executeSql('DROP TABLE IF EXISTS songs');
     tx.executeSql('DROP TABLE IF EXISTS playlists');
     tx.executeSql('DROP TABLE IF EXISTS search_history');
+    tx.executeSql('DROP TABLE IF EXISTS liked_songs');
+    tx.executeSql('DROP TABLE IF EXISTS recently_played');
 }
 
-function updateRecords() {
-    modelo_playlists.clear();
+function updateRecords(targetModel) {
+    var model = targetModel || (typeof modelo_playlists !== "undefined" ? modelo_playlists : null)
+    if (!model) {
+        return
+    }
+    model.clear();
 
     var records = getPlaylists();
 
     for (var i = 0; i < records.length; i++) {
-        modelo_playlists.append({
+        model.append({
             'playlistId': records[i].id,
             'playlistName': records[i].name,
             'playlistCount': records[i].count,
@@ -178,6 +214,7 @@ function getPlaylist(id) {
                 'album': rs.rows.item(i).album,
                 'duration': rs.rows.item(i).duration,
                 'local': rs.rows.item(i).local,
+                'image': rs.rows.item(i).local_art ? rs.rows.item(i).local_art : "",
                 'playlist_id': rs.rows.item(i).playlist
             })
         }
@@ -254,4 +291,139 @@ function deleteSearchHistory(search) {
     db().transaction(function(tx) {
         tx.executeSql('DELETE FROM search_history WHERE search=?;', [value])
     })
+}
+
+function normalizeSongRecord(song) {
+    if (!song) {
+        return null
+    }
+    var sid = song.id || song.song_id || song.sid
+    if (!sid) {
+        return null
+    }
+    return {
+        sid: sid,
+        name: song.name || "",
+        artist_id: song.artist_id || 0,
+        artist: song.artist || "",
+        album_id: song.album_id || 0,
+        album: song.album || "",
+        duration: song.duration || 0,
+        art: song.image || song.art || ""
+    }
+}
+
+function isLikedSong(songId) {
+    var sid = parseInt(songId, 10)
+    if (!sid) {
+        return false
+    }
+    var liked = false
+    db().transaction(function(tx) {
+        var rs = tx.executeSql('SELECT COUNT(*) as total FROM liked_songs WHERE sid=?;', [sid])
+        liked = rs.rows.item(0).total > 0
+    })
+    return liked
+}
+
+function insertLikedSong(song) {
+    var record = normalizeSongRecord(song)
+    if (!record) {
+        return false
+    }
+    db().transaction(function(tx) {
+        tx.executeSql(
+            'INSERT OR REPLACE INTO liked_songs(sid, name, artist_id, artist, album_id, album, duration, art, added_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);',
+            [record.sid, record.name, record.artist_id, record.artist, record.album_id, record.album, record.duration, record.art, Date.now()]
+        )
+    })
+    return true
+}
+
+function removeLikedSong(songId) {
+    var sid = parseInt(songId, 10)
+    if (!sid) {
+        return false
+    }
+    db().transaction(function(tx) {
+        tx.executeSql('DELETE FROM liked_songs WHERE sid=?;', [sid])
+    })
+    return true
+}
+
+function toggleLikedSong(song) {
+    var record = normalizeSongRecord(song)
+    if (!record) {
+        return false
+    }
+    if (isLikedSong(record.sid)) {
+        removeLikedSong(record.sid)
+        return false
+    }
+    insertLikedSong(record)
+    return true
+}
+
+function getLikedSongs(limit) {
+    var records = []
+    var max = (typeof limit === "number" && limit > 0) ? limit : 200
+    db().transaction(function(tx) {
+        var rs = tx.executeSql(
+            'SELECT sid, name, artist_id, artist, album_id, album, duration, art, added_at FROM liked_songs ORDER BY added_at DESC LIMIT ?;',
+            [max]
+        )
+        for (var i = 0; i < rs.rows.length; i++) {
+            records.push({
+                song_id: rs.rows.item(i).sid,
+                name: rs.rows.item(i).name,
+                artist_id: rs.rows.item(i).artist_id,
+                artist: rs.rows.item(i).artist,
+                album_id: rs.rows.item(i).album_id,
+                album: rs.rows.item(i).album,
+                duration: rs.rows.item(i).duration,
+                image: rs.rows.item(i).art,
+                timestamp: rs.rows.item(i).added_at
+            })
+        }
+    })
+    return records
+}
+
+function addRecentlyPlayed(song) {
+    var record = normalizeSongRecord(song)
+    if (!record) {
+        return false
+    }
+    db().transaction(function(tx) {
+        tx.executeSql(
+            'INSERT OR REPLACE INTO recently_played(sid, name, artist_id, artist, album_id, album, duration, art, played_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);',
+            [record.sid, record.name, record.artist_id, record.artist, record.album_id, record.album, record.duration, record.art, Date.now()]
+        )
+    })
+    return true
+}
+
+function getRecentlyPlayed(limit) {
+    var records = []
+    var max = (typeof limit === "number" && limit > 0) ? limit : 50
+    db().transaction(function(tx) {
+        var rs = tx.executeSql(
+            'SELECT sid, name, artist_id, artist, album_id, album, duration, art, played_at FROM recently_played ORDER BY played_at DESC LIMIT ?;',
+            [max]
+        )
+        for (var i = 0; i < rs.rows.length; i++) {
+            records.push({
+                song_id: rs.rows.item(i).sid,
+                name: rs.rows.item(i).name,
+                artist_id: rs.rows.item(i).artist_id,
+                artist: rs.rows.item(i).artist,
+                album_id: rs.rows.item(i).album_id,
+                album: rs.rows.item(i).album,
+                duration: rs.rows.item(i).duration,
+                image: rs.rows.item(i).art,
+                timestamp: rs.rows.item(i).played_at
+            })
+        }
+    })
+    return records
 }

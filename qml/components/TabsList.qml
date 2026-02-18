@@ -45,10 +45,10 @@ ActionList {
 
         Action {
             iconName: "stock_music"
-            text: i18n.tr("Playlists")
-            enabled: !tabsList.isCurrentPage(playlistsLoader)
+            text: i18n.tr("Library")
+            enabled: !tabsList.isCurrentPage(libraryLoader)
             onTriggered: {
-                tabsList.navigateTo(playlistsLoader)
+                tabsList.navigateTo(libraryLoader)
             }
         },
 

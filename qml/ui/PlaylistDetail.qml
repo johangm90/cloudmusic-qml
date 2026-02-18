@@ -222,83 +222,37 @@ Item {
                 width: playlist_wrapper.width
                 height: parent.height
                 boundsBehavior: Flickable.StopAtBounds
-                delegate: ListItem {
-                    contentItem.anchors {
-                        leftMargin: units.gu(2)
-                        rightMargin: units.gu(2)
-                        topMargin: units.gu(1)
-                        bottomMargin: units.gu(1)
-                    }
-
-                    color: songsList.index == index ? selectedColor : "transparent"
-
-                    Label {
-                        id: song_name
-                        text: name
-                        elide: Text.ElideRight
-                        anchors.left: parent.left
-                        anchors.right: song_duration.left
-                        color: textColor
-                    }
-
-                    Label {
-                        id: song_artista
-                        text: artist
-                        fontSize: "small"
-                        color: secondaryTextColor
-                        elide: Text.ElideRight
-                        anchors.left: parent.left
-                        anchors.right: song_duration.left
-                        anchors.bottom: parent.bottom
-                    }
-
-                    Label {
-                        id: song_duration
-                        text: Api.durationToString(duration)
-                        width: units.gu(5)
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: item_menu.left
-                        horizontalAlignment: Text.AlignRight
-                    }
-
-                    MouseArea {
-                        id: item_menu
-                        width: units.gu(5)
-                        height: parent.height
-                        anchors.right: parent.right
-                        onClicked: {
-                            if (songsList.index == index) {
-                                context_menu.close()
-                            } else {
-                                songsList.index = index
-                            }
-
-                            context_menu.caller = item_menu
-                            context_menu.show()
+                delegate: SongListItem {
+                    title: name
+                    subtitle: artist
+                    durationText: Api.durationToString(duration)
+                    coverSource: image
+                    albumId: album_id
+                    selected: songsList.index == index
+                    rowTextColor: textColor
+                    rowSecondaryTextColor: secondaryTextColor
+                    selectedColor: playlist.selectedColor
+                    onMenuClicked: {
+                        if (songsList.index == index) {
+                            context_menu.close()
+                        } else {
+                            songsList.index = index
                         }
-
-                        Icon {
-                            height: units.gu(3)
-                            width: height
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            name: "contextual-menu"
-                        }
+                        context_menu.caller = caller
+                        context_menu.show()
                     }
-
                     onClicked: {
                         pagestack.push(playingPage)
                         var songs = [];
                         var songs_ids = [];
                         playing_page.model_queue.clear();
                         for (var i = 0; i < songsModel.count; i++) {
-                            if (songsModel.get(index).local) {
+                            if (songsModel.get(i).local) {
                                 songs.push(Qt.resolvedUrl(songsModel.get(i).local))
                             } else {
                                 var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
                                 var server = appRoot ? appRoot.server : ""
                                 songs.push(server + 'play/' + songsModel.get(i).song_id + '/' + quality);
-                                //songs.push(cloudMusic.server1 + 'url?id=' + songsModel.get(i).song_id + '&br=' + cloudMusic.settings.streaming_quality + '&raw');
                             }
                             songs_ids.push(songsModel.get(i).song_id);
                             playing_page.model_queue.append(songsModel.get(i));
@@ -306,8 +260,6 @@ Item {
                         playing_page.songs_list = songs_ids
                         media_player.setPlaylist(songs, index)
                     }
-
-                    //color: dragMode ? "#ecedeb" : "transparent"
                     onPressAndHold: ListView.view.ViewItems.dragMode = !ListView.view.ViewItems.dragMode
                 }
                 ViewItems.onDragUpdated: {

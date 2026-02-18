@@ -71,7 +71,7 @@ Rectangle {
         height: units.gu(5)
         radius: units.gu(2.5)
 
-        Icon{
+        Icon {
             width: units.gu(3)
             height: units.gu(3)
             name: media_player.playbackState === 1 ? "media-playback-pause" : "media-playback-start"

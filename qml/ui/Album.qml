@@ -4,6 +4,7 @@ import Lomiri.Components.Popups 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
 import "../logic/Api.js" as Api
+import "../logic/Database.js" as Db
 import "../components"
 
 Item {
@@ -129,6 +130,19 @@ Item {
                     playing_page.model_queue.append(albumModel.get(albumList.index))
                     context_menu.close()
                     messager.show_message(i18n.tr("Song added to queue"), 3)
+                }
+            }
+            Action {
+                text: (albumList.index >= 0 && Db.isLikedSong(albumModel.get(albumList.index).id))
+                      ? i18n.tr("Remove from Favorites")
+                      : i18n.tr("Add to Favorites")
+                name: (albumList.index >= 0 && Db.isLikedSong(albumModel.get(albumList.index).id))
+                      ? "like"
+                      : "unlike"
+                onTriggered: {
+                    var liked = Db.toggleLikedSong(albumModel.get(albumList.index))
+                    messager.show_message(liked ? i18n.tr("Added to Favorites") : i18n.tr("Removed from Favorites"), 3)
+                    context_menu.close()
                 }
             }
             Action {
@@ -327,76 +341,26 @@ Item {
                             model: albumModel
                             boundsBehavior: Flickable.StopAtBounds
 
-                            delegate: ListItem {
-                                contentItem.anchors {
-                                    leftMargin: units.gu(1.2)
-                                    rightMargin: units.gu(1.2)
-                                    topMargin: units.gu(0.9)
-                                    bottomMargin: units.gu(0.9)
-                                }
-                                divider.visible: false
-                                color: albumList.index === index ? selectedColor : "transparent"
-
-                                Label {
-                                    id: track_index
-                                    width: units.gu(3)
-                                    anchors.left: parent.left
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    horizontalAlignment: Text.AlignLeft
-                                    fontSize: "small"
-                                    color: mutedTextColor
-                                    text: (index + 1) + "."
-                                }
-
-                                Label {
-                                    id: lbl_name
-                                    text: name
-                                    elide: Text.ElideRight
-                                    anchors.left: track_index.right
-                                    anchors.leftMargin: units.gu(0.6)
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.right: lbl_duration.left
-                                    anchors.rightMargin: units.gu(1)
-                                    color: primaryTextColor
-                                }
-
-                                Label {
-                                    id: lbl_duration
-                                    text: Api.durationToString(duration)
-                                    width: units.gu(6)
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.right: item_menu.left
-                                    anchors.rightMargin: units.gu(0.2)
-                                    horizontalAlignment: Text.AlignRight
-                                    fontSize: "small"
-                                    color: mutedTextColor
-                                }
-
-                                MouseArea {
-                                    id: item_menu
-                                    width: units.gu(5)
-                                    height: parent.height
-                                    anchors.right: parent.right
-                                    onClicked: {
-                                        if (albumList.index === index) {
-                                            context_menu.close()
-                                        } else {
-                                            albumList.index = index
-                                        }
-                                        context_menu.caller = item_menu
-                                        context_menu.show()
+                            delegate: SongListItem {
+                                title: name
+                                subtitle: artist
+                                durationText: Api.durationToString(duration)
+                                coverSource: image
+                                albumId: album_id
+                                leadingText: (index + 1) + "."
+                                selected: albumList.index === index
+                                rowTextColor: primaryTextColor
+                                rowSecondaryTextColor: mutedTextColor
+                                selectedColor: albumContainer.selectedColor
+                                onMenuClicked: {
+                                    if (albumList.index === index) {
+                                        context_menu.close()
+                                    } else {
+                                        albumList.index = index
                                     }
-
-                                    Icon {
-                                        height: units.gu(2.6)
-                                        width: height
-                                        anchors.right: parent.right
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        name: "contextual-menu"
-                                        color: mutedTextColor
-                                    }
+                                    context_menu.caller = caller
+                                    context_menu.show()
                                 }
-
                                 onClicked: {
                                     var songs = []
                                     var songs_ids = []
