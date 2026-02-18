@@ -1,0 +1,120 @@
+name: Publish OpenStore
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      changelog_message:
+        description: "Mensaje opcional para prepend al changelog en OpenStore"
+        required: false
+        type: string
+
+jobs:
+  publish:
+    name: publish-arm64
+    runs-on: ubuntu-latest
+    container:
+      image: clickable/ci-20.04-arm64
+    environment: openstore
+    env:
+      OPENSTORE_API_KEY: ${{ secrets.OPENSTORE_API_KEY }}
+      CHANGELOG_MESSAGE: ${{ github.event.inputs.changelog_message || '' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate OpenStore API key
+        run: |
+          if [ -z "${OPENSTORE_API_KEY}" ]; then
+            echo "Missing secret OPENSTORE_API_KEY"
+            exit 1
+          fi
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Build click package (arm64)
+        run: clickable build
+
+      - name: Review click package
+        run: clickable review
+
+      - name: Upload click artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: click-arm64-release
+          path: build/aarch64-linux-gnu/app/*.click
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Generate changelog message
+        id: changelog
+        run: |
+          if [ -n "${CHANGELOG_MESSAGE}" ]; then
+            printf 'message=%s\n' "${CHANGELOG_MESSAGE}" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          CURRENT_TAG="${GITHUB_REF_NAME:-}"
+          PREVIOUS_TAG="$(git tag --sort=-v:refname | grep '^v' | grep -Fxv "${CURRENT_TAG}" | head -n1 || true)"
+
+          if [ -n "${PREVIOUS_TAG}" ] && [ -n "${CURRENT_TAG}" ]; then
+            RANGE="${PREVIOUS_TAG}..${CURRENT_TAG}"
+          elif [ -n "${CURRENT_TAG}" ]; then
+            RANGE="$(git rev-list --max-parents=0 HEAD)..${CURRENT_TAG}"
+          else
+            RANGE="HEAD~20..HEAD"
+          fi
+
+          RAW_SUBJECTS="$(git log --pretty=format:'%s' ${RANGE} | head -n 40)"
+
+          FEATURES="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -E '^(feat)(\([^)]+\))?: ' | sed -E 's/^(feat)(\([^)]+\))?: /- /' || true)"
+          FIXES="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -E '^(fix)(\([^)]+\))?: ' | sed -E 's/^(fix)(\([^)]+\))?: /- /' || true)"
+          PERF="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -E '^(perf)(\([^)]+\))?: ' | sed -E 's/^(perf)(\([^)]+\))?: /- /' || true)"
+          REFACTOR="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -E '^(refactor)(\([^)]+\))?: ' | sed -E 's/^(refactor)(\([^)]+\))?: /- /' || true)"
+          DOCS="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -E '^(docs)(\([^)]+\))?: ' | sed -E 's/^(docs)(\([^)]+\))?: /- /' || true)"
+          CHORE="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -E '^(chore|ci|build|style|test)(\([^)]+\))?: ' | sed -E 's/^(chore|ci|build|style|test)(\([^)]+\))?: /- /' || true)"
+          OTHERS="$(printf '%s\n' "${RAW_SUBJECTS}" | grep -Ev '^(feat|fix|perf|refactor|docs|chore|ci|build|style|test)(\([^)]+\))?: ' | sed -E 's/^/- /' || true)"
+
+          CHANGELOG_SECTIONS=""
+          if [ -n "${FEATURES}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Features"$'\n'"${FEATURES}"$'\n'
+          fi
+          if [ -n "${FIXES}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Fixes"$'\n'"${FIXES}"$'\n'
+          fi
+          if [ -n "${PERF}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Performance"$'\n'"${PERF}"$'\n'
+          fi
+          if [ -n "${REFACTOR}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Refactors"$'\n'"${REFACTOR}"$'\n'
+          fi
+          if [ -n "${DOCS}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Docs"$'\n'"${DOCS}"$'\n'
+          fi
+          if [ -n "${CHORE}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Maintenance"$'\n'"${CHORE}"$'\n'
+          fi
+          if [ -n "${OTHERS}" ]; then
+            CHANGELOG_SECTIONS="${CHANGELOG_SECTIONS}"$'\n'"Other changes"$'\n'"${OTHERS}"$'\n'
+          fi
+
+          if [ -z "$(printf '%s' "${CHANGELOG_SECTIONS}" | tr -d '\n[:space:]')" ]; then
+            CHANGELOG_SECTIONS=$'- Maintenance release'
+          fi
+
+          MESSAGE="$(printf 'Release %s\n%s' "${CURRENT_TAG:-manual}" "${CHANGELOG_SECTIONS}")"
+          {
+            echo "message<<EOF"
+            echo "${MESSAGE}"
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Publish to OpenStore
+        run: |
+          clickable publish "${{ steps.changelog.outputs.message }}"
