@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-18 15:29+0000\n"
 "PO-Revision-Date: 2017-06-01 12:12+0000\n"
-"Last-Translator: Daniel Frańczak <Unknown>\n"
+"Last-Translator: Nouvborne <Unknown>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -26,15 +26,15 @@ msgstr "Album dodany do playlisty"
 
 #: qml/components/SongDialog.qml:39
 msgid "Song added to playlist"
-msgstr "Dźwięk dodany do playlisty"
+msgstr "Utwór dodany do playlisty"
 
 #: qml/components/SongDialog.qml:57 qml/ui/Library.qml:63
 msgid "New playlist"
-msgstr "Nowa lista odtwarzania"
+msgstr "Nowa playlista"
 
 #: qml/components/SongDialog.qml:61 qml/ui/Library.qml:66
 msgid "Enter playlist name"
-msgstr "Podaj nazwę listy odtwarzania"
+msgstr "Podaj nazwę playlisty"
 
 #: qml/components/SongDialog.qml:71 qml/ui/Library.qml:71
 msgid "Create"
@@ -48,7 +48,7 @@ msgstr "Anuluj"
 #: qml/components/SongDialog.qml:97 qml/ui/Search.qml:524 qml/ui/Album.qml:164
 #: qml/ui/Artist.qml:209 qml/Main.qml:373
 msgid "Add to playlist"
-msgstr "Dodaj do listy odtwarzania"
+msgstr "Dodaj do playlisty"
 
 #: qml/components/SongDialog.qml:98
 msgid "Select one playlist to add"
@@ -73,11 +73,11 @@ msgstr "Nowy Album"
 
 #: qml/components/TabsList.qml:44 qml/ui/TopArtists.qml:25
 msgid "Top Artists"
-msgstr ""
+msgstr "Top Artyści"
 
 #: qml/components/TabsList.qml:53 qml/ui/Library.qml:42
 msgid "Library"
-msgstr ""
+msgstr "Biblioteka"
 
 #: qml/components/TabsList.qml:62 qml/ui/SettingsPage.qml:15
 msgid "Settings"
@@ -97,11 +97,11 @@ msgstr "Wydano zgodnie z licencją GNU GPL v3"
 
 #: qml/ui/About.qml:109
 msgid "Donate"
-msgstr ""
+msgstr "Wesprzyj"
 
 #: qml/ui/About.qml:119
 msgid "Report bugs on %1"
-msgstr ""
+msgstr "Zgłoś błędy na %1"
 
 #: qml/ui/About.qml:162
 msgid "Credits"
@@ -109,7 +109,7 @@ msgstr "Autorzy"
 
 #: qml/ui/Credits.qml:19 qml/ui/Credits.qml:20
 msgid "Developers"
-msgstr ""
+msgstr "Programiści"
 
 #: qml/ui/Credits.qml:21
 msgid "Icon"
@@ -149,20 +149,20 @@ msgstr "Usuń"
 
 #: qml/ui/Library.qml:190 qml/Main.qml:419
 msgid "Favorites"
-msgstr ""
+msgstr "Ulubione"
 
 #: qml/ui/Library.qml:195 qml/ui/Library.qml:239
 #, fuzzy
 msgid "%1 songs"
-msgstr "%1 utwór"
+msgstr "%1 utworów"
 
 #: qml/ui/Library.qml:234 qml/Main.qml:457
 msgid "Recently Played"
-msgstr ""
+msgstr "Ostatnio Odtwarzane"
 
 #: qml/ui/Library.qml:271
 msgid "Playlists"
-msgstr "Listy odtwarzania"
+msgstr "Playlisty"
 
 #: qml/ui/Library.qml:320 qml/ui/Search.qml:682 qml/ui/Album.qml:325
 #: qml/ui/Artist.qml:702
@@ -176,7 +176,7 @@ msgstr[2] "%1 utworów"
 msgid ""
 "An error occurred\n"
 "Touch to retry"
-msgstr ""
+msgstr "Wystąpił błąd\nNacisnij aby spróbować pomownie"
 
 #: qml/ui/SettingsPage.qml:32
 msgid "Download quality"
@@ -205,15 +205,15 @@ msgstr "Motyw"
 #: qml/ui/NowPlaying.qml:138 qml/ui/NowPlaying.qml:139
 #: qml/ui/NowPlaying.qml:158 qml/Main.qml:495
 msgid "Now Playing"
-msgstr ""
+msgstr "Teraz Odtwarzane"
 
 #: qml/ui/NowPlaying.qml:202 qml/ui/NowPlaying.qml:221
 msgid "No lyrics available"
-msgstr ""
+msgstr "Brak dostępnego tekstu"
 
 #: qml/ui/NowPlaying.qml:207
 msgid "I'm sorry but I forgot that lyric :("
-msgstr ""
+msgstr "Przepraszam, zapomniałem tego tekstu :("
 
 #: qml/ui/NowPlaying.qml:300 qml/ui/Queue.qml:14 qml/Main.qml:499
 msgid "Queue"
@@ -222,23 +222,23 @@ msgstr "Kolejka"
 #: qml/ui/NowPlaying.qml:310 qml/ui/Album.qml:371 qml/ui/Artist.qml:519
 #: qml/ui/Artist.qml:639
 msgid "%1 total"
-msgstr ""
+msgstr "%1 łącznie"
 
 #: qml/ui/Search.qml:347
 msgid "Item deletion"
-msgstr ""
+msgstr "Usunięcie przedmiotu"
 
 #: qml/ui/Search.qml:348
 msgid "The selected element to be deleted from the search list is: "
-msgstr ""
+msgstr "Wybrany element do usunięcia z listy wyszukań to: "
 
 #: qml/ui/Search.qml:360
 msgid "Return"
-msgstr ""
+msgstr "Powrót"
 
 #: qml/ui/Search.qml:429 qml/ui/Search.qml:468
 msgid "Songs"
-msgstr "Piosenki"
+msgstr "Utwory"
 
 #: qml/ui/Search.qml:429 qml/ui/Search.qml:657 qml/ui/Artist.qml:456
 #: qml/ui/Artist.qml:629
@@ -247,7 +247,7 @@ msgstr "Albumy"
 
 #: qml/ui/Search.qml:429 qml/ui/Search.qml:721
 msgid "Artists"
-msgstr ""
+msgstr "Artyści"
 
 #: qml/ui/Search.qml:510 qml/ui/Album.qml:150 qml/ui/Artist.qml:195
 #: qml/ui/PlaylistDetail.qml:228 qml/Main.qml:189
@@ -267,29 +267,29 @@ msgstr "piosenka dodana do kolejki"
 #: qml/ui/Search.qml:547 qml/ui/Album.qml:189 qml/ui/Artist.qml:234
 #: qml/ui/LibrarySongs.qml:131 qml/Main.qml:508
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "Usuń z ulubionych"
 
 #: qml/ui/Search.qml:548 qml/ui/Album.qml:190 qml/ui/Artist.qml:235
 #: qml/ui/LibrarySongs.qml:132 qml/Main.qml:508
 #, fuzzy
 msgid "Add to Favorites"
-msgstr "Dodaj do listy odtwarzania"
+msgstr "Dodaj do ulubionych"
 
 #: qml/ui/Search.qml:554 qml/ui/Album.qml:196 qml/ui/Artist.qml:241
 #: qml/ui/LibrarySongs.qml:148 qml/Main.qml:512
 #, fuzzy
 msgid "Added to Favorites"
-msgstr "Dodaj do listy odtwarzania"
+msgstr "Dodaj do ulubionych"
 
 #: qml/ui/Search.qml:554 qml/ui/Album.qml:196 qml/ui/Artist.qml:241
 #: qml/ui/LibrarySongs.qml:148 qml/Main.qml:512
 msgid "Removed from Favorites"
-msgstr ""
+msgstr "Usuń z ulubionych"
 
 #: qml/ui/Search.qml:559 qml/ui/Artist.qml:246 qml/ui/PlaylistDetail.qml:266
 #: qml/ui/LibrarySongs.qml:156
 msgid "Go to album"
-msgstr "Idź do albumu"
+msgstr "Przejdź do albumu"
 
 #: qml/ui/Search.qml:568 qml/ui/Album.qml:201 qml/ui/PlaylistDetail.qml:275
 #: qml/ui/LibrarySongs.qml:166
@@ -298,17 +298,17 @@ msgstr "Przejdź do wykonawcy"
 
 #: qml/ui/Album.qml:50
 msgid "Release Date:"
-msgstr ""
+msgstr "Data Wydania:"
 
 #: qml/ui/Album.qml:361
 msgid "Tracks"
-msgstr ""
+msgstr "Utwory"
 
 #: qml/ui/Album.qml:448
 msgid ""
 "I'm sorry, list is empty because none of the songs included in this album "
 "are of a supported format :("
-msgstr ""
+msgstr "Przepraszam, lista jest pusta ponieważ żaden utwór w tym albumie nie jest we wspieranym formacie :("
 
 #: qml/ui/Artist.qml:43 qml/ui/Artist.qml:72 qml/Main.qml:347
 msgid "Artist"
@@ -317,24 +317,24 @@ msgstr "Wykonawca"
 #: qml/ui/Artist.qml:365
 #, fuzzy
 msgid "Artist profile"
-msgstr "Wykonawca"
+msgstr "Profil wykonawcy"
 
 #: qml/ui/Artist.qml:383
 msgid "%1 tracks"
-msgstr ""
+msgstr "%1 utwo©ów"
 
 #: qml/ui/Artist.qml:397
 #, fuzzy
 msgid "%1 albums"
-msgstr "Albumy"
+msgstr "%1 albumów"
 
 #: qml/ui/Artist.qml:434 qml/ui/Artist.qml:509
 msgid "Top Songs"
-msgstr ""
+msgstr "Top Utwory"
 
 #: qml/ui/PlaylistDetail.qml:125
 msgid "Available offline"
-msgstr ""
+msgstr "Dostępne offline"
 
 #: qml/ui/PlaylistDetail.qml:242
 msgid "Remove"
@@ -342,40 +342,40 @@ msgstr "Usuń"
 
 #: qml/ui/PlaylistDetail.qml:248
 msgid "Song removed"
-msgstr "Piosenka usunięta"
+msgstr "Utwór usunięta"
 
 #: qml/ui/LibrarySongs.qml:192
 msgid "No matches found"
-msgstr ""
+msgstr "Nie znaleziono wyników"
 
 #: qml/ui/LibrarySongs.qml:193
 msgid "No recent songs yet"
-msgstr ""
+msgstr "Brak ostatnio odtwarzanych utworów"
 
 #: qml/ui/LibrarySongs.qml:193
 msgid "No favorites yet"
-msgstr ""
+msgstr "Brak ulubionych utworów"
 
 #: qml/Main.qml:116
 msgid "%1 songs played today"
-msgstr "%1 dzisiaj odtworzonej piosenki"
+msgstr "%1 dzisiaj odtworzonych utworów"
 
 #: qml/Main.qml:117
 msgid "0 songs played today"
-msgstr ""
+msgstr "0 odtworzonych dzisiaj utworów"
 
 #: qml/Main.qml:205
 msgid "Download failed: missing song id"
-msgstr ""
+msgstr "Pobieranie nie powiodło się: Brakujący identyfikator utworu"
 
 #: qml/Main.qml:212
 msgid "Unknown"
-msgstr ""
+msgstr "Nieznany"
 
 #: qml/Main.qml:220 qml/Main.qml:229 qml/Main.qml:236
 #, fuzzy
 msgid "Download failed"
-msgstr "Jakość pobieranego utworu"
+msgstr "Pobieranie nie powiodło się"
 
 #: qml/Main.qml:367
 msgid "Album"
@@ -383,19 +383,19 @@ msgstr "Album"
 
 #: qml/Main.qml:400
 msgid "Playlist"
-msgstr ""
+msgstr "Playlista"
 
 #: qml/Main.qml:423
 msgid "Search in Favorites"
-msgstr ""
+msgstr "Szukaj w ulubionych"
 
 #: qml/Main.qml:461
 msgid "Search in Recently Played"
-msgstr ""
+msgstr "Szukaj w ostatnio odtwarzanych"
 
 #: qml/Main.qml:605
 msgid "Download failed: invalid file path"
-msgstr ""
+msgstr "Pobieranie nie powioodlo się: Niepoprawna scieżka pliku"
 
 #~ msgid "What's new?"
 #~ msgstr "Co nowego?"
