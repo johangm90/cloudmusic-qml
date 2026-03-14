@@ -10,6 +10,8 @@ function getSongDetail(deps, id, context) {
     var setCurrentId = ctx.setCurrentId || function() {}
     var updateToolbar = ctx.updateToolbar || function() {}
     var onSongResolved = ctx.onSongResolved || null
+    // Optional: caller may pass source = "youtube" | "netease" to force routing
+    var source = ctx.source || "netease"
     var lyricsEnabled = ctx.lyricsEnabled
     if (lyricsEnabled === undefined && deps.defaultLyricsEnabled) {
         lyricsEnabled = deps.defaultLyricsEnabled()
@@ -28,63 +30,110 @@ function getSongDetail(deps, id, context) {
         playingLoaderRef.running = true
     }
 
-    CloudBridge.directApiAsync(
-        "songDetail",
-        { id: String(id) },
-        function(data) {
-            if (data) {
-                var song = data
-                if (data && data.length && data.length > 0) {
-                    song = data[0]
+    if (source === "youtube") {
+        // ── YouTube Music path ────────────────────────────────────────────────
+        CloudBridge.directApiAsync(
+            "ytmusic_song",
+            { id: String(id) },
+            function(data) {
+                if (data) {
+                    var artistName = typeof data.artist === "string" ? data.artist : ""
+                    var resolvedDuration = (data.duration && data.duration > 0) ? data.duration
+                                          : (fallbackDuration > 0 ? fallbackDuration : 0)
+                    var cover = data.img || data.image || "../graphics/default.png"
+                    var title = data.title || data.name || i18n.tr("Now Playing")
+                    setPageTitle(title)
+                    setAlbumImage(cover)
+                    setArtistText(artistName)
+                    setAlbumText(data.album || "")
+                    if (resolvedDuration > 0) {
+                        setSeekMaximum(resolvedDuration)
+                    }
+                    updateToolbar(title, artistName, cover)
+                    setCurrentId(data.id ? data.id : id)
+                    if (onSongResolved) {
+                        onSongResolved({
+                            id: data.id ? data.id : id,
+                            name: title,
+                            artist: artistName,
+                            album: data.album || "",
+                            duration: resolvedDuration,
+                            image: cover,
+                            source: "youtube"
+                        })
+                    }
                 }
-                var artistName = ""
-                if (song.artist && song.artist.length && song.artist.length > 0) {
-                    artistName = song.artist.join(", ")
-                } else if (typeof song.artist === "string") {
-                    artistName = song.artist
+                if (playingLoaderRef) {
+                    playingLoaderRef.running = false
                 }
+            },
+            function(e) {
+                console.log(e)
+                if (playingLoaderRef) {
+                    playingLoaderRef.running = false
+                }
+            }
+        )
+    } else {
+        // ── NetEase path (unchanged) ──────────────────────────────────────────
+        CloudBridge.directApiAsync(
+            "songDetail",
+            { id: String(id) },
+            function(data) {
+                if (data) {
+                    var song = data
+                    if (data && data.length && data.length > 0) {
+                        song = data[0]
+                    }
+                    var artistName = ""
+                    if (song.artist && song.artist.length && song.artist.length > 0) {
+                        artistName = song.artist.join(", ")
+                    } else if (typeof song.artist === "string") {
+                        artistName = song.artist
+                    }
 
-                var resolvedDuration = 0
-                if (song.duration && song.duration > 0) {
-                    resolvedDuration = song.duration
-                } else if (fallbackDuration && fallbackDuration > 0) {
-                    resolvedDuration = fallbackDuration
-                }
+                    var resolvedDuration = 0
+                    if (song.duration && song.duration > 0) {
+                        resolvedDuration = song.duration
+                    } else if (fallbackDuration && fallbackDuration > 0) {
+                        resolvedDuration = fallbackDuration
+                    }
 
-                var picId = song.pic_id ? song.pic_id : ""
-                var cover = (picId !== "" && picId !== "0") ? (deps.apiBase + "pic/" + picId + "?size=300") : "../graphics/default.png"
-                setPageTitle(song.name || i18n.tr("Now Playing"))
-                setAlbumImage(cover)
-                setArtistText(artistName)
-                setAlbumText(song.album || "")
-                if (resolvedDuration > 0) {
-                    setSeekMaximum(resolvedDuration)
+                    var picId = song.pic_id ? song.pic_id : ""
+                    var cover = (picId !== "" && picId !== "0") ? (deps.apiBase + "pic/" + picId + "?size=300") : "../graphics/default.png"
+                    setPageTitle(song.name || i18n.tr("Now Playing"))
+                    setAlbumImage(cover)
+                    setArtistText(artistName)
+                    setAlbumText(song.album || "")
+                    if (resolvedDuration > 0) {
+                        setSeekMaximum(resolvedDuration)
+                    }
+                    updateToolbar(song.name || i18n.tr("Now Playing"), artistName, cover)
+                    setCurrentId(song.id ? song.id : id)
+                    if (onSongResolved) {
+                        onSongResolved({
+                            id: song.id ? song.id : id,
+                            name: song.name || "",
+                            artist: artistName,
+                            album: song.album || "",
+                            duration: resolvedDuration,
+                            image: cover,
+                            source: song.source || "netease"
+                        })
+                    }
                 }
-                updateToolbar(song.name || i18n.tr("Now Playing"), artistName, cover)
-                setCurrentId(song.id ? song.id : id)
-                if (onSongResolved) {
-                    onSongResolved({
-                        id: song.id ? song.id : id,
-                        name: song.name || "",
-                        artist: artistName,
-                        album: song.album || "",
-                        duration: resolvedDuration,
-                        image: cover,
-                        source: song.source || "netease"
-                    })
+                if (playingLoaderRef) {
+                    playingLoaderRef.running = false
+                }
+            },
+            function(e) {
+                console.log(e)
+                if (playingLoaderRef) {
+                    playingLoaderRef.running = false
                 }
             }
-            if (playingLoaderRef) {
-                playingLoaderRef.running = false
-            }
-        },
-        function(e) {
-            console.log(e)
-            if (playingLoaderRef) {
-                playingLoaderRef.running = false
-            }
-        }
-    )
+        )
+    }
 }
 
 function getLyric(deps, id, context) {

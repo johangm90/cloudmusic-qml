@@ -11,6 +11,7 @@ import "../graphics"
 import "../logic/Format.js" as Format
 import "../logic/RequestBus.js" as RequestBus
 import "../logic/Database.js" as Db
+import "../logic/CloudBridge.js" as CloudBridge
 
 Item {
     id: playingContainer
@@ -176,45 +177,94 @@ Item {
             requestLyric(songId)
         }
         playing_loader.running = true
-        var songDetailRequestId = RequestBus.createId("song_detail")
-        RequestBus.registerRequest(songDetailRequestId, {
-            context: songRequestContext,
-            onSuccess: function(data) {
-                var song = data && data.song ? data.song : data
-                if (!song) {
-                    return
+
+        // Determine provider from the queue item at the current playback index
+        var idx = media_player.getIndex()
+        var itemSource = "netease"
+        if (idx >= 0 && idx < model_queue.count) {
+            itemSource = model_queue.get(idx).source ? model_queue.get(idx).source : "netease"
+        }
+
+        if (itemSource === "youtube") {
+            // ── YouTube Music path ────────────────────────────────────────────
+            CloudBridge.directApiAsync(
+                "ytmusic_song",
+                { id: String(songId) },
+                function(data) {
+                    if (data) {
+                        var artistName = typeof data.artist === "string" ? data.artist : ""
+                        var duration = (data.duration && data.duration > 0) ? data.duration : currentQueueDuration()
+                        var cover = data.img || data.image || "../graphics/default.png"
+                        var title = data.title || data.name || i18n.tr("Now Playing")
+                        playingPage.title = title
+                        playingPage.header.title = title
+                        albumImage.source = cover
+                        lbl_artistaDetalle.text = artistName
+                        lbl_albumDetalle.text = data.album || ""
+                        if (duration > 0) {
+                            seek.maximumValue = duration
+                        }
+                        player_toolbar.cargar(title, artistName, cover)
+                        current_id = data.id ? data.id : songId
+                        Db.addRecentlyPlayed({
+                            id: current_id,
+                            name: title,
+                            artist: artistName,
+                            album: data.album || "",
+                            duration: duration,
+                            image: cover,
+                            source: "youtube"
+                        })
+                    }
+                    playing_loader.running = false
+                },
+                function(err) {
+                    console.log(err)
+                    playing_loader.running = false
                 }
-                var artistName = typeof song.artist === "string" ? song.artist : ""
-                var duration = (song.duration && song.duration > 0) ? song.duration : currentQueueDuration()
-                var cover = song.big_image ? song.big_image : (song.image ? song.image : "../graphics/default.png")
-                playingPage.title = song.name || i18n.tr("Now Playing")
-                playingPage.header.title = playingPage.title
-                albumImage.source = cover
-                lbl_artistaDetalle.text = artistName
-                lbl_albumDetalle.text = song.album || ""
-                if (duration > 0) {
-                    seek.maximumValue = duration
+            )
+        } else {
+            // ── NetEase path (unchanged) ──────────────────────────────────────
+            var songDetailRequestId = RequestBus.createId("song_detail")
+            RequestBus.registerRequest(songDetailRequestId, {
+                context: songRequestContext,
+                onSuccess: function(data) {
+                    var song = data && data.song ? data.song : data
+                    if (!song) {
+                        return
+                    }
+                    var artistName = typeof song.artist === "string" ? song.artist : ""
+                    var duration = (song.duration && song.duration > 0) ? song.duration : currentQueueDuration()
+                    var cover = song.big_image ? song.big_image : (song.image ? song.image : "../graphics/default.png")
+                    playingPage.title = song.name || i18n.tr("Now Playing")
+                    playingPage.header.title = playingPage.title
+                    albumImage.source = cover
+                    lbl_artistaDetalle.text = artistName
+                    lbl_albumDetalle.text = song.album || ""
+                    if (duration > 0) {
+                        seek.maximumValue = duration
+                    }
+                    player_toolbar.cargar(playingPage.title, artistName, cover)
+                    current_id = song.id ? song.id : (current_index >= 0 && current_index < songs_list.length ? songs_list[current_index] : current_id)
+                    Db.addRecentlyPlayed({
+                        id: current_id,
+                        name: playingPage.title,
+                        artist: artistName,
+                        album: song.album || "",
+                        duration: duration,
+                        image: cover,
+                        source: song.source || "netease"
+                    })
+                },
+                onError: function(err) {
+                    console.log(err)
+                },
+                onFinally: function() {
+                    playing_loader.running = false
                 }
-                player_toolbar.cargar(playingPage.title, artistName, cover)
-                current_id = song.id ? song.id : (current_index >= 0 && current_index < songs_list.length ? songs_list[current_index] : current_id)
-                Db.addRecentlyPlayed({
-                    id: current_id,
-                    name: playingPage.title,
-                    artist: artistName,
-                    album: song.album || "",
-                    duration: duration,
-                    image: cover,
-                    source: song.source || "netease"
-                })
-            },
-            onError: function(err) {
-                console.log(err)
-            },
-            onFinally: function() {
-                playing_loader.running = false
-            }
-        })
-        appRoot.cloudApi.songDetailAsync(String(songId), songDetailRequestId)
+            })
+            appRoot.cloudApi.songDetailAsync(String(songId), songDetailRequestId)
+        }
     }
 
     function requestLyric(songId) {
@@ -579,6 +629,21 @@ Item {
                             width: parent.width
                             elide: Label.ElideRight
                             color: secondaryTextColor
+                        }
+
+                        Label {
+                            id: lbl_sourceBadge
+                            visible: current_id > 0
+                            fontSize: "x-small"
+                            color: secondaryTextColor
+                            text: {
+                                var idx = media_player.getIndex()
+                                var src = "netease"
+                                if (idx >= 0 && idx < model_queue.count) {
+                                    src = model_queue.get(idx).source ? model_queue.get(idx).source : "netease"
+                                }
+                                return src === "youtube" ? "YouTube" : "NetEase"
+                            }
                         }
                     }
 

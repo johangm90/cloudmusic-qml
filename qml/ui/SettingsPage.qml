@@ -2,6 +2,7 @@ import QtQuick 2.12
 import Lomiri.Components 1.3
 import Lomiri.Components.ListItems 1.3 as UListItem
 import "../components"
+import "../logic/Database.js" as Db
 
 Page {
     id: settingsPage
@@ -141,6 +142,38 @@ Page {
                             appRoot.settings.theme = name
                             console.log("Theme: " + appRoot.settings.theme)
                         }
+                    }
+                }
+            }
+
+            // Music Provider selector
+            UListItem.ItemSelector {
+                id: providerSelector
+                text: i18n.tr("Music Provider")
+                model: providerModel
+                delegate: providerSelectorDelegate
+                Component.onCompleted: {
+                    var saved = Db.getSetting("active_provider")
+                    if (saved === "youtube") {
+                        selectedIndex = 1
+                    } else {
+                        selectedIndex = 0
+                    }
+                }
+            }
+            ListModel {
+                id: providerModel
+                ListElement { name: "NetEase Cloud Music"; key: "netease" }
+                ListElement { name: "YouTube Music"; key: "youtube" }
+            }
+            Component {
+                id: providerSelectorDelegate
+                OptionSelectorDelegate {
+                    text: name
+                    onClicked: {
+                        var selectedKey = providerModel.get(providerSelector.selectedIndex).key
+                        Db.setSetting("active_provider", selectedKey)
+                        console.log("Music Provider: " + selectedKey)
                     }
                 }
             }
