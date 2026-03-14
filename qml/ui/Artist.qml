@@ -237,8 +237,15 @@ Item {
                     playing_page.songs_list.push(songsModel.get(songsList.index).id)
                     var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
                     var server = appRoot ? appRoot.server : ""
-                    media_player.additem(server + "play/" + songsModel.get(songsList.index).id + "/" + quality)
-                    playing_page.model_queue.append(songsModel.get(songsList.index))
+                    var song = songsModel.get(songsList.index)
+                    var playUrl
+                    if (song.source === "youtube") {
+                        playUrl = server + "play/youtube/" + song.id
+                    } else {
+                        playUrl = server + "play/" + song.id + "/" + quality
+                    }
+                    media_player.additem(playUrl)
+                    playing_page.model_queue.append(song)
                     context_menu.close()
                     messager.show_message(i18n.tr("Song added to queue"), 3)
                 }
@@ -566,6 +573,7 @@ Item {
                                 rowTextColor: primaryTextColor
                                 rowSecondaryTextColor: mutedTextColor
                                 selectedColor: artistContainer.selectedColor
+                                sourceLabel: model.source ? model.source : ""
                                 onMenuClicked: {
                                     if (songsList.index === index) {
                                         context_menu.close()
@@ -583,9 +591,16 @@ Item {
                                     for (var i = 0; i < songsModel.count; i++) {
                                         var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
                                         var server = appRoot ? appRoot.server : ""
-                                        songs.push(server + "play/" + songsModel.get(i).id + "/" + quality)
-                                        songs_ids.push(songsModel.get(i).id)
-                                        playing_page.model_queue.append(songsModel.get(i))
+                                        var song = songsModel.get(i)
+                                        var playUrl
+                                        if (song.source === "youtube") {
+                                            playUrl = server + "play/youtube/" + song.id
+                                        } else {
+                                            playUrl = server + "play/" + song.id + "/" + quality
+                                        }
+                                        songs.push(playUrl)
+                                        songs_ids.push(song.id)
+                                        playing_page.model_queue.append(song)
                                     }
                                     playing_page.songs_list = songs_ids
                                     media_player.setPlaylist(songs, index)

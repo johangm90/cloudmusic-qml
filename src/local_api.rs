@@ -21,6 +21,15 @@ const WEAPI_SKEY: &str = "B3v3kH4vRPWRJFfH";
 const WEAPI_IV: &str = "0102030405060708";
 const WEAPI_ENCSEC_KEY: &str = "85302b818aea19b68db899c25dac229412d9bba9b3fcfe4f714dc016bc1686fc446a08844b1f8327fd9cb623cc189be00c5a365ac835e93d4858ee66f43fdc59e32aaed3ef24f0675d70172ef688d376a4807228c55583fe5bac647d10ecef15220feef61477c28cae8406f6f9896ed329d6db9f88757e31848a6c2ce2f94308";
 
+// ── YouTube Music / InnerTube constants ──────────────────────────────────────
+const INNERTUBE_API_KEY: &str = "AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX3";
+const INNERTUBE_BASE: &str = "https://music.youtube.com/youtubei/v1/";
+const INNERTUBE_CLIENT_NAME: &str = "WEB_REMIX";
+const INNERTUBE_CLIENT_ID: &str = "67";
+const INNERTUBE_CLIENT_VERSION: &str = "1.20250310.01.00";
+const INNERTUBE_USER_AGENT: &str =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0";
+
 pub fn direct_call(action: &str, params_json: &str) -> String {
     let params: Value = serde_json::from_str(params_json).unwrap_or_else(|_| json!({}));
     let client = match Client::builder().timeout(Duration::from_secs(20)).build() {
@@ -46,12 +55,20 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
             let limit = get_i64("limit", 50).to_string();
             let body = [
                 ("s", query),
-                ("type", if kind.is_empty() { "1".to_string() } else { kind }),
+                (
+                    "type",
+                    if kind.is_empty() {
+                        "1".to_string()
+                    } else {
+                        kind
+                    },
+                ),
                 ("offset", "0".to_string()),
                 ("limit", limit),
             ];
-            music_post_form(&client, "/api/search/get", &body)
-                .and_then(|raw| parse_json_loose(&raw).map(|v| normalize_search_payload(&v).to_string()))
+            music_post_form(&client, "/api/search/get", &body).and_then(|raw| {
+                parse_json_loose(&raw).map(|v| normalize_search_payload(&v).to_string())
+            })
         }
         "getNewAlbums" => {
             let limit = get_i64("limit", 50);
@@ -59,14 +76,16 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
                 &client,
                 &format!("/api/album/new?area=ALL&offset=0&total=true&limit={limit}"),
             )
-            .and_then(|raw| parse_json_loose(&raw).map(|v| {
-                let albums = v
-                    .get("albums")
-                    .and_then(Value::as_array)
-                    .map(|arr| arr.iter().map(normalize_album).collect::<Vec<Value>>())
-                    .unwrap_or_default();
-                json!({ "albums": albums })
-            }))
+            .and_then(|raw| {
+                parse_json_loose(&raw).map(|v| {
+                    let albums = v
+                        .get("albums")
+                        .and_then(Value::as_array)
+                        .map(|arr| arr.iter().map(normalize_album).collect::<Vec<Value>>())
+                        .unwrap_or_default();
+                    json!({ "albums": albums })
+                })
+            })
             .map(|v| v.to_string())
         }
         "getTopArtists" => {
@@ -75,34 +94,42 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
                 &client,
                 &format!("/api/artist/top?offset=0&total=false&limit={limit}"),
             )
-            .and_then(|raw| parse_json_loose(&raw).map(|v| {
-                let artists = v
-                    .get("artists")
-                    .and_then(Value::as_array)
-                    .map(|arr| arr.iter().map(normalize_artist).collect::<Vec<Value>>())
-                    .unwrap_or_default();
-                json!({ "artists": artists })
-            }))
+            .and_then(|raw| {
+                parse_json_loose(&raw).map(|v| {
+                    let artists = v
+                        .get("artists")
+                        .and_then(Value::as_array)
+                        .map(|arr| arr.iter().map(normalize_artist).collect::<Vec<Value>>())
+                        .unwrap_or_default();
+                    json!({ "artists": artists })
+                })
+            })
             .map(|v| v.to_string())
         }
         "getArtistTopSongs" => {
             let id = get_str("id");
             music_get(&client, &format!("/api/artist/{id}?offset=0&limit=100"))
-                .and_then(|raw| parse_json_loose(&raw).map(|v| {
-                    let artist = normalize_artist(v.get("artist").unwrap_or(&Value::Null));
-                    let songs = v
-                        .get("hotSongs")
-                        .and_then(Value::as_array)
-                        .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
-                        .unwrap_or_default();
-                    json!({ "artist": artist, "songs": songs })
-                }))
+                .and_then(|raw| {
+                    parse_json_loose(&raw).map(|v| {
+                        let artist = normalize_artist(v.get("artist").unwrap_or(&Value::Null));
+                        let songs = v
+                            .get("hotSongs")
+                            .and_then(Value::as_array)
+                            .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
+                            .unwrap_or_default();
+                        json!({ "artist": artist, "songs": songs })
+                    })
+                })
                 .map(|v| v.to_string())
         }
         "getArtistAlbums" => {
             let id = get_str("id");
-            music_get(&client, &format!("/api/artist/albums/{id}?offset=0&limit=100"))
-                .and_then(|raw| parse_json_loose(&raw).map(|v| {
+            music_get(
+                &client,
+                &format!("/api/artist/albums/{id}?offset=0&limit=100"),
+            )
+            .and_then(|raw| {
+                parse_json_loose(&raw).map(|v| {
                     let artist = normalize_artist(v.get("artist").unwrap_or(&Value::Null));
                     let albums = v
                         .get("hotAlbums")
@@ -110,24 +137,27 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
                         .map(|arr| arr.iter().map(normalize_album).collect::<Vec<Value>>())
                         .unwrap_or_default();
                     json!({ "artist": artist, "albums": albums })
-                }))
-                .map(|v| v.to_string())
+                })
+            })
+            .map(|v| v.to_string())
         }
         "getAlbumDetail" => {
             let id = get_str("id");
             music_get(&client, &format!("/api/album/{id}"))
-                .and_then(|raw| parse_json_loose(&raw).map(|v| {
-                    let album_src = v.get("album").unwrap_or(&Value::Null);
-                    let songs = album_src
-                        .get("songs")
-                        .and_then(Value::as_array)
-                        .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
-                        .unwrap_or_default();
-                    json!({
-                        "album": normalize_album(album_src),
-                        "songs": songs
+                .and_then(|raw| {
+                    parse_json_loose(&raw).map(|v| {
+                        let album_src = v.get("album").unwrap_or(&Value::Null);
+                        let songs = album_src
+                            .get("songs")
+                            .and_then(Value::as_array)
+                            .map(|arr| arr.iter().map(normalize_song).collect::<Vec<Value>>())
+                            .unwrap_or_default();
+                        json!({
+                            "album": normalize_album(album_src),
+                            "songs": songs
+                        })
                     })
-                }))
+                })
                 .map(|v| v.to_string())
         }
         "songDetail" => {
@@ -141,9 +171,35 @@ pub fn direct_call(action: &str, params_json: &str) -> String {
         "downloadUrl" => {
             let id = get_str("id");
             let quality = get_str("quality");
-            let q = if quality.is_empty() { "96" } else { quality.as_str() };
+            let q = if quality.is_empty() {
+                "96"
+            } else {
+                quality.as_str()
+            };
             resolve_stream_data(&id, q, &client)
                 .map(|data| json!({"url": data.mp3, "img": data.img}).to_string())
+        }
+        "ytmusic_search" => {
+            let q = params.get("q").and_then(Value::as_str).unwrap_or("");
+            let limit = params.get("limit").and_then(Value::as_u64).unwrap_or(20) as usize;
+            Ok(innertube_search(q, limit, &client).to_string())
+        }
+        "ytmusic_song" => {
+            let id = params.get("id").and_then(Value::as_str).unwrap_or("");
+            match innertube_stream_url(id, &client) {
+                Ok(data) => Ok(json!({
+                    "id": id,
+                    "title": data.song_name,
+                    "artist": data.artist,
+                    "album": data.album,
+                    "img": data.img,
+                    "duration": data.duration,
+                    "source": "youtube",
+                    "url": data.mp3
+                })
+                .to_string()),
+                Err(e) => Ok(json!({"error": e}).to_string()),
+            }
         }
         _ => Err("unsupported action".to_string()),
     };
@@ -182,7 +238,18 @@ fn handle_request(request: Request, client: &Client) {
     let (path, query) = split_path_query(&url);
     let params = parse_query(query);
 
+    // Extract Range header (needed for YouTube byte-range proxy)
+    let range_header: Option<String> = request
+        .headers()
+        .iter()
+        .find(|h| h.field.equiv("Range"))
+        .map(|h| h.value.as_str().to_string());
+
     let response = match (method, path) {
+        (Method::Get, p) if p.starts_with("/play/youtube/") => {
+            handle_play_youtube(p, range_header.as_deref(), client)
+        }
+        (Method::Get, p) if p.starts_with("/url/youtube/") => handle_url_youtube(p, client),
         (Method::Get, p) if p.starts_with("/play/") => handle_play(p, client),
         (Method::Get, p) if p.starts_with("/url/") => handle_url(p, client),
         (Method::Get, p) if p.starts_with("/song/") => handle_song_detail_endpoint(p, client),
@@ -210,8 +277,12 @@ fn parse_query(query: &str) -> HashMap<String, String> {
         let mut it = pair.splitn(2, '=');
         let k = it.next().unwrap_or_default();
         let v = it.next().unwrap_or_default();
-        let key = urlencoding::decode(k).map(|s| s.into_owned()).unwrap_or_default();
-        let value = urlencoding::decode(v).map(|s| s.into_owned()).unwrap_or_default();
+        let key = urlencoding::decode(k)
+            .map(|s| s.into_owned())
+            .unwrap_or_default();
+        let value = urlencoding::decode(v)
+            .map(|s| s.into_owned())
+            .unwrap_or_default();
         out.insert(key, value);
     }
     out
@@ -269,7 +340,10 @@ fn music_post_form(client: &Client, path: &str, form: &[(&str, String)]) -> Resu
         .map_err(|e| e.to_string())
 }
 
-fn handle_query_actions(params: HashMap<String, String>, client: &Client) -> Response<std::io::Cursor<Vec<u8>>> {
+fn handle_query_actions(
+    params: HashMap<String, String>,
+    client: &Client,
+) -> Response<std::io::Cursor<Vec<u8>>> {
     if let Some(id) = params.get("lyric") {
         return handle_lyric(id, client);
     }
@@ -285,8 +359,14 @@ fn handle_query_actions(params: HashMap<String, String>, client: &Client) -> Res
         match action.as_str() {
             "search" => {
                 let query = params.get("query").cloned().unwrap_or_default();
-                let song_type = params.get("type").cloned().unwrap_or_else(|| "1".to_string());
-                let limit = params.get("limit").cloned().unwrap_or_else(|| "50".to_string());
+                let song_type = params
+                    .get("type")
+                    .cloned()
+                    .unwrap_or_else(|| "1".to_string());
+                let limit = params
+                    .get("limit")
+                    .cloned()
+                    .unwrap_or_else(|| "50".to_string());
                 let body = [
                     ("s", query),
                     ("type", song_type),
@@ -296,12 +376,24 @@ fn handle_query_actions(params: HashMap<String, String>, client: &Client) -> Res
                 return proxy_post_form(client, "/api/search/get", &body);
             }
             "getNewAlbums" => {
-                let limit = params.get("limit").cloned().unwrap_or_else(|| "50".to_string());
-                return proxy_get(client, &format!("/api/album/new?area=ALL&offset=0&total=true&limit={limit}"));
+                let limit = params
+                    .get("limit")
+                    .cloned()
+                    .unwrap_or_else(|| "50".to_string());
+                return proxy_get(
+                    client,
+                    &format!("/api/album/new?area=ALL&offset=0&total=true&limit={limit}"),
+                );
             }
             "getTopArtists" => {
-                let limit = params.get("limit").cloned().unwrap_or_else(|| "50".to_string());
-                return proxy_get(client, &format!("/api/artist/top?offset=0&total=false&limit={limit}"));
+                let limit = params
+                    .get("limit")
+                    .cloned()
+                    .unwrap_or_else(|| "50".to_string());
+                return proxy_get(
+                    client,
+                    &format!("/api/artist/top?offset=0&total=false&limit={limit}"),
+                );
             }
             "getArtistTopSongs" => {
                 let id = params.get("id").cloned().unwrap_or_default();
@@ -309,7 +401,10 @@ fn handle_query_actions(params: HashMap<String, String>, client: &Client) -> Res
             }
             "getArtistAlbums" => {
                 let id = params.get("id").cloned().unwrap_or_default();
-                return proxy_get(client, &format!("/api/artist/albums/{id}?offset=0&limit=100"));
+                return proxy_get(
+                    client,
+                    &format!("/api/artist/albums/{id}?offset=0&limit=100"),
+                );
             }
             "getAlbumDetail" => {
                 let id = params.get("id").cloned().unwrap_or_default();
@@ -318,6 +413,38 @@ fn handle_query_actions(params: HashMap<String, String>, client: &Client) -> Res
             "getSongDetail" => {
                 let id = params.get("id").cloned().unwrap_or_default();
                 return handle_song_detail_legacy(&id, client);
+            }
+            "ytmusic_search" => {
+                let query = params.get("q").cloned().unwrap_or_default();
+                let limit = params
+                    .get("limit")
+                    .and_then(|v| v.parse::<usize>().ok())
+                    .unwrap_or(20);
+                let result = innertube_search(&query, limit, client);
+                return json_response(StatusCode(200), result);
+            }
+            "ytmusic_song" => {
+                let id = params.get("id").cloned().unwrap_or_default();
+                match innertube_stream_url(&id, client) {
+                    Ok(data) => {
+                        return json_response(
+                            StatusCode(200),
+                            json!({
+                                "id": id,
+                                "title": data.song_name,
+                                "artist": data.artist,
+                                "album": data.album,
+                                "img": data.img,
+                                "duration": data.duration,
+                                "source": "youtube",
+                                "url": data.mp3
+                            }),
+                        );
+                    }
+                    Err(err) => {
+                        return json_response(StatusCode(502), json!({"error": err}));
+                    }
+                }
             }
             _ => {}
         }
@@ -366,7 +493,11 @@ fn proxy_get(client: &Client, path: &str) -> Response<std::io::Cursor<Vec<u8>>> 
     }
 }
 
-fn proxy_post_form(client: &Client, path: &str, form: &[(&str, String)]) -> Response<std::io::Cursor<Vec<u8>>> {
+fn proxy_post_form(
+    client: &Client,
+    path: &str,
+    form: &[(&str, String)],
+) -> Response<std::io::Cursor<Vec<u8>>> {
     match music_post_form(client, path, form) {
         Ok(body) => plain_json_response(StatusCode(200), body),
         Err(err) => json_response(StatusCode(502), json!({"error":err})),
@@ -631,7 +762,9 @@ fn handle_pic(path: &str, query: &str) -> Response<std::io::Cursor<Vec<u8>>> {
         .filter(|v| *v > 0)
         .unwrap_or(300);
     let enc = decrypt_id(pic_id);
-    redirect_response(&format!("{MEDIA_BASE}{enc}/{pic_id}.jpg?param={size}y{size}"))
+    redirect_response(&format!(
+        "{MEDIA_BASE}{enc}/{pic_id}.jpg?param={size}y{size}"
+    ))
 }
 
 struct StreamData {
@@ -718,7 +851,11 @@ fn resolve_outer_url(id: &str, client: &Client) -> Result<String, String> {
     }
 }
 
-fn resolve_stream_data_legacy_dfs(id: &str, quality: &str, client: &Client) -> Result<String, String> {
+fn resolve_stream_data_legacy_dfs(
+    id: &str,
+    quality: &str,
+    client: &Client,
+) -> Result<String, String> {
     let song = get_song_detail_raw(id, client)?;
     let album = song.get("album").cloned().unwrap_or(Value::Null);
     let album_id = album
@@ -830,7 +967,10 @@ fn resolve_play_url_weapi(id: &str, quality: &str, client: &Client) -> Result<St
             })
             .unwrap_or_default();
         if !maybe_url.is_empty() {
-            eprintln!("local_api weapi ok q={} br={} url={}", quality, br_kbps, maybe_url);
+            eprintln!(
+                "local_api weapi ok q={} br={} url={}",
+                quality, br_kbps, maybe_url
+            );
             return Ok(maybe_url);
         }
         last_err = format!("{} empty url response: {}", endpoint, raw);
@@ -975,4 +1115,408 @@ fn redirect_response(url: &str) -> Response<std::io::Cursor<Vec<u8>>> {
         response = response.with_header(h);
     }
     response
+}
+
+// ── YouTube Music / InnerTube helpers ────────────────────────────────────────
+
+/// Returns the standard InnerTube `context` body fragment.
+fn innertube_context() -> Value {
+    json!({
+        "context": {
+            "client": {
+                "clientName": INNERTUBE_CLIENT_NAME,
+                "clientVersion": INNERTUBE_CLIENT_VERSION,
+                "gl": "US",
+                "hl": "en"
+            }
+        }
+    })
+}
+
+/// Makes a blocking POST to `{INNERTUBE_BASE}{endpoint}?key={INNERTUBE_API_KEY}`
+/// with all required InnerTube headers. Returns parsed JSON or an error string.
+fn innertube_post(endpoint: &str, body: Value, client: &Client) -> Result<Value, String> {
+    let url = format!("{}{}?key={}", INNERTUBE_BASE, endpoint, INNERTUBE_API_KEY);
+    let resp = client
+        .post(&url)
+        .header("Content-Type", "application/json")
+        .header("X-Goog-Api-Format-Version", "1")
+        .header("X-YouTube-Client-Name", INNERTUBE_CLIENT_ID)
+        .header("X-YouTube-Client-Version", INNERTUBE_CLIENT_VERSION)
+        .header("X-Origin", "https://music.youtube.com")
+        .header("Referer", "https://music.youtube.com/")
+        .header("User-Agent", INNERTUBE_USER_AGENT)
+        .json(&body)
+        .send()
+        .map_err(|e| format!("innertube_http_error: {}", e))?;
+    resp.json::<Value>()
+        .map_err(|e| format!("innertube_json_error: {}", e))
+}
+
+/// Calls the InnerTube `player` endpoint and returns a `StreamData` with the
+/// best audio stream URL and video metadata.
+fn innertube_stream_url(video_id: &str, client: &Client) -> Result<StreamData, String> {
+    let mut body = innertube_context();
+    body["videoId"] = json!(video_id);
+
+    let resp = innertube_post("player", body, client)?;
+
+    // ── video metadata ────────────────────────────────────────────────────────
+    let details = resp.get("videoDetails").unwrap_or(&Value::Null);
+
+    let song_name = details
+        .get("title")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+
+    let artist = details
+        .get("author")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+
+    let duration_secs = details
+        .get("lengthSeconds")
+        .and_then(Value::as_str)
+        .and_then(|s| s.parse::<i64>().ok())
+        .unwrap_or(0);
+    let duration = duration_secs * 1000; // convert to milliseconds
+
+    let img = details
+        .get("thumbnail")
+        .and_then(|t| t.get("thumbnails"))
+        .and_then(Value::as_array)
+        .and_then(|arr| arr.last())
+        .and_then(|t| t.get("url"))
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+
+    // ── stream selection ──────────────────────────────────────────────────────
+    let adaptive_formats = resp
+        .get("streamingData")
+        .and_then(|sd| sd.get("adaptiveFormats"))
+        .and_then(Value::as_array)
+        .ok_or_else(|| "no_stream".to_string())?;
+
+    if adaptive_formats.is_empty() {
+        return Err("no_stream".to_string());
+    }
+
+    // First try to find itag=140 (audio/mp4 AAC 128kbps) for best compatibility.
+    // Fall back to the audio-only format with the highest bitrate.
+    let audio_formats: Vec<&Value> = adaptive_formats
+        .iter()
+        .filter(|f| {
+            f.get("mimeType")
+                .and_then(Value::as_str)
+                .map(|m| m.starts_with("audio/"))
+                .unwrap_or(false)
+        })
+        .collect();
+
+    if audio_formats.is_empty() {
+        return Err("no_stream".to_string());
+    }
+
+    // Prefer itag 140
+    let best = audio_formats
+        .iter()
+        .find(|f| f.get("itag").and_then(Value::as_i64).unwrap_or(0) == 140)
+        .copied()
+        .unwrap_or_else(|| {
+            // Otherwise pick highest bitrate
+            audio_formats
+                .iter()
+                .max_by_key(|f| f.get("bitrate").and_then(Value::as_i64).unwrap_or(0))
+                .copied()
+                .unwrap_or(audio_formats[0])
+        });
+
+    let mp3 = best
+        .get("url")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+
+    if mp3.is_empty() {
+        return Err("no_stream".to_string());
+    }
+
+    Ok(StreamData {
+        song_name,
+        artist,
+        album: String::new(), // not available in player response
+        duration,
+        img,
+        mp3,
+    })
+}
+
+/// Searches YouTube Music for songs matching `query`, returns a JSON array
+/// of up to `limit` normalized song objects.
+fn innertube_search(query: &str, limit: usize, client: &Client) -> Value {
+    let mut body = innertube_context();
+    body["query"] = json!(query);
+    // FILTER_SONG param — restricts results to songs only
+    body["params"] = json!("EgWKAQIIAWoKEAkQBRAKEAMQBA%3D%3D");
+
+    let resp = match innertube_post("search", body, client) {
+        Ok(v) => v,
+        Err(_) => return json!([]),
+    };
+
+    // Navigate to musicShelfRenderer → contents
+    let contents = resp
+        .get("contents")
+        .and_then(|c| c.get("tabbedSearchResultsRenderer"))
+        .and_then(|t| t.get("tabs"))
+        .and_then(Value::as_array)
+        .and_then(|tabs| tabs.first())
+        .and_then(|tab| tab.get("tabRenderer"))
+        .and_then(|tr| tr.get("content"))
+        .and_then(|c| c.get("sectionListRenderer"))
+        .and_then(|sl| sl.get("contents"))
+        .and_then(Value::as_array);
+
+    let shelf_contents = contents.and_then(|arr| {
+        arr.iter().find_map(|section| {
+            section
+                .get("musicShelfRenderer")
+                .and_then(|msr| msr.get("contents"))
+                .and_then(Value::as_array)
+        })
+    });
+
+    let items = match shelf_contents {
+        Some(v) => v,
+        None => return json!([]),
+    };
+
+    let mut songs: Vec<Value> = Vec::new();
+    for item in items.iter().take(limit) {
+        let renderer = match item.get("musicResponsiveListItemRenderer") {
+            Some(r) => r,
+            None => continue,
+        };
+
+        // Title from flexColumns[0] → runs[0].text
+        let title = renderer
+            .get("flexColumns")
+            .and_then(Value::as_array)
+            .and_then(|cols| cols.first())
+            .and_then(|c| c.get("musicResponsiveListItemFlexColumnRenderer"))
+            .and_then(|fc| fc.get("text"))
+            .and_then(|t| t.get("runs"))
+            .and_then(Value::as_array)
+            .and_then(|runs| runs.first())
+            .and_then(|r| r.get("text"))
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+
+        // Artist from flexColumns[1] → runs[0].text
+        let artist_yt = renderer
+            .get("flexColumns")
+            .and_then(Value::as_array)
+            .and_then(|cols| cols.get(1))
+            .and_then(|c| c.get("musicResponsiveListItemFlexColumnRenderer"))
+            .and_then(|fc| fc.get("text"))
+            .and_then(|t| t.get("runs"))
+            .and_then(Value::as_array)
+            .and_then(|runs| runs.first())
+            .and_then(|r| r.get("text"))
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+
+        // video ID from overlay → playButton → watchEndpoint
+        let video_id = renderer
+            .get("overlay")
+            .and_then(|o| o.get("musicItemThumbnailOverlayRenderer"))
+            .and_then(|o| o.get("content"))
+            .and_then(|c| c.get("musicPlayButtonRenderer"))
+            .and_then(|pb| pb.get("playNavigationEndpoint"))
+            .and_then(|ne| ne.get("watchEndpoint"))
+            .and_then(|we| we.get("videoId"))
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+
+        if video_id.is_empty() {
+            continue;
+        }
+
+        // Thumbnail — last (largest) thumbnail
+        let img_yt = renderer
+            .get("thumbnail")
+            .and_then(|t| t.get("musicThumbnailRenderer"))
+            .and_then(|mtr| mtr.get("thumbnail"))
+            .and_then(|t| t.get("thumbnails"))
+            .and_then(Value::as_array)
+            .and_then(|arr| arr.last())
+            .and_then(|t| t.get("url"))
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+
+        songs.push(json!({
+            "id": video_id,
+            "title": title,
+            "artist": artist_yt,
+            "album": "",
+            "img": img_yt,
+            "duration": 0,
+            "source": "youtube"
+        }));
+    }
+
+    json!(songs)
+}
+
+// ── YouTube Music HTTP route handlers ────────────────────────────────────────
+
+/// Returns true if `id` is a valid YouTube video ID: exactly 11 chars from [A-Za-z0-9_-].
+fn is_valid_youtube_id(id: &str) -> bool {
+    id.len() == 11
+        && id
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+}
+
+/// GET /play/youtube/{video_id}[/{quality}]
+///
+/// Fetches the CDN audio stream URL from InnerTube, then **pipes the CDN
+/// response bytes directly back** to the caller through `tiny_http`.  The QML
+/// MediaPlayer therefore only ever talks to `127.0.0.1:39876` — it never
+/// receives or follows a redirect to a `googlevideo.com` CDN URL.
+///
+/// Supported pass-through headers (upstream → client):
+///   • Content-Type   (typically `audio/mp4`)
+///   • Content-Length (enables duration/seek in MediaPlayer)
+///   • Accept-Ranges  (signals that byte-range requests are OK)
+///
+/// Honoured incoming headers from the client:
+///   • Range  (forwarded to the CDN so seek-to-position works)
+fn handle_play_youtube(
+    path: &str,
+    range_header: Option<&str>,
+    client: &Client,
+) -> Response<std::io::Cursor<Vec<u8>>> {
+    // path: "/play/youtube/{video_id}" or "/play/youtube/{video_id}/{quality}"
+    let stripped = path.trim_start_matches("/play/youtube/");
+    let video_id = stripped.split('/').next().unwrap_or("").trim();
+
+    if video_id.is_empty() {
+        return json_response(StatusCode(400), json!({"error": "missing video_id"}));
+    }
+    if !is_valid_youtube_id(video_id) {
+        return json_response(
+            StatusCode(400),
+            json!({"error": "invalid youtube video id"}),
+        );
+    }
+
+    // 1. Resolve the CDN stream URL via InnerTube.
+    let cdn_url = match innertube_stream_url(video_id, client) {
+        Ok(data) => data.mp3,
+        Err(err) => {
+            eprintln!(
+                "local_api /play/youtube innertube failed video_id={}: {}",
+                video_id, err
+            );
+            return json_response(StatusCode(502), json!({"error": err}));
+        }
+    };
+
+    // 2. Open an HTTP GET to the CDN URL, forwarding Range if present.
+    let mut cdn_req = client.get(&cdn_url);
+    if let Some(range) = range_header {
+        cdn_req = cdn_req.header("Range", range);
+    }
+    let cdn_resp = match cdn_req.send() {
+        Ok(r) => r,
+        Err(err) => {
+            eprintln!(
+                "local_api /play/youtube cdn fetch failed video_id={}: {}",
+                video_id, err
+            );
+            return json_response(StatusCode(502), json!({"error": err.to_string()}));
+        }
+    };
+
+    // 3. Collect headers we want to pass through before consuming the body.
+    let status_code = cdn_resp.status().as_u16();
+    let content_type = cdn_resp
+        .headers()
+        .get("Content-Type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("audio/mp4")
+        .to_string();
+    let content_length: Option<String> = cdn_resp
+        .headers()
+        .get("Content-Length")
+        .and_then(|v| v.to_str().ok())
+        .map(str::to_string);
+    let accept_ranges: Option<String> = cdn_resp
+        .headers()
+        .get("Accept-Ranges")
+        .and_then(|v| v.to_str().ok())
+        .map(str::to_string);
+
+    // 4. Read the CDN body into memory and pipe it back.
+    let body_bytes = match cdn_resp.bytes() {
+        Ok(b) => b.to_vec(),
+        Err(err) => {
+            eprintln!(
+                "local_api /play/youtube cdn body read failed video_id={}: {}",
+                video_id, err
+            );
+            return json_response(StatusCode(502), json!({"error": err.to_string()}));
+        }
+    };
+
+    // 5. Build the tiny_http response.
+    let http_status = StatusCode(status_code);
+    let mut response = Response::from_data(body_bytes).with_status_code(http_status);
+
+    if let Ok(h) = Header::from_bytes(b"Content-Type", content_type.as_bytes()) {
+        response = response.with_header(h);
+    }
+    if let Some(cl) = content_length {
+        if let Ok(h) = Header::from_bytes(b"Content-Length", cl.as_bytes()) {
+            response = response.with_header(h);
+        }
+    }
+    if let Some(ar) = accept_ranges {
+        if let Ok(h) = Header::from_bytes(b"Accept-Ranges", ar.as_bytes()) {
+            response = response.with_header(h);
+        }
+    }
+
+    response
+}
+
+/// GET /url/youtube/{video_id}
+/// Returns JSON `{"url": "http://127.0.0.1:39876/play/youtube/{id}", "img": "..."}`.
+/// The `url` field always points to the local proxy endpoint — never to a CDN URL.
+fn handle_url_youtube(path: &str, client: &Client) -> Response<std::io::Cursor<Vec<u8>>> {
+    let video_id = path.trim_start_matches("/url/youtube/").trim();
+    if video_id.is_empty() {
+        return json_response(StatusCode(400), json!({"error": "missing video_id"}));
+    }
+    if !is_valid_youtube_id(video_id) {
+        return json_response(
+            StatusCode(400),
+            json!({"error": "invalid youtube video id"}),
+        );
+    }
+    match innertube_stream_url(video_id, client) {
+        Ok(data) => {
+            let proxy_url = format!("http://{}/play/youtube/{}", LISTEN_ADDR, video_id);
+            json_response(StatusCode(200), json!({"url": proxy_url, "img": data.img}))
+        }
+        Err(err) => json_response(StatusCode(502), json!({"error": err})),
+    }
 }

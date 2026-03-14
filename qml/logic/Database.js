@@ -30,6 +30,7 @@ function create_tables(tx) {
     tx.executeSql('CREATE TABLE IF NOT EXISTS search_history(id INTEGER PRIMARY KEY, search TEXT UNIQUE, created_at INTEGER);');
     tx.executeSql('CREATE TABLE IF NOT EXISTS liked_songs(id INTEGER PRIMARY KEY, sid INTEGER, source TEXT DEFAULT "netease", name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration INTEGER, art TEXT, added_at INTEGER, UNIQUE(sid, source));');
     tx.executeSql('CREATE TABLE IF NOT EXISTS recently_played(id INTEGER PRIMARY KEY, sid INTEGER, source TEXT DEFAULT "netease", name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration INTEGER, art TEXT, played_at INTEGER, UNIQUE(sid, source));');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT NOT NULL);');
 }
 
 function migrate_schema(tx) {
@@ -39,6 +40,7 @@ function migrate_schema(tx) {
     ensure_recently_played_schema(tx)
     migrate_liked_songs_provider_schema(tx)
     migrate_recently_played_provider_schema(tx)
+    ensure_settings_schema(tx)
 }
 
 function ensure_search_history_created_at(tx) {
@@ -130,6 +132,11 @@ function migrate_recently_played_provider_schema(tx) {
     tx.executeSql('CREATE TABLE recently_played(id INTEGER PRIMARY KEY, sid INTEGER, source TEXT DEFAULT "netease", name TEXT, artist_id INTEGER, artist TEXT, album_id INTEGER, album TEXT, duration INTEGER, art TEXT, played_at INTEGER, UNIQUE(sid, source));')
     tx.executeSql('INSERT OR REPLACE INTO recently_played(sid, source, name, artist_id, artist, album_id, album, duration, art, played_at) SELECT sid, "netease", name, artist_id, artist, album_id, album, duration, art, COALESCE(played_at, ?) FROM recently_played_old;', [Date.now()])
     tx.executeSql('DROP TABLE recently_played_old;')
+}
+
+function ensure_settings_schema(tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT NOT NULL);')
+    tx.executeSql('INSERT OR IGNORE INTO settings(key, value) VALUES("active_provider", "netease");')
 }
 
 function delete_tables(tx) {
@@ -538,4 +545,23 @@ function getRecentlyPlayed(limit) {
         }
     })
     return records
+}
+
+// Settings helpers
+
+function getSetting(key) {
+    var result = null
+    db().transaction(function(tx) {
+        var rs = tx.executeSql('SELECT value FROM settings WHERE key=?;', [key])
+        if (rs.rows.length > 0) {
+            result = rs.rows.item(0).value
+        }
+    })
+    return result
+}
+
+function setSetting(key, value) {
+    db().transaction(function(tx) {
+        tx.executeSql('INSERT OR REPLACE INTO settings(key, value) VALUES(?, ?);', [key, value])
+    })
 }

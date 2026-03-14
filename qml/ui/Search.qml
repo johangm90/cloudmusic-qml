@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.2
 import "../logic/Format.js" as Format
 import "../logic/RequestBus.js" as RequestBus
 import "../logic/Database.js" as Db
+import "../logic/CloudBridge.js" as CloudBridge
 import "../components"
 
 Page {
@@ -160,6 +161,53 @@ Page {
             is_visible(true)
             searchLoading = false
         }
+    }
+
+    function runSearchYoutube(query, limit) {
+        RequestBus.cancelContext(requestContext)
+        is_visible(false)
+        searchSongsModel.clear()
+        searchAlbumsModel.clear()
+        searchArtistsModel.clear()
+        search_songs_loader.running = true
+        search_albums_loader.running = false
+        search_artists_loader.running = false
+        searchLoading = true
+        pendingSearchRequests = 1
+
+        CloudBridge.directApiAsync(
+            "ytmusic_search",
+            { q: String(query), limit: Number(limit) || 20 },
+            function(data) {
+                if (data && Array.isArray(data)) {
+                    for (var i = 0; i < data.length; i++) {
+                        var raw = data[i]
+                        if (!raw || !raw.id) {
+                            continue
+                        }
+                        searchSongsModel.append({
+                            id:        raw.id,
+                            name:      raw.title  || raw.name  || "",
+                            artist:    typeof raw.artist === "string" ? raw.artist : "",
+                            artist_id: 0,
+                            album:     raw.album  || "",
+                            album_id:  0,
+                            duration:  raw.duration || 0,
+                            image:     raw.img    || raw.image || "../graphics/default.png",
+                            source:    "youtube"
+                        })
+                    }
+                }
+                search_songs_loader.running = false
+                finishSearchRequest()
+            },
+            function(err) {
+                console.log("Search(youtube) error: " + err)
+                search_songs_loader.running = false
+                finishSearchRequest()
+            }
+        )
+        return true
     }
 
     function runSearchRust(query, limit) {
@@ -543,13 +591,20 @@ Page {
                                     context_menu.close()
                                 }
                             }
-                            Action {
+                                Action {
                                 text: i18n.tr("Add to queue")
                                 name: "navigation-menu"
                                 onTriggered: {
-                                    playing_page.songs_list.push(searchSongsModel.get(songsList.index).id)
-                                    media_player.additem((searchPage.appRoot ? searchPage.appRoot.server : "") + 'play/' + searchSongsModel.get(songsList.index).id + '/' + (searchPage.appRoot && searchPage.appRoot.settings ? searchPage.appRoot.settings.streaming_quality : "320"))
-                                    playing_page.model_queue.append(searchSongsModel.get(songsList.index))
+                                    var qSong = searchSongsModel.get(songsList.index)
+                                    playing_page.songs_list.push(qSong.id)
+                                    var qUrl
+                                    if (qSong.source === "youtube") {
+                                        qUrl = (searchPage.appRoot ? searchPage.appRoot.server : "") + "play/youtube/" + qSong.id
+                                    } else {
+                                        qUrl = (searchPage.appRoot ? searchPage.appRoot.server : "") + "play/" + qSong.id + "/" + (searchPage.appRoot && searchPage.appRoot.settings ? searchPage.appRoot.settings.streaming_quality : "320")
+                                    }
+                                    media_player.additem(qUrl)
+                                    playing_page.model_queue.append(qSong)
                                     context_menu.close()
                                     messager.show_message(i18n.tr("Song added to queue"), 3)
                                 }
@@ -607,7 +662,10 @@ Page {
                                 boundsBehavior: Flickable.StopAtBounds
                                 delegate: SongListItem {
                                     title: name
-                                    subtitle: artist
+                                    subtitle: {
+                                        var src = (model.source === "youtube") ? i18n.tr("YouTube") : i18n.tr("NetEase")
+                                        return artist ? (artist + " • " + src) : src
+                                    }
                                     durationText: Format.durationToString(duration)
                                     coverSource: image
                                     albumId: album_id
@@ -629,9 +687,16 @@ Page {
                                         var songs_ids = [];
                                         playing_page.model_queue.clear()
                                         for(var i = 0; i < searchSongsModel.count; i++) {
-                                            songs.push((searchPage.appRoot ? searchPage.appRoot.server : "") + 'play/' + searchSongsModel.get(i).id + '/' + (searchPage.appRoot && searchPage.appRoot.settings ? searchPage.appRoot.settings.streaming_quality : "320"));
-                                            songs_ids.push(searchSongsModel.get(i).id);
-                                            playing_page.model_queue.append(searchSongsModel.get(i));
+                                            var s = searchSongsModel.get(i)
+                                            var playUrl
+                                            if (s.source === "youtube") {
+                                                playUrl = (searchPage.appRoot ? searchPage.appRoot.server : "") + "play/youtube/" + s.id
+                                            } else {
+                                                playUrl = (searchPage.appRoot ? searchPage.appRoot.server : "") + "play/" + s.id + "/" + (searchPage.appRoot && searchPage.appRoot.settings ? searchPage.appRoot.settings.streaming_quality : "320")
+                                            }
+                                            songs.push(playUrl);
+                                            songs_ids.push(s.id);
+                                            playing_page.model_queue.append(s);
                                         }
                                         pagestack.push(playingPage);
                                         playing_page.songs_list = songs_ids
@@ -836,8 +901,15 @@ Page {
             Db.insertSearchHistory(query, 20)
             populateDataModel()
         }
-        if (!runSearchRust(query, 50)) {
-            searchLoading = false
+        var activeProvider = Db.getSetting("active_provider")
+        if (activeProvider === "youtube") {
+            if (!runSearchYoutube(query, 50)) {
+                searchLoading = false
+            }
+        } else {
+            if (!runSearchRust(query, 50)) {
+                searchLoading = false
+            }
         }
     }
 

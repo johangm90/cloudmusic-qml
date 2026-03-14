@@ -73,9 +73,16 @@ Item {
         var server = appRoot ? appRoot.server : ""
         playing_page.model_queue.clear()
         for (var i = 0; i < filteredSongsModel.count; i++) {
-            songs.push(server + "play/" + filteredSongsModel.get(i).song_id + "/" + quality)
-            songsIds.push(filteredSongsModel.get(i).song_id)
-            playing_page.model_queue.append(filteredSongsModel.get(i))
+            var s = filteredSongsModel.get(i)
+            var playUrl
+            if (s.source === "youtube") {
+                playUrl = server + "play/youtube/" + s.song_id
+            } else {
+                playUrl = server + "play/" + s.song_id + "/" + quality
+            }
+            songs.push(playUrl)
+            songsIds.push(s.song_id)
+            playing_page.model_queue.append(s)
         }
         playing_page.songs_list = songsIds
         pagestack.push(playingPage)
@@ -124,7 +131,13 @@ Item {
                     playing_page.songs_list.push(song.song_id)
                     var quality = (appRoot && appRoot.settings) ? appRoot.settings.streaming_quality : "320"
                     var server = appRoot ? appRoot.server : ""
-                    media_player.additem(server + "play/" + song.song_id + "/" + quality)
+                    var playUrl
+                    if (song.source === "youtube") {
+                        playUrl = server + "play/youtube/" + song.song_id
+                    } else {
+                        playUrl = server + "play/" + song.song_id + "/" + quality
+                    }
+                    media_player.additem(playUrl)
                     playing_page.model_queue.append(song)
                     messager.show_message(i18n.tr("Song added to queue"), 3)
                     context_menu.close()

@@ -30,6 +30,7 @@ ListItem {
     property real menuWidth: units.gu(5)
     property real menuIconSize: units.gu(3)
     property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
+    property string sourceLabel: ""
 
     signal menuClicked(var caller)
 
@@ -101,10 +102,23 @@ ListItem {
         elide: Text.ElideRight
         anchors.left: leadingText !== "" ? leadLabel.right : coverFrame.right
         anchors.leftMargin: textInset
-        anchors.right: durationLabel.left
+        anchors.right: sourceBadgeLabel.visible ? sourceBadgeLabel.left : durationLabel.left
+        anchors.rightMargin: sourceBadgeLabel.visible ? units.gu(0.4) : 0
         anchors.bottom: parent.bottom
         fontSize: smallTextSize
         color: rowSecondaryTextColor
+    }
+
+    Label {
+        id: sourceBadgeLabel
+        visible: sourceLabel !== ""
+        text: sourceLabel === "youtube" ? "YouTube" : (sourceLabel === "netease" ? "NetEase" : sourceLabel)
+        fontSize: "x-small"
+        color: rowSecondaryTextColor
+        anchors.right: durationLabel.left
+        anchors.rightMargin: units.gu(0.4)
+        anchors.bottom: parent.bottom
+        elide: Text.ElideRight
     }
 
     Label {
