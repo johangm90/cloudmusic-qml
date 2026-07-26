@@ -17,7 +17,6 @@ Page {
             numberOfSlots: 0
             actions: tabsList.actions
         }
-        trailingActionBar.actions: [searchAction]
     }
 
     Rectangle {
