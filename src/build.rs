@@ -134,7 +134,13 @@ fn walk_dir(dir: PathBuf, ext: &str) -> Vec<PathBuf> {
 }
 
 fn main() {
-    update_language_files();
+    let is_desktop = env::var("CARGO_FEATURE_DESKTOP").is_ok();
+
+    if !is_desktop || env::var("INSTALL_DIR").is_ok() {
+        update_language_files();
+    } else {
+        println!("cargo:warning=skipping gettext .mo generation (desktop build, no INSTALL_DIR)");
+    }
 
     let qmake_cmd = qmake_call();
     let args = qmake_args();
@@ -142,9 +148,15 @@ fn main() {
     let qt_include_path = qmake_query(&qmake_cmd, &args, "QT_INSTALL_HEADERS");
     let qt_library_path = qmake_query(&qmake_cmd, &args, "QT_INSTALL_LIBS");
 
-    cpp_build::Config::new()
-        .include(qt_include_path.trim())
-        .build("src/main.rs");
+    let mut cpp_config = cpp_build::Config::new();
+    cpp_config.include(qt_include_path.trim());
+    if cfg!(target_os = "macos") {
+        // Homebrew's Qt5 ships as macOS frameworks; some headers (e.g. the private
+        // QQmlPrivate registration API used for the desktop compat shim) are only
+        // forwarded inside each framework's own Headers dir, not the flat include tree.
+        cpp_config.include(format!("{}/QtQml.framework/Headers", qt_library_path.trim()));
+    }
+    cpp_config.build("src/main.rs");
 
     let macos_lib_search = if cfg!(target_os = "macos") {
         "=framework"
