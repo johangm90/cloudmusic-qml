@@ -32,6 +32,12 @@ use std::thread;
 
 mod qrc;
 mod local_api;
+#[cfg(feature = "desktop")]
+mod desktop_compat;
+#[cfg(feature = "desktop")]
+mod downloader;
+#[cfg(feature = "desktop")]
+mod view_items;
 
 #[derive(QObject, Default)]
 struct FileManager {
@@ -297,12 +303,34 @@ fn main() {
             QCoreApplication::setApplicationName(QStringLiteral("apu.johangm90"));
         }}
     }
+    #[cfg(not(feature = "desktop"))]
     QQuickStyle::set_style("Suru");
     qrc::load();
     qml_register_type::<FileManager>(cstr!("FileManager"), 1, 0, cstr!("FileManager"));
     qml_register_type::<CloudMusic>(cstr!("CloudMusic"), 1, 0, cstr!("CloudMusic"));
+    #[cfg(feature = "desktop")]
+    downloader::register_type();
+    #[cfg(feature = "desktop")]
+    view_items::register();
 
     let mut engine = QmlEngine::new();
+
+    #[cfg(feature = "desktop")]
+    engine.add_import_path("qrc:/qml/compat".into());
+    #[cfg(feature = "desktop")]
+    let units_box = QObjectBox::new(desktop_compat::Units::default());
+    #[cfg(feature = "desktop")]
+    let i18n_backend_box = QObjectBox::new(desktop_compat::I18nBackend::default());
+    #[cfg(feature = "desktop")]
+    engine.set_object_property("units".into(), units_box.pinned());
+    #[cfg(feature = "desktop")]
+    engine.set_object_property("i18nBackend".into(), i18n_backend_box.pinned());
+    #[cfg(feature = "desktop")]
+    {
+        let i18n_ptr = desktop_compat::make_i18n_wrapper(&engine);
+        desktop_compat::set_context_property_object(&engine, "i18n", i18n_ptr);
+    }
+
     engine.load_file("qrc:/qml/Main.qml".into());
     engine.exec();
 }
