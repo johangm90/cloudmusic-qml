@@ -1,0 +1,44 @@
+import QtQuick 2.7
+
+Item {
+    id: root
+    width: parent ? parent.width : implicitWidth
+    height: 48
+    property color color: "transparent"
+    property var leadingActions: null
+    property var trailingActions: null
+    property ListItemDivider divider: ListItemDivider {}
+
+    signal clicked()
+    signal pressAndHold()
+
+    property alias contentItem: contentArea
+    default property alias listItemData: contentArea.data
+
+    Rectangle {
+        anchors.fill: parent
+        color: root.color
+    }
+
+    Item {
+        id: contentArea
+        anchors.fill: parent
+    }
+
+    Rectangle {
+        visible: root.divider.visible
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: root.divider.anchors.leftMargin
+        anchors.rightMargin: root.divider.anchors.rightMargin
+        height: root.divider.height
+        color: "#e5e5e5"
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: root.clicked()
+        onPressAndHold: root.pressAndHold()
+    }
+}
