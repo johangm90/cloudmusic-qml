@@ -1,0 +1,3 @@
+module Lomiri.Components.Popups
+PopupUtils 1.3 PopupUtils.js
+PopupBase 1.3 PopupBase.qml
