@@ -1,0 +1,3 @@
+module Lomiri.DownloadManager
+SingleDownload 1.2 SingleDownload.qml
+Metadata 1.2 Metadata.qml

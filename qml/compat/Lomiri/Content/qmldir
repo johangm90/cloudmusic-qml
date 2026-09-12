@@ -1,0 +1,13 @@
+module Lomiri.Content
+singleton ContentType 1.1 ContentType.qml
+singleton ContentType 1.3 ContentType.qml
+singleton ContentHandler 1.1 ContentHandler.qml
+singleton ContentHandler 1.3 ContentHandler.qml
+singleton ContentTransfer 1.1 ContentTransfer.qml
+singleton ContentTransfer 1.3 ContentTransfer.qml
+ContentItem 1.1 ContentItem.qml
+ContentItem 1.3 ContentItem.qml
+ContentPeer 1.1 ContentPeer.qml
+ContentPeer 1.3 ContentPeer.qml
+ContentPeerPicker 1.1 ContentPeerPicker.qml
+ContentPeerPicker 1.3 ContentPeerPicker.qml
