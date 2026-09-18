@@ -98,6 +98,10 @@ Item {
                 leftMargin: sideInset
                 rightMargin: sideInset
             }
+            onClicked: {
+                context_menu.close()
+                action.trigger()
+            }
             Icon {
                 id: icon
                 width: units.gu(3)

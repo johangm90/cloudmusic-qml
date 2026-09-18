@@ -210,6 +210,10 @@ Item {
                 leftMargin: spacingMedium + spacingSmall
                 rightMargin: spacingMedium + spacingSmall
             }
+            onClicked: {
+                context_menu.close()
+                action.trigger()
+            }
 
             Icon {
                 id: icon

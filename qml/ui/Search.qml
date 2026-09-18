@@ -498,6 +498,10 @@ Page {
                                 leftMargin: sideInset
                                 rightMargin: sideInset
                             }
+                            onClicked: {
+                                context_menu.close()
+                                action.trigger()
+                            }
 
                             Icon {
                                 id: icon

@@ -15,8 +15,20 @@ QQC2.Popup {
     y: (parent ? parent.height - height : 0) / 2
     closePolicy: QQC2.Popup.CloseOnEscape | QQC2.Popup.CloseOnPressOutside
 
+    background: Rectangle {
+        color: Theme.cardColor
+        border.color: Theme.borderColor
+        border.width: 1
+        radius: 8
+    }
+
     function show() { root.open() }
-    function hide() { root.close() }
+    // Every call site also declares its own `function close()` on this same instance
+    // (to reset its own selection state alongside dismissing the popup), which shadows
+    // QQC2.Popup's built-in close() by name. Going through `root.close()` here would
+    // resolve back to that same shadowing override and recurse forever, so drop straight
+    // to the underlying `visible` state instead -- equivalent for a non-animated popup.
+    function hide() { root.visible = false }
 
     // Real Lomiri's ActionSelectionPopover injects `action` into each delegate instance
     // via a per-item QQmlContext. The only reliable way to reproduce that with pure QML

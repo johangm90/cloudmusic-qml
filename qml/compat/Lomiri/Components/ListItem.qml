@@ -20,6 +20,17 @@ Item {
         color: root.color
     }
 
+    // This whole-row click catcher must sit BEHIND `contentArea` (declared next), not
+    // after it: a MouseArea declared later paints on top and wins hit-testing first, which
+    // would silently swallow clicks meant for interactive children placed in contentArea
+    // (e.g. SongListItem's per-row "..." context-menu button) before they ever see them.
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.clicked()
+        onPressAndHold: root.pressAndHold()
+    }
+
     Item {
         id: contentArea
         anchors.fill: parent
@@ -33,12 +44,6 @@ Item {
         anchors.leftMargin: root.divider.anchors.leftMargin
         anchors.rightMargin: root.divider.anchors.rightMargin
         height: root.divider.height
-        color: "#e5e5e5"
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: root.clicked()
-        onPressAndHold: root.pressAndHold()
+        color: Theme.borderColor
     }
 }
