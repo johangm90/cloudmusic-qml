@@ -17,6 +17,16 @@ Page {
             numberOfSlots: 0
             actions: tabsList.actions
         }
+        trailingActionBar {
+            numberOfSlots: 1
+            actions: [
+                Action {
+                    text: i18n.tr("Search")
+                    iconName: "find"
+                    onTriggered: pagestack.push(searchPage)
+                }
+            ]
+        }
     }
 
     Rectangle {
