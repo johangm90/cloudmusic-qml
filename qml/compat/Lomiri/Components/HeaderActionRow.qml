@@ -39,12 +39,25 @@ Row {
         width: 220
         modal: true
         focus: true
+        closePolicy: QQC2.Popup.CloseOnEscape | QQC2.Popup.CloseOnPressOutside
+        background: Rectangle {
+            color: Theme.cardColor
+            border.color: Theme.borderColor
+            border.width: 1
+            radius: 8
+        }
         contentItem: Column {
             Repeater {
                 model: root.overflowActions
                 delegate: QQC2.ItemDelegate {
                     width: 220
                     text: modelData.text
+                    contentItem: Text {
+                        text: modelData.text
+                        color: Theme.textColor
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: 12
+                    }
                     onClicked: {
                         overflowMenu.close()
                         modelData.trigger()

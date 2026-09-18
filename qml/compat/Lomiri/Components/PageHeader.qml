@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 Rectangle {
     id: root
     height: 56
-    color: "#f5f5f5"
+    color: Theme.cardColor
 
     property string title: ""
     property Item contents: null
@@ -12,11 +12,21 @@ Rectangle {
     property ActionBar trailingActionBar: ActionBar {}
     property alias extension: extensionLoader.sourceComponent
 
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 1
+        color: Theme.borderColor
+    }
+
+    // `contents` (e.g. a search TextField) replaces only the title slot, not the whole
+    // row -- it must never cover the leading/trailing action buttons (back button, tab
+    // switcher, overflow menu), or they become invisible and unreachable.
     onContentsChanged: {
         if (contents) {
-            contents.parent = root
-            contents.anchors.fill = titleRow
-            contents.anchors.margins = 4
+            contents.parent = titleSlot
+            contents.anchors.fill = titleSlot
         }
     }
 
@@ -36,13 +46,21 @@ Rectangle {
             iconFor: "navigation-menu"
         }
 
-        Text {
+        Item {
+            id: titleSlot
             Layout.fillWidth: true
-            text: root.title
-            elide: Text.ElideRight
-            font.pixelSize: 20
-            font.weight: Font.DemiBold
-            verticalAlignment: Text.AlignVCenter
+            Layout.fillHeight: true
+
+            Text {
+                anchors.fill: parent
+                visible: !root.contents
+                text: root.title
+                color: Theme.textColor
+                elide: Text.ElideRight
+                font.pixelSize: 20
+                font.weight: Font.DemiBold
+                verticalAlignment: Text.AlignVCenter
+            }
         }
 
         HeaderActionRow {

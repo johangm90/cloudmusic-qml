@@ -4,7 +4,7 @@ Text {
     id: label
     property string fontSize: "medium"
     property color linkColor: "#19b6ee"
-    color: "#303030"
+    color: Theme.textColor
     font.pixelSize: {
         switch (fontSize) {
             case "x-small": return 11

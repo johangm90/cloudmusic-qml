@@ -2,17 +2,32 @@ import QtQuick 2.7
 import "IconLookup.js" as IconLookup
 
 Item {
+    id: root
     property string iconName: ""
     signal clicked()
     width: 40
     height: 40
+
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 4
+        radius: width / 2
+        color: Theme.textColor
+        opacity: mouseArea.pressed ? 0.18 : (mouseArea.containsMouse ? 0.1 : 0)
+        Behavior on opacity { NumberAnimation { duration: 100 } }
+    }
+
     Text {
         anchors.centerIn: parent
-        text: IconLookup.glyphFor(parent.iconName)
+        text: IconLookup.glyphFor(root.iconName)
+        color: Theme.textColor
         font.pixelSize: 18
     }
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
-        onClicked: parent.clicked()
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.clicked()
     }
 }

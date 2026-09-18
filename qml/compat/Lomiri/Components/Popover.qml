@@ -12,4 +12,11 @@ QQC2.Popup {
     x: (parent ? parent.width - width : 0) / 2
     y: (parent ? parent.height - height : 0) / 2
     closePolicy: QQC2.Popup.CloseOnEscape | QQC2.Popup.CloseOnPressOutside
+
+    background: Rectangle {
+        color: Theme.cardColor
+        border.color: Theme.borderColor
+        border.width: 1
+        radius: 8
+    }
 }

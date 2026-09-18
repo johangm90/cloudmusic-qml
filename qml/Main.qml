@@ -152,6 +152,20 @@ ApplicationWindow {
         property real pagePadding: units.gu(designTokens.spacing.page)
         property real layoutPlayerInset: units.gu(designTokens.layout.playerToolbarHeight)
 
+        // Keep the compat shim's Theme singleton (used by generic widgets like
+        // PageHeader/Label/Icon that have no appRoot of their own) in sync with
+        // the app's real theme, so chrome (headers, dialogs, dividers) never
+        // drifts from the page content when the user switches theme.
+        Binding { target: Theme; property: "dark"; value: cloudMusic.isDarkTheme }
+        Binding { target: Theme; property: "pageColor"; value: cloudMusic.pageColor }
+        Binding { target: Theme; property: "cardColor"; value: cloudMusic.cardColor }
+        Binding { target: Theme; property: "borderColor"; value: cloudMusic.borderColor }
+        Binding { target: Theme; property: "sectionColor"; value: cloudMusic.sectionColor }
+        Binding { target: Theme; property: "textColor"; value: cloudMusic.textColor }
+        Binding { target: Theme; property: "textMutedColor"; value: cloudMusic.secondaryTextColor }
+        Binding { target: Theme; property: "inverseTextColor"; value: cloudMusic.inverseTextColor }
+        Binding { target: Theme; property: "accentColor"; value: cloudMusic.primaryColor }
+
         Component.onCompleted: {
             appWindow.applyThemeMode()
             appWindow.settings.download_quality = appWindow.normalizeQuality(appWindow.settings.download_quality)

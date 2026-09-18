@@ -23,7 +23,7 @@ Item {
                 default: return 12
             }
         }
-        color: "#eeeeee"
+        color: Theme.sectionColor
         clip: true
     }
 }

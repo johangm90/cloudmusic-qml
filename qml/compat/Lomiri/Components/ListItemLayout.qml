@@ -14,6 +14,7 @@ Item {
         Text {
             id: titleText
             width: parent.width
+            color: Theme.textColor
             elide: Text.ElideRight
         }
         Text {
@@ -22,7 +23,7 @@ Item {
             visible: text.length > 0
             elide: Text.ElideRight
             font.pixelSize: 12
-            color: "#666666"
+            color: Theme.textMutedColor
         }
         Text {
             id: summaryText
@@ -30,7 +31,7 @@ Item {
             visible: text.length > 0
             elide: Text.ElideRight
             font.pixelSize: 12
-            color: "#666666"
+            color: Theme.textMutedColor
         }
     }
 }

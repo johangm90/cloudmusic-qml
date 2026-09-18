@@ -4,7 +4,7 @@ import "IconLookup.js" as IconLookup
 Item {
     id: root
     property string name: ""
-    property color color: "#303030"
+    property color color: Theme.textColor
     width: 24
     height: 24
 
