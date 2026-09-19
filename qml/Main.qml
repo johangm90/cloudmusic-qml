@@ -21,8 +21,10 @@ ApplicationWindow {
     id: appWindow
     objectName: "appWindow"
 
-    width: units.gu(45)
-    height: units.gu(75)
+    // Start as a real desktop workspace while retaining compact layouts when
+    // the window is resized for phone-sized screens.
+    width: units.gu(90)
+    height: units.gu(72)
     visible: true
     // Fallback for any gap a page/overlay doesn't paint itself (e.g. a
     // transparent toolbar, an unfilled layout cell): match the theme instead
@@ -196,6 +198,7 @@ ApplicationWindow {
         Binding { target: Theme; property: "textMutedColor"; value: cloudMusic.secondaryTextColor }
         Binding { target: Theme; property: "inverseTextColor"; value: cloudMusic.inverseTextColor }
         Binding { target: Theme; property: "accentColor"; value: cloudMusic.primaryColor }
+        Binding { target: Theme; property: "selectedColor"; value: cloudMusic.selectedColor }
         Binding { target: Theme; property: "surfaceHoverColor"; value: cloudMusic.surfaceHoverColor }
 
         Component.onCompleted: {

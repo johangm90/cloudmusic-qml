@@ -58,6 +58,6 @@ Item {
         anchors.leftMargin: root.divider.anchors.leftMargin
         anchors.rightMargin: root.divider.anchors.rightMargin
         height: root.divider.height
-        color: Theme.borderColor
+        color: Qt.rgba(Theme.borderColor.r, Theme.borderColor.g, Theme.borderColor.b, 0.45)
     }
 }

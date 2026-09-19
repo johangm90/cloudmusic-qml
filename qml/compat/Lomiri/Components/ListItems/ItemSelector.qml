@@ -72,7 +72,7 @@ Column {
             property int rowIndex: -1
             property QtObject logic: null
             height: 36
-            color: root.selectedIndex === rowIndex ? Qt.rgba(Theme.accentColor.r, Theme.accentColor.g, Theme.accentColor.b, Theme.dark ? 0.22 : 0.16) : "transparent"
+            color: root.selectedIndex === rowIndex ? Theme.selectedColor : (mouseArea.containsMouse ? Theme.surfaceHoverColor : "transparent")
             Text {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -86,11 +86,12 @@ Column {
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.selectedIndex === rowIndex ? "✓" : ""
-                color: Theme.accentColor
+                color: Theme.textColor
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
             MouseArea {
+                id: mouseArea
                 anchors.fill: parent
                 onClicked: {
                     root.selectedIndex = rowIndex

@@ -10,7 +10,7 @@ Rectangle {
     property var model: []
     property color backgroundColor: appRoot ? appRoot.cardColor : "#ffffff"
     property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
-    property color activeColor: appRoot ? appRoot.primaryColor : "#e53446"
+    property color activeColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color inactiveColor: appRoot ? appRoot.secondaryTextColor : "#666666"
     property string labelTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.caption : "x-small"
     property real iconSize: units.gu(2.6)
@@ -39,11 +39,11 @@ Rectangle {
                     anchors.centerIn: parent
                     spacing: units.gu(0.2)
 
-                    Icon {
+                    VectorIcon {
                         anchors.horizontalCenter: parent.horizontalCenter
                         width: bottomNav.iconSize
                         height: bottomNav.iconSize
-                        name: modelData.iconName || modelData.name
+                        iconName: modelData.iconName === "find" ? "search" : (modelData.iconName === "slideshow" ? "library" : (modelData.iconName === "contact-group" ? "circle-help" : (modelData.iconName === "stock_music" ? "list-music" : (modelData.iconName === "settings" ? "settings" : "circle-help"))))
                         color: isActive ? bottomNav.activeColor : bottomNav.inactiveColor
                     }
 

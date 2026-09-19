@@ -85,7 +85,7 @@ Page {
                 Button {
                     width: (parent.width - parent.spacing) / 2
                     text: i18n.tr("Create")
-                    color: accentColor
+                             color: secondaryTextColor
                     onClicked: {
                         Db.insertPlaylist(txt_playlist.text)
                         refreshLibrary()
@@ -125,7 +125,7 @@ Page {
                 Button {
                     width: (parent.width - parent.spacing) / 2
                     text: i18n.tr("Save")
-                    color: accentColor
+                             color: secondaryTextColor
                     onClicked: {
                         Db.updatePlaylist(playlist_lista.currentId, txt_name.text)
                         refreshLibrary()
@@ -193,9 +193,7 @@ Page {
                     width: parent.width
                     height: cardHeight
                     radius: radiusMedium
-                    color: cardColor
-                    border.color: favoritesCardArea.containsMouse ? accentColor : borderColor
-                    border.width: 1
+                    color: favoritesCardArea.containsMouse ? (appRoot ? appRoot.surfaceHoverColor : "#f0efed") : cardColor
                     Row {
                         anchors.fill: parent
                         anchors.margins: spacingMedium + (spacingSmall / 2)
@@ -239,9 +237,7 @@ Page {
                     width: parent.width
                     height: cardHeight
                     radius: radiusMedium
-                    color: cardColor
-                    border.color: recentCardArea.containsMouse ? accentColor : borderColor
-                    border.width: 1
+                    color: recentCardArea.containsMouse ? (appRoot ? appRoot.surfaceHoverColor : "#f0efed") : cardColor
                     Row {
                         anchors.fill: parent
                         anchors.margins: spacingMedium + (spacingSmall / 2)
@@ -285,8 +281,6 @@ Page {
                     width: parent.width
                     radius: radiusMedium
                     color: cardColor
-                    border.color: borderColor
-                    border.width: 1
                     height: Math.max(units.gu(12), playlistsHeaderHeight + modelo_playlists.count * playlistRowHeight)
                     clip: true
                     Item {

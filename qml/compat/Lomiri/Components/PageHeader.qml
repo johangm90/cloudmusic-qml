@@ -3,22 +3,14 @@ import QtQuick.Layouts 1.3
 
 Rectangle {
     id: root
-    height: 56
-    color: Theme.cardColor
+    height: 64
+    color: Theme.pageColor
 
     property string title: ""
     property Item contents: null
     property ActionBar leadingActionBar: ActionBar {}
     property ActionBar trailingActionBar: ActionBar {}
     property alias extension: extensionLoader.sourceComponent
-
-    Rectangle {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: 1
-        color: Theme.borderColor
-    }
 
     // `contents` (e.g. a search TextField) replaces only the title slot, not the whole
     // row -- it must never cover the leading/trailing action buttons (back button, tab
@@ -33,9 +25,9 @@ Rectangle {
     RowLayout {
         id: titleRow
         anchors.fill: parent
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
-        spacing: 4
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        spacing: 8
 
         // Real Lomiri's numberOfSlots controls how many actions show inline before the
         // rest collapse into an overflow menu; this app always uses numberOfSlots: 0
@@ -57,7 +49,7 @@ Rectangle {
                 text: root.title
                 color: Theme.textColor
                 elide: Text.ElideRight
-                font.pixelSize: 20
+                font.pixelSize: 22
                 font.weight: Font.DemiBold
                 verticalAlignment: Text.AlignVCenter
             }

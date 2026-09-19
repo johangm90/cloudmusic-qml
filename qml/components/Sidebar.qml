@@ -10,15 +10,15 @@ Rectangle {
     property var model: []
     property color backgroundColor: appRoot ? appRoot.cardColor : "#ffffff"
     property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
-    property color activeColor: appRoot ? appRoot.primaryColor : "#e53446"
+    property color activeColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color activeSurfaceColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.16)
     property color hoverColor: appRoot ? appRoot.surfaceHoverColor : Qt.rgba(0, 0, 0, 0.035)
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color inactiveColor: appRoot ? appRoot.secondaryTextColor : "#666666"
-    property real itemHeight: units.gu(5.5)
+    property real itemHeight: units.gu(5.8)
     property real iconSize: units.gu(2.4)
     property real itemRadius: appRoot ? appRoot.radiusMedium : units.gu(1.2)
-    property real sidePadding: units.gu(1.5)
+    property real sidePadding: units.gu(1.6)
     property string labelTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
     property string brandTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
 
@@ -30,20 +30,49 @@ Rectangle {
         color: sidebar.borderColor
     }
 
-    Label {
+    Row {
         id: brand
         anchors { top: parent.top; left: parent.left; right: parent.right }
         anchors.margins: sidebar.sidePadding
-        height: units.gu(5)
-        text: "CloudMusic"
-        fontSize: sidebar.brandTextSize
-        font.weight: Font.DemiBold
-        color: sidebar.textColor
-        verticalAlignment: Label.AlignVCenter
+        height: units.gu(6)
+        spacing: units.gu(1)
+
+        Rectangle {
+            width: units.gu(4)
+            height: width
+            radius: units.gu(1.2)
+            anchors.verticalCenter: parent.verticalCenter
+            color: sidebar.activeColor
+
+            VectorIcon {
+                anchors.fill: parent
+                anchors.margins: units.gu(0.8)
+                iconName: "volume-2"
+                color: "white"
+            }
+        }
+
+        Column {
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: units.gu(0.1)
+
+            Label {
+                text: "CloudMusic"
+                fontSize: sidebar.brandTextSize
+                font.weight: Font.DemiBold
+                color: sidebar.textColor
+            }
+
+            Label {
+                text: i18n.tr("Your music space")
+                fontSize: "small"
+                color: sidebar.inactiveColor
+            }
+        }
     }
 
     Column {
-        anchors { top: brand.bottom; left: parent.left; right: parent.right; topMargin: units.gu(1) }
+        anchors { top: brand.bottom; left: parent.left; right: parent.right; topMargin: units.gu(1.5) }
         spacing: units.gu(0.2)
 
         Repeater {
@@ -69,11 +98,11 @@ Rectangle {
                         anchors.leftMargin: units.gu(1.4)
                         spacing: units.gu(1.4)
 
-                        Icon {
+                        VectorIcon {
                             anchors.verticalCenter: parent.verticalCenter
                             width: sidebar.iconSize
                             height: sidebar.iconSize
-                            name: modelData.iconName || modelData.name
+                            iconName: modelData.iconName === "find" ? "search" : (modelData.iconName === "slideshow" ? "library" : (modelData.iconName === "contact-group" ? "circle-help" : (modelData.iconName === "stock_music" ? "list-music" : (modelData.iconName === "settings" ? "settings" : "circle-help"))))
                             color: isActive ? sidebar.activeColor : sidebar.inactiveColor
                         }
 

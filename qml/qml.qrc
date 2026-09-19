@@ -2,7 +2,16 @@
     <qresource prefix="/">
         <file>Main.qml</file>
         <file>components</file>
+        <file>components/VectorIcon.qml</file>
         <file>graphics</file>
+        <file>graphics/icons/search.svg</file>
+        <file>graphics/icons/heart.svg</file>
+        <file>graphics/icons/history.svg</file>
+        <file>graphics/icons/library.svg</file>
+        <file>graphics/icons/list-music.svg</file>
+        <file>graphics/icons/settings.svg</file>
+        <file>graphics/icons/circle-help.svg</file>
+        <file>graphics/icons/volume-2.svg</file>
         <file>logic</file>
         <file>ui</file>
     </qresource>

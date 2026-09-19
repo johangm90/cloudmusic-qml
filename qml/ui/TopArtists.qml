@@ -150,15 +150,14 @@ Page {
 
                 Rectangle {
                     id: item
-                    color: tileColor
+                    color: cardArea.containsMouse ? (appRoot ? appRoot.surfaceHoverColor : "#f0efed") : tileColor
 
                     anchors {
                         fill: parent
                         margins: spacingSmall / 2
                     }
 
-                    border.color: cardArea.containsMouse ? (appRoot ? appRoot.primaryColor : "#e53446") : tileBorderColor
-                    border.width: 1
+                    border.width: 0
                     radius: radiusMedium
 
                     layer.enabled: true

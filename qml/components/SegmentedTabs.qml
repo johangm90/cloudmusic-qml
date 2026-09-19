@@ -9,6 +9,8 @@ Rectangle {
     property color activeColor: appRoot ? appRoot.primaryColor : "#e53446"
     property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color activeTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
+    property color selectedColor: appRoot ? appRoot.selectedColor : Qt.rgba(0, 0, 0, 0.06)
+    property color hoverColor: appRoot ? appRoot.surfaceHoverColor : Qt.rgba(0, 0, 0, 0.035)
     property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
     property color backgroundColor: appRoot ? appRoot.cardColor : "#ffffff"
     property real cornerRadius: appRoot ? appRoot.radiusMedium : units.gu(1)
@@ -19,8 +21,7 @@ Rectangle {
     signal selected(int index)
 
     color: backgroundColor
-    border.color: borderColor
-    border.width: 1
+    border.width: 0
     radius: segmentedTabs.cornerRadius
     clip: true
 
@@ -35,19 +36,18 @@ Rectangle {
                 width: (parent.width - ((segmentedTabs.labels.length - 1) * segmentedTabs.innerMargin)) / Math.max(1, segmentedTabs.labels.length)
                 height: parent.height
                 radius: segmentedTabs.innerRadius
-                color: index === segmentedTabs.currentIndex ? segmentedTabs.activeColor : "transparent"
-                border.color: index === segmentedTabs.currentIndex ? segmentedTabs.activeColor : segmentedTabs.borderColor
-                border.width: 1
+                color: index === segmentedTabs.currentIndex ? segmentedTabs.selectedColor : (tabMouse.containsMouse ? segmentedTabs.hoverColor : "transparent")
 
                 Label {
                     anchors.centerIn: parent
                     text: segmentedTabs.labels[index]
-                    color: index === segmentedTabs.currentIndex ? segmentedTabs.activeTextColor : segmentedTabs.textColor
+                    color: index === segmentedTabs.currentIndex ? segmentedTabs.textColor : segmentedTabs.textColor
                     fontSize: segmentedTabs.bodySmallTextSize
                     font.weight: Font.DemiBold
                 }
 
                 MouseArea {
+                    id: tabMouse
                     anchors.fill: parent
                     onClicked: segmentedTabs.selected(index)
                 }

@@ -4,38 +4,38 @@ function build(isDarkTheme, primaryColor) {
     return {
         color: {
             accent: accent,
-            page: dark ? "#1f1f1f" : "#f5f5f5",
-            card: dark ? "#232323" : "#ffffff",
-            border: dark ? "#3a3a3a" : "#d8d8d8",
-            section: dark ? "#1a1a1a" : "#ececec",
-            text: dark ? "#f2f2f2" : "#1f1f1f",
-            textMuted: dark ? "#b8b8b8" : "#666666",
+            page: dark ? "#151516" : "#f7f6f5",
+            card: dark ? "#1d1d1f" : "#ffffff",
+            border: dark ? "#303034" : "#e5e2df",
+            section: dark ? "#111112" : "#efedeb",
+            text: dark ? "#f7f5f3" : "#211f1e",
+            textMuted: dark ? "#aaa6a4" : "#706b68",
             textInverse: "#ffffff",
-            selected: Qt.rgba(0.9, 0.2, 0.28, dark ? 0.22 : 0.16),
-            tile: dark ? "#252525" : "#ffffff",
-            tileBorder: dark ? "#3a3a3a" : "#dcdcdc",
+            selected: dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.06),
+            tile: dark ? "#202022" : "#ffffff",
+            tileBorder: dark ? "#2d2d31" : "#e5e2df",
             overlay: "#55000000",
             toastBg: "#000000",
             toastText: "#ffffff",
             // Elevation/interaction surfaces: one step lighter/darker than `card`
             // so a raised or hovered surface reads as a subtle layer, not a new hue.
-            surfaceElevated: dark ? "#2a2a2a" : "#ffffff",
-            surfaceHover: dark ? Qt.rgba(1, 1, 1, 0.06) : Qt.rgba(0, 0, 0, 0.035),
+            surfaceElevated: dark ? "#28282b" : "#ffffff",
+            surfaceHover: dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.045),
             success: dark ? "#4caf6b" : "#2e8b46",
             warning: dark ? "#e0a940" : "#b3791f",
             error: dark ? "#e5605e" : "#c53a37"
         },
         radius: {
-            sm: 0.8,
-            md: 1.2,
-            lg: 2.0
+            sm: 0.6,
+            md: 1.0,
+            lg: 1.6
         },
         spacing: {
             // Legacy semantic steps, kept as-is: existing screens read these directly.
             sm: 0.8,
             md: 1.2,
             lg: 1.8,
-            page: 1.2,
+            page: 2.0,
             // 4/8/12/16/24/32/48px scale expressed in grid units (1gu == 8px), for
             // new/refactored components. Prefer this over ad-hoc `spacingX + units.gu(y)` math.
             scale: {
@@ -67,7 +67,7 @@ function build(isDarkTheme, primaryColor) {
             cardTargetWidth: 25
         },
         typography: {
-            display: "x-large",
+            display: "xx-large",
             heading: "x-large",
             title: "large",
             body: "medium",

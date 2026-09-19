@@ -10,7 +10,7 @@ Rectangle {
     property var model: []
     property color backgroundColor: appRoot ? appRoot.cardColor : "#ffffff"
     property color borderColor: appRoot ? appRoot.borderColor : "#d8d8d8"
-    property color activeColor: appRoot ? appRoot.primaryColor : "#e53446"
+    property color activeColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color activeSurfaceColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.16)
     property color hoverColor: appRoot ? appRoot.surfaceHoverColor : Qt.rgba(0, 0, 0, 0.035)
     property color inactiveColor: appRoot ? appRoot.secondaryTextColor : "#666666"
@@ -47,11 +47,11 @@ Rectangle {
                     color: isActive ? rail.activeSurfaceColor : (itemMouse.containsMouse ? rail.hoverColor : "transparent")
                 }
 
-                Icon {
+                VectorIcon {
                     anchors.centerIn: itemSurface
                     width: rail.iconSize
                     height: rail.iconSize
-                    name: modelData.iconName || modelData.name
+                    iconName: modelData.iconName === "find" ? "search" : (modelData.iconName === "slideshow" ? "library" : (modelData.iconName === "contact-group" ? "circle-help" : (modelData.iconName === "stock_music" ? "list-music" : (modelData.iconName === "settings" ? "settings" : "circle-help"))))
                     color: isActive ? rail.activeColor : rail.inactiveColor
                 }
 

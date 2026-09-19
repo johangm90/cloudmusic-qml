@@ -13,9 +13,16 @@ QQC2.TextField {
     placeholderTextColor: Theme.textMutedColor
     background: Rectangle {
         implicitHeight: 36
-        radius: 6
+        radius: 10
         color: Theme.sectionColor
-        border.color: Theme.borderColor
-        border.width: 1
+        border.width: 0
+
+        Rectangle {
+            anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+            height: 2
+            radius: 1
+            color: Theme.accentColor
+            visible: control.activeFocus
+        }
     }
 }
