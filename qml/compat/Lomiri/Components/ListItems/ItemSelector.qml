@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import Lomiri.Components 1.3
 
 Column {
     id: root
@@ -58,7 +59,7 @@ Column {
     Text {
         text: root.text
         font.pixelSize: 13
-        color: "#666666"
+        color: Theme.textMutedColor
     }
     Column {
         id: rows
@@ -71,13 +72,13 @@ Column {
             property int rowIndex: -1
             property QtObject logic: null
             height: 36
-            color: root.selectedIndex === rowIndex ? "#19e53446" : "transparent"
+            color: root.selectedIndex === rowIndex ? Qt.rgba(Theme.accentColor.r, Theme.accentColor.g, Theme.accentColor.b, Theme.dark ? 0.22 : 0.16) : "transparent"
             Text {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.leftMargin: 8
                 text: logic ? logic.text : ""
-                color: "#1f1f1f"
+                color: Theme.textColor
                 font.weight: root.selectedIndex === rowIndex ? Font.DemiBold : Font.Normal
             }
             Text {
@@ -85,7 +86,7 @@ Column {
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.selectedIndex === rowIndex ? "✓" : ""
-                color: "#e53446"
+                color: Theme.accentColor
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }

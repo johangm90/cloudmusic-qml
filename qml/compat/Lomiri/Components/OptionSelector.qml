@@ -64,12 +64,13 @@ Item {
             property int rowIndex: -1
             property QtObject logic: null
             height: 40
-            color: root.selectedIndex === rowIndex ? "#19b6ee22" : "transparent"
+            color: root.selectedIndex === rowIndex ? Qt.rgba(Theme.accentColor.r, Theme.accentColor.g, Theme.accentColor.b, Theme.dark ? 0.22 : 0.16) : "transparent"
             Text {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.leftMargin: 8
                 text: logic ? logic.text : ""
+                color: Theme.textColor
             }
             MouseArea {
                 anchors.fill: parent
