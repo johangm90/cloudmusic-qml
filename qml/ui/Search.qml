@@ -442,7 +442,7 @@ Page {
                     currentIndex: searchPage.currentTab
                     activeColor: accentColor
                     textColor: searchPage.textColor
-                    activeTextColor: appRoot ? appRoot.inverseTextColor : "#ffffff"
+                    activeTextColor: accentColor
                     borderColor: searchPage.borderColor
                     backgroundColor: searchPage.cardColor
                     onSelected: function(index) { searchPage.currentTab = index }

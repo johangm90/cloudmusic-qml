@@ -277,11 +277,12 @@ Item {
         anchors.fill: parent
         clip: true
         contentWidth: width
-        contentHeight: Math.max(height, mainLayout.implicitHeight + spacingMedium + spacingSmall)
+        contentHeight: Math.max(height, mainLayout.height + spacingMedium + spacingSmall)
 
         GridLayout {
             id: mainLayout
             width: artistFlick.width
+            height: Math.max(artistFlick.height, implicitHeight)
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
@@ -421,7 +422,7 @@ Item {
                 }
             }
 
-            Rectangle {
+            SegmentedTabs {
                 id: tabs_layout
                 visible: contentReady
                 Layout.fillWidth: true
@@ -429,61 +430,14 @@ Item {
                 Layout.column: 0
                 Layout.columnSpan: mainLayout.columns === 1 ? 1 : 2
                 Layout.preferredHeight: units.gu(6)
-                radius: radiusMedium
-                color: cardColor
-                border.color: cardBorder
-                border.width: 1
-                clip: true
-
-                Row {
-                    anchors.fill: parent
-                    anchors.margins: tabsInnerMargin
-                    spacing: tabsInnerMargin
-
-                    Rectangle {
-                        width: (parent.width - tabsInnerMargin) / 2
-                        height: parent.height
-                        radius: radiusSmall
-                        color: activeTab === 0 ? accentColor : "transparent"
-                        border.color: activeTab === 0 ? accentColor : cardBorder
-                        border.width: 1
-
-                        Label {
-                            anchors.centerIn: parent
-                            text: i18n.tr("Top Songs")
-                            fontSize: bodySmallTextSize
-                            font.weight: Font.DemiBold
-                            color: activeTab === 0 ? inverseTextColor : primaryTextColor
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: activeTab = 0
-                        }
-                    }
-
-                    Rectangle {
-                        width: (parent.width - tabsInnerMargin) / 2
-                        height: parent.height
-                        radius: radiusSmall
-                        color: activeTab === 1 ? accentColor : "transparent"
-                        border.color: activeTab === 1 ? accentColor : cardBorder
-                        border.width: 1
-
-                        Label {
-                            anchors.centerIn: parent
-                            text: i18n.tr("Albums")
-                            fontSize: bodySmallTextSize
-                            font.weight: Font.DemiBold
-                            color: activeTab === 1 ? inverseTextColor : primaryTextColor
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: activeTab = 1
-                        }
-                    }
-                }
+                labels: [i18n.tr("Top Songs"), i18n.tr("Albums")]
+                currentIndex: artistContainer.activeTab
+                activeColor: accentColor
+                textColor: primaryTextColor
+                activeTextColor: accentColor
+                borderColor: cardBorder
+                backgroundColor: cardColor
+                onSelected: function(index) { artistContainer.activeTab = index }
             }
 
             Rectangle {

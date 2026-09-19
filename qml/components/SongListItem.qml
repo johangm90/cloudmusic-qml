@@ -32,7 +32,9 @@ ListItem {
     property real leadWidth: units.gu(3)
     property real textInset: spacingSmall
     property real durationWidth: units.gu(6)
-    property real expandedColumnWidth: units.gu(16)
+    // Keep secondary columns readable without starving the song title in narrow
+    // queue panels and medium-width layouts.
+    property real expandedColumnWidth: Math.min(units.gu(16), Math.max(units.gu(8), width * 0.22))
     property real menuWidth: units.gu(5)
     property real menuIconSize: units.gu(3)
     property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"

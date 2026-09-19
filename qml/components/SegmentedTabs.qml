@@ -16,34 +16,39 @@ Rectangle {
     property real cornerRadius: appRoot ? appRoot.radiusMedium : units.gu(1)
     property real innerRadius: appRoot ? appRoot.radiusSmall : units.gu(0.8)
     property real innerMargin: appRoot ? (appRoot.spacingSmall * 0.75) : units.gu(0.6)
+    property real indicatorHeight: units.gu(0.35)
     property string bodySmallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
 
     signal selected(int index)
 
     color: backgroundColor
     border.width: 0
-    radius: segmentedTabs.cornerRadius
-    clip: true
+    radius: 0
 
     Row {
         anchors.fill: parent
-        anchors.margins: segmentedTabs.innerMargin
-        spacing: segmentedTabs.innerMargin
+        spacing: 0
 
         Repeater {
             model: segmentedTabs.labels ? segmentedTabs.labels.length : 0
             delegate: Rectangle {
-                width: (parent.width - ((segmentedTabs.labels.length - 1) * segmentedTabs.innerMargin)) / Math.max(1, segmentedTabs.labels.length)
+                width: parent.width / Math.max(1, segmentedTabs.labels.length)
                 height: parent.height
-                radius: segmentedTabs.innerRadius
-                color: index === segmentedTabs.currentIndex ? segmentedTabs.selectedColor : (tabMouse.containsMouse ? segmentedTabs.hoverColor : "transparent")
+                color: tabMouse.containsMouse ? segmentedTabs.hoverColor : "transparent"
 
                 Label {
                     anchors.centerIn: parent
                     text: segmentedTabs.labels[index]
-                    color: index === segmentedTabs.currentIndex ? segmentedTabs.textColor : segmentedTabs.textColor
+                    color: index === segmentedTabs.currentIndex ? segmentedTabs.activeTextColor : segmentedTabs.textColor
                     fontSize: segmentedTabs.bodySmallTextSize
                     font.weight: Font.DemiBold
+                }
+
+                Rectangle {
+                    anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+                    height: segmentedTabs.indicatorHeight
+                    color: segmentedTabs.activeColor
+                    visible: index === segmentedTabs.currentIndex
                 }
 
                 MouseArea {

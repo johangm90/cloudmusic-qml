@@ -165,7 +165,7 @@ Page {
                 currentIndex: aboutPage.currentTab
                 activeColor: aboutPage.accentColor
                 textColor: aboutPage.textColor
-                activeTextColor: aboutPage.inverseTextColor
+                activeTextColor: aboutPage.accentColor
                 borderColor: aboutPage.borderColor
                 backgroundColor: aboutPage.cardColor
                 onSelected: function(index) { aboutPage.currentTab = index }
