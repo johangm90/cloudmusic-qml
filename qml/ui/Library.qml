@@ -54,7 +54,7 @@ Page {
                 id: addPlaylistAction
                 text: i18n.tr("Add Playlist")
                 iconName: "add"
-                onTriggered: PopupUtils.open(newplaylist)
+                onTriggered: PopupUtils.open(newplaylist, libraryPage)
             }
         ]
     }
@@ -72,19 +72,25 @@ Page {
                 inputMethodHints: Qt.ImhNoPredictiveText
                 onVisibleChanged: if (visible) forceActiveFocus()
             }
-            Button {
-                text: i18n.tr("Create")
-                color: LomiriColors.green
-                onClicked: {
-                    Db.insertPlaylist(txt_playlist.text)
-                    refreshLibrary()
-                    PopupUtils.close(create_playlist)
+            Row {
+                width: parent.width
+                spacing: 12
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Cancel")
+                    color: LomiriColors.darkGrey
+                    onClicked: PopupUtils.close(create_playlist)
                 }
-            }
-            Button {
-                text: i18n.tr("Cancel")
-                color: LomiriColors.darkGrey
-                onClicked: PopupUtils.close(create_playlist)
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Create")
+                    color: LomiriColors.green
+                    onClicked: {
+                        Db.insertPlaylist(txt_playlist.text)
+                        refreshLibrary()
+                        PopupUtils.close(create_playlist)
+                    }
+                }
             }
         }
     }
@@ -106,19 +112,25 @@ Page {
                     }
                 }
             }
-            Button {
-                text: i18n.tr("Save")
-                color: LomiriColors.green
-                onClicked: {
-                    Db.updatePlaylist(playlist_lista.currentId, txt_name.text)
-                    refreshLibrary()
-                    PopupUtils.close(edit_playlist)
+            Row {
+                width: parent.width
+                spacing: 12
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Cancel")
+                    color: LomiriColors.darkGrey
+                    onClicked: PopupUtils.close(edit_playlist)
                 }
-            }
-            Button {
-                text: i18n.tr("Cancel")
-                color: LomiriColors.darkGrey
-                onClicked: PopupUtils.close(edit_playlist)
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Save")
+                    color: LomiriColors.green
+                    onClicked: {
+                        Db.updatePlaylist(playlist_lista.currentId, txt_name.text)
+                        refreshLibrary()
+                        PopupUtils.close(edit_playlist)
+                    }
+                }
             }
         }
     }
@@ -129,19 +141,25 @@ Page {
             id: delete_playlist
             title: i18n.tr("Delete playlist")
             text: i18n.tr("This cannot be undone")
-            Button {
-                text: i18n.tr("Delete")
-                color: LomiriColors.red
-                onClicked: {
-                    Db.removePlaylist(playlist_lista.currentId)
-                    refreshLibrary()
-                    PopupUtils.close(delete_playlist)
+            Row {
+                width: parent.width
+                spacing: 12
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Cancel")
+                    color: LomiriColors.darkGrey
+                    onClicked: PopupUtils.close(delete_playlist)
                 }
-            }
-            Button {
-                text: i18n.tr("Cancel")
-                color: LomiriColors.darkGrey
-                onClicked: PopupUtils.close(delete_playlist)
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Delete")
+                    color: LomiriColors.red
+                    onClicked: {
+                        Db.removePlaylist(playlist_lista.currentId)
+                        refreshLibrary()
+                        PopupUtils.close(delete_playlist)
+                    }
+                }
             }
         }
     }
@@ -270,9 +288,11 @@ Page {
                     border.width: 1
                     height: Math.max(units.gu(12), playlistsHeaderHeight + modelo_playlists.count * playlistRowHeight)
                     clip: true
-                    Column {
+                    Item {
                         anchors.fill: parent
                         Rectangle {
+                            id: playlistsHeader
+                            anchors.top: parent.top
                             width: parent.width
                             height: playlistsHeaderHeight
                             color: "transparent"
@@ -289,6 +309,7 @@ Page {
                             id: playlist_lista
                             property int currentId: 0
                             property string current: ""
+                            anchors.top: playlistsHeader.bottom
                             width: parent.width
                             height: parent.height - playlistsHeaderHeight
                             model: modelo_playlists
@@ -306,7 +327,7 @@ Page {
                                             iconName: "delete"
                                             onTriggered: {
                                                 playlist_lista.currentId = playlistId
-                                                PopupUtils.open(delplaylist)
+                                                PopupUtils.open(delplaylist, libraryPage)
                                             }
                                         }
                                     ]
@@ -318,7 +339,7 @@ Page {
                                             onTriggered: {
                                                 playlist_lista.current = playlistName
                                                 playlist_lista.currentId = playlistId
-                                                PopupUtils.open(editplaylist)
+                                                PopupUtils.open(editplaylist, libraryPage)
                                             }
                                         }
                                     ]

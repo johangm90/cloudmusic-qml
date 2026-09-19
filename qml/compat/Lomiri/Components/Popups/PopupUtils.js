@@ -1,10 +1,14 @@
 .pragma library
 
+.import "../../../../logic/AppContext.js" as AppContext
+
 function open(component, caller, properties) {
     // A popup without an Item/window parent cannot resolve its QQuickWindow on
-    // desktop, so QQC2 silently closes it with "cannot find any window".  Most
-    // call sites omit caller; use the active application window as the fallback.
-    var parentItem = caller || (Qt.application ? Qt.application.activeWindow : null) || null
+    // desktop, so QQC2 silently closes it with "cannot find any window". Most
+    // call sites omit caller; fall back to the app's root Item (set once in
+    // Main.qml), not Qt.application.activeWindow -- that's a Window, not an
+    // Item, so QQC2.Popup can never resolve a window from it either.
+    var parentItem = caller || AppContext.get("appRoot") || null
     var obj = component.createObject(parentItem, properties || {})
     if (!obj) {
         console.error("PopupUtils.open: failed to create popup from component")

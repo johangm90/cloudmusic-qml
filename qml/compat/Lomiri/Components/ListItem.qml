@@ -14,6 +14,9 @@ Item {
 
     property alias contentItem: contentArea
     default property alias listItemData: contentArea.data
+    // Real Lomiri's ListItem exposes `pressed` for press-state styling; app code
+    // (e.g. Library's playlist rows) binds to it directly.
+    readonly property alias pressed: hoverArea.pressed
 
     Rectangle {
         anchors.fill: parent
