@@ -81,14 +81,15 @@ Column {
                 color: Theme.textColor
                 font.weight: root.selectedIndex === rowIndex ? Font.DemiBold : Font.Normal
             }
-            Text {
+            Rectangle {
+                width: 6
+                height: 6
+                radius: 3
                 anchors.right: parent.right
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                text: root.selectedIndex === rowIndex ? "✓" : ""
                 color: Theme.textColor
-                font.pixelSize: 18
-                font.weight: Font.DemiBold
+                visible: root.selectedIndex === rowIndex
             }
             MouseArea {
                 id: mouseArea

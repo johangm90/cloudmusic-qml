@@ -37,7 +37,7 @@ Item {
         text: IconLookup.glyphFor(root.iconName)
         color: Theme.textColor
         font.pixelSize: 18
-        visible: vectorSource.status !== Image.Ready
+        visible: vectorSource.status !== Image.Ready && text !== ""
     }
     MouseArea {
         id: mouseArea

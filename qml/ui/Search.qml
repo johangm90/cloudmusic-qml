@@ -694,7 +694,7 @@ Page {
                                 boundsBehavior: Flickable.StopAtBounds
                                 delegate: AlbumListItem {
                                     title: name
-                                    subtitle: artist ? (date ? (artist + " • " + date) : artist) : (date ? date : "")
+                                     subtitle: artist ? (date ? (artist + " / " + date) : artist) : (date ? date : "")
                                     metaText: i18n.tr("%1 song", "%1 songs", size).arg(size)
                                     coverSource: image
                                     albumId: id

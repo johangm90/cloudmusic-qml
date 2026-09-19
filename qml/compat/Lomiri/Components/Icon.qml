@@ -34,6 +34,6 @@ Item {
         font.pixelSize: Math.min(root.width, root.height) * 0.72
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        visible: vectorSource.status !== Image.Ready
+        visible: vectorSource.status !== Image.Ready && text !== ""
     }
 }

@@ -1,39 +1,5 @@
 .pragma library
 
-var glyphs = {
-    "add": "+",
-    "add-to-playlist": "+♪",
-    "audio-volume-high": "🔊",
-    "audio-volume-mute": "🔇",
-    "back": "←",
-    "close": "✕",
-    "contact": "☺",
-    "contact-group": "☺☺",
-    "contextual-menu": "⋮",
-    "delete": "✖",
-    "edit": "✎",
-    "find": "🔍",
-    "go-next": "›",
-    "help": "?",
-    "history": "↺",
-    "like": "♥",
-    "unlike": "♡",
-    "media-playback-pause": "❚❚",
-    "media-playback-start": "▶",
-    "media-playlist": "≡",
-    "media-playlist-repeat": "↻",
-    "media-playlist-repeat-one": "↻1",
-    "media-playlist-shuffle": "⥁",
-    "media-skip-backward": "⏮",
-    "media-skip-forward": "⏭",
-    "navigation-menu": "☰",
-    "note": "♪",
-    "save": "⤓",
-    "settings": "⚙",
-    "slideshow": "▣",
-    "stock_music": "♫"
-}
-
 var assets = {
     "add": "plus",
     "add-to-playlist": "list-plus",
@@ -73,8 +39,5 @@ function assetFor(name) {
 }
 
 function glyphFor(name) {
-    if (glyphs.hasOwnProperty(name)) {
-        return glyphs[name]
-    }
-    return "●"
+    return ""
 }
