@@ -16,4 +16,7 @@ QtObject {
     property color textMutedColor: "#666666"
     property color inverseTextColor: "#ffffff"
     property color accentColor: "#e53446"
+    // Additive pointer-only affordance: rows/cards tint with this on hover.
+    // Never required to see or reach anything -- touch behavior is unaffected.
+    property color surfaceHoverColor: Qt.rgba(0, 0, 0, 0.035)
 }

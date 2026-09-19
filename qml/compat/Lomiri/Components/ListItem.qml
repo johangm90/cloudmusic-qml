@@ -20,12 +20,23 @@ Item {
         color: root.color
     }
 
+    // Pointer-only hover wash, shown only when the row isn't already tinted
+    // (selected/pressed) by the caller's own `color` binding. Purely additive --
+    // touch interaction never depends on it.
+    Rectangle {
+        anchors.fill: parent
+        color: Theme.surfaceHoverColor
+        visible: hoverArea.containsMouse && root.color.a === 0
+    }
+
     // This whole-row click catcher must sit BEHIND `contentArea` (declared next), not
     // after it: a MouseArea declared later paints on top and wins hit-testing first, which
     // would silently swallow clicks meant for interactive children placed in contentArea
     // (e.g. SongListItem's per-row "..." context-menu button) before they ever see them.
     MouseArea {
+        id: hoverArea
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
         onPressAndHold: root.pressAndHold()

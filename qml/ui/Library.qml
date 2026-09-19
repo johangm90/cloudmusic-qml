@@ -175,7 +175,7 @@ Page {
                     height: cardHeight
                     radius: radiusMedium
                     color: cardColor
-                    border.color: borderColor
+                    border.color: favoritesCardArea.containsMouse ? accentColor : borderColor
                     border.width: 1
                     Row {
                         anchors.fill: parent
@@ -204,7 +204,9 @@ Page {
                         }
                     }
                     MouseArea {
+                        id: favoritesCardArea
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: {
                             favorites_query.text = ""
                             favorites_page.clearQuery()
@@ -219,7 +221,7 @@ Page {
                     height: cardHeight
                     radius: radiusMedium
                     color: cardColor
-                    border.color: borderColor
+                    border.color: recentCardArea.containsMouse ? accentColor : borderColor
                     border.width: 1
                     Row {
                         anchors.fill: parent
@@ -248,7 +250,9 @@ Page {
                         }
                     }
                     MouseArea {
+                        id: recentCardArea
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: {
                             recent_query.text = ""
                             recent_page.clearQuery()

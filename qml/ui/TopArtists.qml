@@ -143,8 +143,10 @@ Page {
             cacheBuffer: 50
 
             delegate: MouseArea {
+                id: cardArea
                 width: artistsView.cellWidth
                 height: artistsView.cellHeight
+                hoverEnabled: true
 
                 Rectangle {
                     id: item
@@ -155,7 +157,7 @@ Page {
                         margins: spacingSmall / 2
                     }
 
-                    border.color: tileBorderColor
+                    border.color: cardArea.containsMouse ? (appRoot ? appRoot.primaryColor : "#e53446") : tileBorderColor
                     border.width: 1
                     radius: radiusMedium
 

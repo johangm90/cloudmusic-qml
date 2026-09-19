@@ -767,8 +767,10 @@ Page {
                             cacheBuffer: 1000
 
                             delegate: MouseArea {
+                                id: artistCardArea
                                 width: artistsView.cellWidth
                                 height: artistsView.cellHeight
+                                hoverEnabled: true
                                 Column {
                                     id: delegateitem
                                     anchors.fill: parent
@@ -783,7 +785,7 @@ Page {
                                     }
                                     Rectangle {
                                         color: cardColor
-                                        border.color: borderColor
+                                        border.color: artistCardArea.containsMouse ? accentColor : borderColor
                                         border.width: 1
                                         width: artistsView.cellWidth
                                         height: artistCaptionHeight

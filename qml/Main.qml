@@ -192,6 +192,7 @@ ApplicationWindow {
         Binding { target: Theme; property: "textMutedColor"; value: cloudMusic.secondaryTextColor }
         Binding { target: Theme; property: "inverseTextColor"; value: cloudMusic.inverseTextColor }
         Binding { target: Theme; property: "accentColor"; value: cloudMusic.primaryColor }
+        Binding { target: Theme; property: "surfaceHoverColor"; value: cloudMusic.surfaceHoverColor }
 
         Component.onCompleted: {
             appWindow.applyThemeMode()

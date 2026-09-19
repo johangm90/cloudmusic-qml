@@ -675,8 +675,10 @@ Item {
                         cacheBuffer: 1000
 
                         delegate: MouseArea {
+                            id: albumCardArea
                             width: albumsView.cellWidth
                             height: albumsView.cellHeight
+                            hoverEnabled: true
 
                             Column {
                                 anchors.fill: parent
@@ -688,7 +690,7 @@ Item {
                                     height: parent.height - units.gu(5.2)
                                     radius: radiusSmall
                                     color: sectionColor
-                                    border.color: Qt.rgba(1, 1, 1, 0.1)
+                                    border.color: albumCardArea.containsMouse ? accentColor : Qt.rgba(1, 1, 1, 0.1)
                                     border.width: 1
                                     clip: true
 
