@@ -88,9 +88,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: sideInset
             anchors.verticalCenter: parent.verticalCenter
-            color: "transparent"
-            border.color: accentColor
-            border.width: 1
+            color: accentColor
             width: controlSize
             height: controlSize
             radius: controlRadius
@@ -99,7 +97,7 @@ Rectangle {
                 width: controlIconSize
                 height: controlIconSize
                 name: media_player.playbackState === 1 ? "media-playback-pause" : "media-playback-start"
-                color: accentColor
+                color: cloudMusic.inverseTextColor
                 anchors.centerIn: parent
             }
 
@@ -129,11 +127,7 @@ Rectangle {
         height: progressHeight
         visible: !expandedMode
 
-        UListItem.ThinDivider {
-            id: divider
-        }
-
-        Rectangle {
+         Rectangle {
            id: progreso
            width: parent.width
            height: parent.height
@@ -141,7 +135,7 @@ Rectangle {
 
            Rectangle {
                id: progresoHint
-               color: accentColor
+            color: accentColor
                height: parent.height
                width: media_player.duration > 0 ? (media_player.position / media_player.duration) * progreso.width : 0
 
@@ -165,13 +159,6 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: sideInset
         visible: expandedMode
-
-        Rectangle {
-            anchors { top: parent.top; left: parent.left; right: parent.right }
-            anchors.topMargin: -sideInset
-            height: 1
-            color: playerToolbar.borderColor
-        }
 
         Item {
             id: metaBlock
@@ -243,7 +230,7 @@ Rectangle {
                         width: units.gu(2.4)
                         height: width
                         name: "media-skip-backward"
-                        color: accentColor
+                        color: secondaryTextColor
                         opacity: media_player.queue > 1 ? 1 : 0.4
                     }
 
@@ -254,16 +241,14 @@ Rectangle {
                     width: units.gu(4)
                     height: width
                     radius: width / 2
-                    color: "transparent"
-                    border.color: accentColor
-                    border.width: 1
+                    color: accentColor
 
                     Icon {
                         anchors.centerIn: parent
                         width: units.gu(2.2)
                         height: width
                         name: media_player.playbackState === 1 ? "media-playback-pause" : "media-playback-start"
-                        color: accentColor
+                        color: cloudMusic.inverseTextColor
                     }
 
                     MouseArea { anchors.fill: parent; onClicked: media_player.toggle() }

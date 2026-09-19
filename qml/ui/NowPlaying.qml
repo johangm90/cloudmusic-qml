@@ -292,15 +292,14 @@ Item {
         id: layouts
         anchors.fill: parent
         columns: layouts.width < queueBreakpoint ? 1 : 2
-        columnSpacing: 1
-        rowSpacing: 1
+        columnSpacing: units.gu(2)
+        rowSpacing: units.gu(2)
 
                     Rectangle {
                         id: queue_layout
                         color: cardColor
                         radius: radiusMedium
-                        border.color: borderColor
-                        border.width: 1
+                        border.width: 0
                         clip: true
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -319,7 +318,7 @@ Item {
                                 width: queueAccentWidth
                                 height: queueAccentHeight
                                 radius: width / 2
-                                color: accentColor
+                                color: secondaryTextColor
                                 anchors.left: parent.left
                                 anchors.leftMargin: queueAccentLeft
                                 anchors.verticalCenter: parent.verticalCenter
@@ -414,8 +413,7 @@ Item {
                         height: side
                         anchors.centerIn: parent
                         radius: radiusMedium
-                        border.color: Qt.rgba(1, 1, 1, 0.12)
-                        border.width: 1
+                        border.width: 0
                         color: sectionColor
                         z: 3
 
@@ -527,8 +525,7 @@ Item {
                     Rectangle {
                         id: tags
                         color: Qt.rgba(cardColor.r, cardColor.g, cardColor.b, 0.86)
-                        border.color: borderColor
-                        border.width: 1
+                        border.width: 0
                         radius: radiusMedium
                         width: parent.width
                         anchors.bottom: nav_wrapper.top
@@ -581,8 +578,7 @@ Item {
                     Rectangle {
                         id: nav_wrapper
                         color: Qt.rgba(cardColor.r, cardColor.g, cardColor.b, 0.9)
-                        border.color: borderColor
-                        border.width: 1
+                        border.width: 0
                         radius: radiusMedium
                         width: parent.width
                         anchors.bottom: control_wrapper.top
@@ -667,8 +663,7 @@ Item {
                     Rectangle {
                         id: control_wrapper
                         color: Qt.rgba(cardColor.r, cardColor.g, cardColor.b, 0.92)
-                        border.color: borderColor
-                        border.width: 1
+                        border.width: 0
                         radius: radiusMedium
                         width: parent.width
                         anchors.bottom: parent.bottom
@@ -721,7 +716,7 @@ Item {
                                 width: iconSize
                                 height: iconSize
                                 name: "media-skip-backward"
-                                color: accentColor
+                                color: secondaryTextColor
                                 anchors.centerIn: parent
                                 opacity: media_player.queue > 1 ? 1 : .4
                             }
@@ -736,9 +731,7 @@ Item {
 
                         Rectangle {
                             id: player_control
-                            color: "transparent";
-                            border.color: accentColor
-                            border.width: 1
+                            color: accentColor
                             width: primaryButtonSize
                             height: primaryButtonSize
                             radius: primaryButtonSize / 2
@@ -748,7 +741,7 @@ Item {
                                 width: primaryIconSize
                                 height: primaryIconSize
                                 name: "media-playback-start"
-                                color: accentColor
+                                color: inverseTextColor
                                 anchors.centerIn: parent
                             }
 
@@ -773,7 +766,7 @@ Item {
                                 width: iconSize
                                 height: iconSize
                                 name: "media-skip-forward"
-                                color: accentColor
+                                color: secondaryTextColor
                                 anchors.centerIn: parent
                                 opacity: media_player.queue > 1 ? 1 : .4
                             }
