@@ -3,9 +3,9 @@ import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import QtQuick.Layouts 1.2
 import "../logic/Format.js" as Format
-import "../logic/RequestBus.js" as RequestBus
 import "../logic/Database.js" as Db
 import "../components"
+import "../logic/viewmodels"
 
 Page {
     id: searchPage
@@ -35,8 +35,14 @@ Page {
     property int currentTab: 0
     property int tabAnimDuration: LomiriAnimation.FastDuration
     property bool searchLoading: false
-    property int pendingSearchRequests: 0
-    property string requestContext: "search_" + String(Date.now())
+    property alias searchSongsModel: searchViewModel.songsModel
+    property alias searchAlbumsModel: searchViewModel.albumsModel
+    property alias searchArtistsModel: searchViewModel.artistsModel
+
+    SearchViewModel {
+        id: searchViewModel
+        appRoot: searchPage.appRoot
+    }
 
     header: PageHeader {
         title: i18n.tr("Search")
@@ -132,10 +138,6 @@ Page {
               search_query.cursorVisible = true
     }
 
-    Component.onDestruction: {
-        RequestBus.cancelContext(requestContext)
-    }
-
     Timer {
         id: searchDebounce
         interval: 350
@@ -147,112 +149,20 @@ Page {
         }
     }
 
-    function formatDate(date) {
-        var y = date.getFullYear()
-        var m = date.getMonth() + 1
-        var d = date.getDate()
-        return y + "-" + (m < 10 ? ("0" + m) : m) + "-" + (d < 10 ? ("0" + d) : d)
-    }
-
-    function finishSearchRequest() {
-        pendingSearchRequests -= 1
-        if (pendingSearchRequests <= 0) {
-            is_visible(true)
-            searchLoading = false
-        }
-    }
-
     function runSearchRust(query, limit) {
-        if (!appRoot || !appRoot.cloudApi) {
-            return false
+        var started = searchViewModel.search(query, limit)
+        if (started) {
+            searchLoading = true
+            is_visible(false)
         }
-        RequestBus.cancelContext(requestContext)
-        is_visible(false)
-        searchSongsModel.clear()
-        searchAlbumsModel.clear()
-        searchArtistsModel.clear()
-        search_songs_loader.running = true
-        search_albums_loader.running = true
-        search_artists_loader.running = true
-        searchLoading = true
-        pendingSearchRequests = 3
-        var songsRequestId = RequestBus.createId("search_songs")
-        var albumsRequestId = RequestBus.createId("search_albums")
-        var artistsRequestId = RequestBus.createId("search_artists")
-
-        RequestBus.registerRequest(songsRequestId, {
-            context: requestContext,
-            onSuccess: function(data) {
-                if (data && data.songs) {
-                    for (var i = 0; i < data.songs.length; i++) {
-                        searchSongsModel.append(data.songs[i])
-                    }
-                }
-            },
-            onError: function(err) {
-                console.log(err)
-            },
-            onFinally: function() {
-                search_songs_loader.running = false
-                finishSearchRequest()
-            }
-        })
-        RequestBus.registerRequest(albumsRequestId, {
-            context: requestContext,
-            onSuccess: function(data) {
-                if (data && data.albums) {
-                    for (var j = 0; j < data.albums.length; j++) {
-                        var album = data.albums[j]
-                        var publishTime = album.publish_time ? album.publish_time : 0
-                        searchAlbumsModel.append({
-                            id: album.id,
-                            name: album.name,
-                            artist: album.artist,
-                            date: formatDate(new Date(publishTime)),
-                            size: album.size,
-                            image: album.image ? album.image : "../graphics/default.png",
-                            big_image: album.big_image ? album.big_image : "../graphics/default.png",
-                            source: "netease"
-                        })
-                    }
-                }
-            },
-            onError: function(err2) {
-                console.log(err2)
-            },
-            onFinally: function() {
-                search_albums_loader.running = false
-                finishSearchRequest()
-            }
-        })
-        RequestBus.registerRequest(artistsRequestId, {
-            context: requestContext,
-            onSuccess: function(data) {
-                if (data && data.artists) {
-                    for (var k = 0; k < data.artists.length; k++) {
-                        searchArtistsModel.append(data.artists[k])
-                    }
-                }
-            },
-            onError: function(err3) {
-                console.log(err3)
-            },
-            onFinally: function() {
-                search_artists_loader.running = false
-                finishSearchRequest()
-            }
-        })
-
-        appRoot.cloudApi.searchAsync(String(query), "1", Number(limit), songsRequestId)
-        appRoot.cloudApi.searchAsync(String(query), "10", Number(limit), albumsRequestId)
-        appRoot.cloudApi.searchAsync(String(query), "100", Number(limit), artistsRequestId)
-        return true
+        return started
     }
 
     Connections {
-        target: appRoot && appRoot.cloudApi ? appRoot.cloudApi : null
-        onRequestFinished: function(requestId, ok, payloadJson, error) {
-            RequestBus.dispatch(requestId, ok, payloadJson, error)
+        target: searchViewModel
+        onSearchFinished: {
+            searchLoading = false
+            is_visible(true)
         }
     }
 
@@ -274,37 +184,6 @@ Page {
 
     SongDialog {
         id: song_dialog
-    }
-
-    ActivityIndicator {
-        id: search_songs_loader
-        anchors.centerIn: parent
-        z: 1
-        visible: false
-    }
-    ActivityIndicator {
-        id: search_albums_loader
-        anchors.centerIn: parent
-        z: 1
-        visible: false
-    }
-    ActivityIndicator {
-        id: search_artists_loader
-        anchors.centerIn: parent
-        z: 1
-        visible: false
-    }
-
-    ListModel {
-        id: searchSongsModel
-    }
-
-    ListModel {
-        id: searchAlbumsModel
-    }
-
-    ListModel {
-        id: searchArtistsModel
     }
 
     Component {
@@ -468,21 +347,6 @@ Page {
                         LomiriNumberAnimation { duration: tabAnimDuration }
                     }
 
-                    Rectangle {
-                        id: songs_title
-                        color: sectionColor
-                        width: parent.width
-                        height: sectionTitleHeight
-                        Label {
-                            anchors.left: parent.left
-                            anchors.leftMargin: sectionTitleInset
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: i18n.tr("Songs")
-                            fontSize: titleTextSize
-                            color: textColor
-                        }
-                    }
-
                     ActionSelectionPopover {
                         id: context_menu
                         z: 999
@@ -595,7 +459,7 @@ Page {
                     Rectangle {
                         id: songs_view
                         color: "transparent"
-                        anchors.top: songs_title.bottom
+                        anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         width: parent.width
                         Item {
@@ -662,24 +526,9 @@ Page {
                     }
 
                     Rectangle {
-                        id: albums_title
-                        color: sectionColor
-                        width: parent.width
-                        height: sectionTitleHeight
-                        Label {
-                            anchors.left: parent.left
-                            anchors.leftMargin: sectionTitleInset
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: i18n.tr("Albums")
-                            fontSize: titleTextSize
-                            color: textColor
-                        }
-                    }
-
-                    Rectangle {
                         id: albums_view
                         color: "transparent"
-                        anchors.top: albums_title.bottom
+                        anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         width: parent.width
                         Item {
@@ -726,24 +575,9 @@ Page {
                     }
 
                     Rectangle {
-                        id: artists_title
-                        color: sectionColor
-                        width: parent.width
-                        height: sectionTitleHeight
-                        Label {
-                            anchors.left: parent.left
-                            anchors.leftMargin: sectionTitleInset
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: i18n.tr("Artists")
-                            fontSize: titleTextSize
-                            color: textColor
-                        }
-                    }
-
-                    Rectangle {
                         id: artists_view
                         color: "transparent"
-                        anchors.top: artists_title.bottom
+                        anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         width: parent.width
                         clip: true
