@@ -3,6 +3,8 @@
 var glyphs = {
     "add": "+",
     "add-to-playlist": "+♪",
+    "audio-volume-high": "🔊",
+    "audio-volume-mute": "🔇",
     "back": "←",
     "close": "✕",
     "contact": "☺",

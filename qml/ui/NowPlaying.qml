@@ -352,38 +352,15 @@ Item {
                             anchors.bottom: parent.bottom
                             width: parent.width
 
-                            Item {
-                                width: parent.width
-                                height: parent.height
-
-                                ListView {
-                                    id: queue_list
-                                    clip: true
-                                    model: queue_model
-                                    width: parent.width
-                                    height: parent.height
-                                    boundsBehavior: Flickable.StopAtBounds
-
-                                    delegate: SongListItem {
-                                        title: name
-                                        subtitle: artist
-                                        durationText: Format.durationToString(duration)
-                                        coverSource: image
-                                        albumId: album_id
-                                        selected: current_index == index
-                                        showMenu: false
-                                        rowTextColor: textColor
-                                        rowSecondaryTextColor: secondaryTextColor
-                                        selectedColor: playingContainer.selectedColor
-                                        onClicked: {
-                                            media_player.setIndex(index)
-                                        }
-                                    }
-                                }
-                                Scrollbar {
-                                    flickableItem: queue_list
-                                    align: Qt.AlignTrailing
-                                }
+                            QueueList {
+                                appRoot: playingContainer.appRoot
+                                anchors.fill: parent
+                                model: queue_model
+                                currentIndex: current_index
+                                rowTextColor: textColor
+                                rowSecondaryTextColor: secondaryTextColor
+                                selectedColor: playingContainer.selectedColor
+                                onSongActivated: media_player.setIndex(index)
                             }
                         }
                     }

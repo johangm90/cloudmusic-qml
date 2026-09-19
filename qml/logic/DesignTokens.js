@@ -50,6 +50,10 @@ function build(isDarkTheme, primaryColor) {
         },
         layout: {
             playerToolbarHeight: 7.25,
+            // Expanded widths get a persistent player bar with inline transport,
+            // seek and volume controls instead of the compact tap-to-expand strip,
+            // so it needs more vertical room.
+            playerToolbarHeightExpanded: 9.5,
             // Page-width thresholds (gu) for switching between compact/medium/expanded
             // layout structure (columns, rails vs. sidebar, persistent panels, etc).
             // Centralized here so screens stop declaring their own copies.

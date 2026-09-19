@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import Lomiri.Components 1.3
-import "../logic/Format.js" as Format
 import "../components"
 
 Page {
@@ -27,42 +26,16 @@ Page {
             bottomMargin: media_player.playbackState != 0 ? layoutPlayerInset : 0
         }
 
-        Item {
-            width: parent.width
-            height: parent.height
-
-            ListView {
-                id: queue_list
-                clip: true
-                model: playing_page.model_queue
-                width: parent.width
-                height: parent.height
-                boundsBehavior: Flickable.StopAtBounds
-
-                Component.onCompleted: {
-                    queue_list.positionViewAtIndex(playing_page.current_index, ListView.Beginning)
-                }
-
-                delegate: SongListItem {
-                    title: name
-                    subtitle: artist
-                    durationText: Format.durationToString(duration)
-                    coverSource: image
-                    albumId: album_id
-                    selected: playing_page.current_index == index
-                    showMenu: false
-                    rowTextColor: textColor
-                    rowSecondaryTextColor: secondaryTextColor
-                    selectedColor: queuePage.selectedColor
-                    onClicked: {
-                        media_player.setIndex(index)
-                    }
-                }
-            }
-            Scrollbar {
-                flickableItem: queue_list
-                align: Qt.AlignTrailing
-            }
+        QueueList {
+            id: queueListView
+            anchors.fill: parent
+            model: playing_page.model_queue
+            currentIndex: playing_page.current_index
+            rowTextColor: textColor
+            rowSecondaryTextColor: secondaryTextColor
+            selectedColor: queuePage.selectedColor
+            onSongActivated: media_player.setIndex(index)
+            Component.onCompleted: scrollToCurrent()
         }
     }
 }

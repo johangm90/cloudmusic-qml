@@ -156,7 +156,7 @@ ApplicationWindow {
         property real spacingMedium: units.gu(designTokens.spacing.md)
         property real spacingLarge: units.gu(designTokens.spacing.lg)
         property real pagePadding: units.gu(designTokens.spacing.page)
-        property real layoutPlayerInset: units.gu(designTokens.layout.playerToolbarHeight)
+        property real layoutPlayerInset: units.gu(isExpanded ? designTokens.layout.playerToolbarHeightExpanded : designTokens.layout.playerToolbarHeight)
 
         // Centralized adaptive-layout thresholds: screens should read these (or
         // `sizeClass`) instead of declaring their own local breakpoint properties.
@@ -178,7 +178,6 @@ ApplicationWindow {
         property real bottomNavHeight: units.gu(7.5)
         property bool showBottomNav: isCompact
         property bool playerActive: media_player.playbackState !== 0
-        property real bottomChromeInset: (playerActive ? layoutPlayerInset : 0) + (showBottomNav ? bottomNavHeight : 0)
 
         // Keep the compat shim's Theme singleton (used by generic widgets like
         // PageHeader/Label/Icon that have no appRoot of their own) in sync with
@@ -563,7 +562,7 @@ ApplicationWindow {
                         onTriggered: {
                             pagestack.push(queuePage)
                         }
-                        visible: cloudMusic.width < units.gu(100) ? true : false
+                        visible: !cloudMusic.isExpanded
                     },
                     Action {
                         id: likeAction
