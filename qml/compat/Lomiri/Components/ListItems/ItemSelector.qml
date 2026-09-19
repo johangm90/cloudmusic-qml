@@ -71,12 +71,23 @@ Column {
             property int rowIndex: -1
             property QtObject logic: null
             height: 36
-            color: root.selectedIndex === rowIndex ? "#19b6ee22" : "transparent"
+            color: root.selectedIndex === rowIndex ? "#19e53446" : "transparent"
             Text {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.leftMargin: 8
                 text: logic ? logic.text : ""
+                color: "#1f1f1f"
+                font.weight: root.selectedIndex === rowIndex ? Font.DemiBold : Font.Normal
+            }
+            Text {
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.selectedIndex === rowIndex ? "✓" : ""
+                color: "#e53446"
+                font.pixelSize: 18
+                font.weight: Font.DemiBold
             }
             MouseArea {
                 anchors.fill: parent

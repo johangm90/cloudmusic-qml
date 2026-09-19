@@ -206,7 +206,7 @@ Page {
                             text: name
                             width: parent.width
                             height: albumTitleHeight
-                            horizontalAlignment: Label.AlignHCenter
+                            horizontalAlignment: Label.AlignLeft
                             verticalAlignment: Label.AlignBottom
                             elide: Label.ElideRight
                             fontSize: bodyTextSize
@@ -218,7 +218,7 @@ Page {
                             text: artist
                             width: parent.width
                             height: albumTitleHeight
-                            horizontalAlignment: Label.AlignHCenter
+                            horizontalAlignment: Label.AlignLeft
                             verticalAlignment: Label.AlignTop
                             elide: Label.ElideRight
                             fontSize: bodySmallTextSize

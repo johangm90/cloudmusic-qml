@@ -10,7 +10,7 @@ Item {
     property real sideInset: spacingMedium + spacingSmall
 
     function open_dialog() {
-        PopupUtils.open(addsong)
+        PopupUtils.open(addsong, appRoot)
     }
 
     function get_playlists() {
@@ -120,14 +120,14 @@ Item {
 
                 onClicked: {
                     PopupUtils.close(addto)
-                    PopupUtils.open(newplaylist)
+                    PopupUtils.open(newplaylist, addto)
                 }
             }
 
             OptionSelector {
                 id: playlistSelector
                 model: modelo_playlists
-                containerHeight: itemHeight * 4
+                containerHeight: units.gu(5) * 4
                 delegate: delegator
             }
 

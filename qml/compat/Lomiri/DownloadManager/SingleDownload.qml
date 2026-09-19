@@ -43,12 +43,12 @@ Item {
         property string requestId: ""
         property Downloader backend: Downloader {
             onProgress: {
-                if (requestId === request_id) {
+                if (internal.requestId === request_id) {
                     root.progress = total > 0 ? received / total : 0
                 }
             }
             onFinished: {
-                if (requestId !== request_id) {
+                if (internal.requestId !== request_id) {
                     return
                 }
                 if (ok) {

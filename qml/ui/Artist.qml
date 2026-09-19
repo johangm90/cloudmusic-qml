@@ -187,8 +187,8 @@ Item {
                 rightMargin: spacingMedium + spacingSmall
             }
             onClicked: {
-                context_menu.close()
                 action.trigger()
+                context_menu.close()
             }
 
             Icon {

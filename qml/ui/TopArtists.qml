@@ -197,7 +197,7 @@ Page {
                         Label {
                             text: name
                             width: parent.width
-                            horizontalAlignment: Label.AlignHCenter
+                            horizontalAlignment: Label.AlignLeft
                             verticalAlignment: Label.AlignBottom
                             elide: Text.ElideRight
                             fontSize: bodyTextSize

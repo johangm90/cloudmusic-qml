@@ -99,8 +99,8 @@ Item {
                 rightMargin: sideInset
             }
             onClicked: {
-                context_menu.close()
                 action.trigger()
+                context_menu.close()
             }
             Icon {
                 id: icon

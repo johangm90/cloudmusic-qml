@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2 as QQC2
+import Lomiri.Components 1.3
 
 Row {
     id: root
@@ -52,11 +53,28 @@ Row {
                 delegate: QQC2.ItemDelegate {
                     width: 220
                     text: modelData.text
-                    contentItem: Text {
-                        text: modelData.text
-                        color: Theme.textColor
-                        verticalAlignment: Text.AlignVCenter
-                        leftPadding: 12
+                    height: 48
+                    background: Rectangle {
+                        color: modelData.enabled ? "transparent" : Qt.rgba(0.9, 0.2, 0.28, 0.16)
+                    }
+                    contentItem: Row {
+                        x: 12
+                        spacing: 12
+                        Icon {
+                            width: 22
+                            height: 22
+                            anchors.verticalCenter: parent.verticalCenter
+                            name: modelData.iconName || ""
+                            color: Theme.accentColor
+                            visible: name !== ""
+                        }
+                        Text {
+                            width: 150
+                            text: modelData.text
+                            color: Theme.textColor
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
                     }
                     onClicked: {
                         overflowMenu.close()

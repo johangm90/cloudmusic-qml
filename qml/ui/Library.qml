@@ -370,6 +370,28 @@ Page {
                                 }
                             }
                         }
+
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: compactSpacing
+                            visible: modelo_playlists.count === 0
+
+                            Icon {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: units.gu(3)
+                                height: width
+                                name: "stock_music"
+                                color: secondaryTextColor
+                                opacity: 0.7
+                            }
+
+                            Label {
+                                text: i18n.tr("No playlists yet")
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: secondaryTextColor
+                                fontSize: smallTextSize
+                            }
+                        }
                     }
                 }
             }

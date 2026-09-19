@@ -1,7 +1,10 @@
 .pragma library
 
 function open(component, caller, properties) {
-    var parentItem = caller || null
+    // A popup without an Item/window parent cannot resolve its QQuickWindow on
+    // desktop, so QQC2 silently closes it with "cannot find any window".  Most
+    // call sites omit caller; use the active application window as the fallback.
+    var parentItem = caller || (Qt.application ? Qt.application.activeWindow : null) || null
     var obj = component.createObject(parentItem, properties || {})
     if (!obj) {
         console.error("PopupUtils.open: failed to create popup from component")
@@ -28,5 +31,12 @@ function close(popup) {
     } else {
         popup.visible = false
     }
-    popup.destroy()
+    // PopupBase instances can be created by a Component with an indestructible
+    // QML root. Hiding is sufficient for those objects; don't let cleanup turn
+    // a successful action into a runtime error.
+    try {
+        popup.destroy()
+    } catch (e) {
+        popup.visible = false
+    }
 }
