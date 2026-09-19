@@ -25,16 +25,8 @@ Page {
     property string activeRequestId: ""
     property bool initialLoadDone: false
 
-    TabsList {
-        id: tabsList
-    }
-
     header: PageHeader {
         title: i18n.tr("New Albums")
-        leadingActionBar {
-            numberOfSlots: 0
-            actions: tabsList.actions
-        }
     }
 
     function getNewAlbums(limit) {

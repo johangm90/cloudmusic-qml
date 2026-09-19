@@ -168,6 +168,18 @@ ApplicationWindow {
         property bool isMedium: sizeClass === "medium"
         property bool isExpanded: sizeClass === "expanded"
 
+        // One adaptive navigation model (see TabsList) rendered three ways depending
+        // on available width: a bottom bar on compact, an icon rail on medium, a full
+        // sidebar on expanded. Content (contentArea below) insets itself around
+        // whichever of these is showing instead of each screen managing its own chrome.
+        property real navRailWidth: units.gu(9)
+        property real sidebarWidth: units.gu(22)
+        property real navInset: isExpanded ? sidebarWidth : (isMedium ? navRailWidth : 0)
+        property real bottomNavHeight: units.gu(7.5)
+        property bool showBottomNav: isCompact
+        property bool playerActive: media_player.playbackState !== 0
+        property real bottomChromeInset: (playerActive ? layoutPlayerInset : 0) + (showBottomNav ? bottomNavHeight : 0)
+
         // Keep the compat shim's Theme singleton (used by generic widgets like
         // PageHeader/Label/Icon that have no appRoot of their own) in sync with
         // the app's real theme, so chrome (headers, dialogs, dividers) never
@@ -206,6 +218,13 @@ ApplicationWindow {
             Queue {
                 appRoot: cloudMusic
             }
+        }
+
+        // Single source of truth for primary navigation destinations. Rendered by
+        // BottomNavigation/NavigationRail/Sidebar below depending on sizeClass --
+        // screens no longer each own a copy wired into their own header.
+        TabsList {
+            id: appNavActions
         }
 
         // Main Actions for page header
@@ -279,6 +298,15 @@ ApplicationWindow {
                 RequestBus.dispatch(requestId, ok, payloadJson, error)
             }
         }
+
+        Item {
+            id: contentArea
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: cloudMusic.navInset
+            anchors.bottomMargin: cloudMusic.showBottomNav ? cloudMusic.bottomNavHeight : 0
 
         PageStack {
             id: pagestack
@@ -559,6 +587,35 @@ ApplicationWindow {
                     bottom: parent.bottom
                 }
             }
+        }
+
+        } // contentArea
+
+        NavigationRail {
+            id: navigationRail
+            appRoot: cloudMusic
+            model: appNavActions.actions
+            visible: cloudMusic.isMedium
+            anchors { top: parent.top; left: parent.left; bottom: parent.bottom }
+            width: cloudMusic.navRailWidth
+        }
+
+        Sidebar {
+            id: sidebar
+            appRoot: cloudMusic
+            model: appNavActions.actions
+            visible: cloudMusic.isExpanded
+            anchors { top: parent.top; left: parent.left; bottom: parent.bottom }
+            width: cloudMusic.sidebarWidth
+        }
+
+        BottomNavigation {
+            id: bottomNav
+            appRoot: cloudMusic
+            model: appNavActions.actions
+            visible: cloudMusic.showBottomNav
+            anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+            height: cloudMusic.bottomNavHeight
         }
 
         Player {

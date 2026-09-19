@@ -9,16 +9,8 @@ Page {
     property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
     property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
 
-    TabsList {
-        id: tabsList
-    }
-
     header: PageHeader {
         title: i18n.tr("Settings")
-        leadingActionBar {
-            numberOfSlots: 0
-            actions: tabsList.actions
-        }
     }
 
     Rectangle {

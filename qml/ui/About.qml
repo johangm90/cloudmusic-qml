@@ -30,19 +30,10 @@ Page {
     property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
     property string versionText: appRoot && appRoot.app_version ? appRoot.app_version : Qt.application.version
 
-    TabsList {
-        id: tabsList
-    }
-
     header: PageHeader {
         id: aboutPageHeader
 
         title: i18n.tr("About")
-
-        leadingActionBar {
-            numberOfSlots: 0
-            actions: tabsList.actions
-        }
     }
 
 

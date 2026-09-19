@@ -47,16 +47,8 @@ Page {
         refreshLibrary()
     }
 
-    TabsList {
-        id: tabsList
-    }
-
     header: PageHeader {
         title: i18n.tr("Library")
-        leadingActionBar {
-            numberOfSlots: 0
-            actions: tabsList.actions
-        }
         trailingActionBar.actions: [
             Action{
                 id: addPlaylistAction

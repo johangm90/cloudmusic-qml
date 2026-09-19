@@ -7,16 +7,8 @@ Page {
     property var appRoot
     property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
 
-    TabsList {
-        id: tabsList
-    }
-
     header: PageHeader {
         title: i18n.tr("Search")
-        leadingActionBar {
-            numberOfSlots: 0
-            actions: tabsList.actions
-        }
         trailingActionBar {
             numberOfSlots: 1
             actions: [

@@ -20,9 +20,10 @@ Rectangle {
     property string bodySmallTextSize: cloudMusic && cloudMusic.designTokens ? cloudMusic.designTokens.typography.bodySmall : "small"
     visible: media_player.queue > 0 && !playingPage.visible && !aboutLoader.visible && !settingsLoader.visible ? true : false
     anchors {
-        bottom: parent.bottom
+        bottom: cloudMusic && cloudMusic.showBottomNav ? bottomNav.top : parent.bottom
         left: parent.left
         right: parent.right
+        leftMargin: cloudMusic ? cloudMusic.navInset : 0
     }
     color: "transparent"
     height: cloudMusic && cloudMusic.layoutPlayerInset ? cloudMusic.layoutPlayerInset : units.gu(7.25)
