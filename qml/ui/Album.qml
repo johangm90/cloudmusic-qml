@@ -31,7 +31,7 @@ Item {
     property real sectionHeaderHeight: units.gu(6)
     property real sectionAccentWidth: units.gu(0.6)
     property real sectionAccentHeight: units.gu(3.2)
-    property real gridBreakpoint: units.gu(90)
+    property real gridBreakpoint: appRoot ? appRoot.breakpointExpanded : units.gu(90)
     property string titleTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
     property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
     property string bodySmallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"

@@ -144,13 +144,29 @@ ApplicationWindow {
         property color selectedColor: designTokens.color.selected
         property color tileColor: designTokens.color.tile
         property color tileBorderColor: designTokens.color.tileBorder
+        property color surfaceElevatedColor: designTokens.color.surfaceElevated
+        property color surfaceHoverColor: designTokens.color.surfaceHover
+        property color successColor: designTokens.color.success
+        property color warningColor: designTokens.color.warning
+        property color errorColor: designTokens.color.error
         property real radiusSmall: units.gu(designTokens.radius.sm)
         property real radiusMedium: units.gu(designTokens.radius.md)
+        property real radiusLarge: units.gu(designTokens.radius.lg)
         property real spacingSmall: units.gu(designTokens.spacing.sm)
         property real spacingMedium: units.gu(designTokens.spacing.md)
         property real spacingLarge: units.gu(designTokens.spacing.lg)
         property real pagePadding: units.gu(designTokens.spacing.page)
         property real layoutPlayerInset: units.gu(designTokens.layout.playerToolbarHeight)
+
+        // Centralized adaptive-layout thresholds: screens should read these (or
+        // `sizeClass`) instead of declaring their own local breakpoint properties.
+        property real breakpointMedium: units.gu(designTokens.layout.breakpoints.medium)
+        property real breakpointExpanded: units.gu(designTokens.layout.breakpoints.expanded)
+        property real cardTargetWidth: units.gu(designTokens.layout.cardTargetWidth)
+        property string sizeClass: DesignTokens.sizeClassForWidth(width, breakpointMedium, breakpointExpanded)
+        property bool isCompact: sizeClass === "compact"
+        property bool isMedium: sizeClass === "medium"
+        property bool isExpanded: sizeClass === "expanded"
 
         // Keep the compat shim's Theme singleton (used by generic widgets like
         // PageHeader/Label/Icon that have no appRoot of their own) in sync with

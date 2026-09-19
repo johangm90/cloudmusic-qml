@@ -16,7 +16,7 @@ Page {
     property real pagePadding: appRoot ? appRoot.pagePadding : units.gu(1.2)
     property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
     property real spacingSmall: appRoot ? appRoot.spacingSmall : units.gu(0.8)
-    property real gridBreakpoint: units.gu(25)
+    property real gridBreakpoint: appRoot ? appRoot.cardTargetWidth : units.gu(25)
     property real albumMetaHeight: units.gu(8)
     property real albumTitleHeight: units.gu(4)
     property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"

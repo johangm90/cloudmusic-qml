@@ -32,7 +32,7 @@ Item {
     property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
     property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
     property string titleTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
-    property real queueBreakpoint: units.gu(100)
+    property real queueBreakpoint: appRoot ? appRoot.breakpointExpanded : units.gu(100)
     property real queueHeaderHeight: units.gu(6)
     property real queueAccentWidth: units.gu(0.6)
     property real queueAccentHeight: units.gu(3.2)

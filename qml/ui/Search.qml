@@ -25,7 +25,7 @@ Page {
     property real sectionTabsHeight: units.gu(6)
     property real sectionTitleHeight: units.gu(5)
     property real sectionTitleInset: spacingSmall + units.gu(0.2)
-    property real gridBreakpoint: units.gu(25)
+    property real gridBreakpoint: appRoot ? appRoot.cardTargetWidth : units.gu(25)
     property real artistCaptionHeight: units.gu(4)
     property string titleTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
     property string bodyTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.body : "medium"
