@@ -12,6 +12,26 @@
         <file>graphics/icons/settings.svg</file>
         <file>graphics/icons/circle-help.svg</file>
         <file>graphics/icons/chevron-right.svg</file>
+        <file>graphics/icons/plus.svg</file>
+        <file>graphics/icons/list-plus.svg</file>
+        <file>graphics/icons/volume-x.svg</file>
+        <file>graphics/icons/arrow-left.svg</file>
+        <file>graphics/icons/x.svg</file>
+        <file>graphics/icons/user.svg</file>
+        <file>graphics/icons/users.svg</file>
+        <file>graphics/icons/more-horizontal.svg</file>
+        <file>graphics/icons/trash-2.svg</file>
+        <file>graphics/icons/pencil.svg</file>
+        <file>graphics/icons/play.svg</file>
+        <file>graphics/icons/pause.svg</file>
+        <file>graphics/icons/repeat.svg</file>
+        <file>graphics/icons/repeat-1.svg</file>
+        <file>graphics/icons/shuffle.svg</file>
+        <file>graphics/icons/skip-back.svg</file>
+        <file>graphics/icons/skip-forward.svg</file>
+        <file>graphics/icons/menu.svg</file>
+        <file>graphics/icons/music-2.svg</file>
+        <file>graphics/icons/download.svg</file>
         <file>graphics/icons/volume-2.svg</file>
         <file>logic</file>
         <file>ui</file>
