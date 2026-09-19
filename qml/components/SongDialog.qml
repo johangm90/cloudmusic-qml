@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.3
 import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import "../logic/Database.js" as Db
@@ -70,23 +71,28 @@ Item {
                     }
                 }
             }
-            Button {
-                text: i18n.tr("Create")
-                color: LomiriColors.green
-                onClicked: {
-                    Db.insertPlaylist(txt_playlist.text)
-                    Db.getLastPlaylist(function(playlistId) {
-                        add_song(playlistId)
-                    })
-                    PopupUtils.close(create_playlist)
+            Row {
+                Layout.fillWidth: true
+                spacing: 12
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Cancel")
+                    color: LomiriColors.darkGrey
+                    onClicked: {
+                        PopupUtils.close(create_playlist)
+                    }
                 }
-            }
-
-            Button {
-                text: i18n.tr("Cancel")
-                color: LomiriColors.darkGrey
-                onClicked: {
-                    PopupUtils.close(create_playlist)
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Create")
+                    color: appRoot ? appRoot.primaryColor : LomiriColors.green
+                    onClicked: {
+                        Db.insertPlaylist(txt_playlist.text)
+                        Db.getLastPlaylist(function(playlistId) {
+                            add_song(playlistId)
+                        })
+                        PopupUtils.close(create_playlist)
+                    }
                 }
             }
         }
@@ -138,21 +144,26 @@ Item {
                 }
             }
 
-            Button {
-                text: i18n.tr("Add")
-                color: LomiriColors.green
-                onClicked: {
-                    var pid = modelo_playlists.get(playlistSelector.selectedIndex).playlistId
-                    add_song(pid)
-                    PopupUtils.close(addto)
+            Row {
+                Layout.fillWidth: true
+                spacing: 12
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Cancel")
+                    color: LomiriColors.darkGrey
+                    onClicked: {
+                        PopupUtils.close(addto)
+                    }
                 }
-            }
-
-            Button {
-                text: i18n.tr("Cancel")
-                color: LomiriColors.darkGrey
-                onClicked: {
-                    PopupUtils.close(addto)
+                Button {
+                    width: (parent.width - parent.spacing) / 2
+                    text: i18n.tr("Add")
+                    color: appRoot ? appRoot.primaryColor : LomiriColors.green
+                    onClicked: {
+                        var pid = modelo_playlists.get(playlistSelector.selectedIndex).playlistId
+                        add_song(pid)
+                        PopupUtils.close(addto)
+                    }
                 }
             }
         }

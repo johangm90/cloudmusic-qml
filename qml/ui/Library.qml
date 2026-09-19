@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.3
 import Lomiri.Components 1.3
 import Lomiri.Components.Popups 1.3
 import "../components"
@@ -73,7 +74,7 @@ Page {
                 onVisibleChanged: if (visible) forceActiveFocus()
             }
             Row {
-                width: parent.width
+                Layout.fillWidth: true
                 spacing: 12
                 Button {
                     width: (parent.width - parent.spacing) / 2
@@ -84,7 +85,7 @@ Page {
                 Button {
                     width: (parent.width - parent.spacing) / 2
                     text: i18n.tr("Create")
-                    color: LomiriColors.green
+                    color: accentColor
                     onClicked: {
                         Db.insertPlaylist(txt_playlist.text)
                         refreshLibrary()
@@ -113,7 +114,7 @@ Page {
                 }
             }
             Row {
-                width: parent.width
+                Layout.fillWidth: true
                 spacing: 12
                 Button {
                     width: (parent.width - parent.spacing) / 2
@@ -124,7 +125,7 @@ Page {
                 Button {
                     width: (parent.width - parent.spacing) / 2
                     text: i18n.tr("Save")
-                    color: LomiriColors.green
+                    color: accentColor
                     onClicked: {
                         Db.updatePlaylist(playlist_lista.currentId, txt_name.text)
                         refreshLibrary()
@@ -142,7 +143,7 @@ Page {
             title: i18n.tr("Delete playlist")
             text: i18n.tr("This cannot be undone")
             Row {
-                width: parent.width
+                Layout.fillWidth: true
                 spacing: 12
                 Button {
                     width: (parent.width - parent.spacing) / 2
@@ -153,7 +154,7 @@ Page {
                 Button {
                     width: (parent.width - parent.spacing) / 2
                     text: i18n.tr("Delete")
-                    color: LomiriColors.red
+                    color: appRoot ? appRoot.errorColor : LomiriColors.red
                     onClicked: {
                         Db.removePlaylist(playlist_lista.currentId)
                         refreshLibrary()
