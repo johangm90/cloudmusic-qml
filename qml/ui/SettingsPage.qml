@@ -7,6 +7,10 @@ Page {
     id: settingsPage
     property var appRoot
     property color pageColor: appRoot ? appRoot.pageColor : "#f5f5f5"
+    property color textColor: appRoot ? appRoot.textColor : "#1f1f1f"
+    property color secondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#666666"
+    property color surfaceColor: appRoot ? appRoot.surfaceElevatedColor : "#ffffff"
+    property real radiusMedium: appRoot ? appRoot.radiusMedium : units.gu(1.2)
     property real spacingMedium: appRoot ? appRoot.spacingMedium : units.gu(1.2)
 
     header: PageHeader {
@@ -21,23 +25,104 @@ Page {
             right: parent.right
             bottom: parent.bottom
         }
-        Column {
+        Flickable {
             anchors.fill: parent
-            anchors.margins: spacingMedium
-            spacing: spacingMedium
+            contentWidth: width
+            contentHeight: settingsContent.implicitHeight + spacingMedium * 2
+            clip: true
 
-            UListItem.ItemSelector {
-                id: qselector
-                text: i18n.tr("Download quality")
-                model: customModel
-                delegate: selectorDelegate
-            }
-            UListItem.ItemSelector {
-                id: qselector2
-                text: i18n.tr("Streaming quality")
-                model: customModel2
-                delegate: selectorDelegate2
-            }
+            Column {
+                id: settingsContent
+                x: spacingMedium
+                y: spacingMedium
+                width: parent.width - spacingMedium * 2
+                spacing: spacingMedium
+
+                Label {
+                    text: i18n.tr("Make CloudMusic yours")
+                    color: textColor
+                    fontSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.heading : "x-large"
+                    font.weight: Font.DemiBold
+                }
+
+                Label {
+                    width: parent.width
+                    text: i18n.tr("Tune playback quality and appearance without leaving your music.")
+                    color: secondaryTextColor
+                    wrapMode: Text.WordWrap
+                }
+
+                Label {
+                    text: i18n.tr("Playback")
+                    color: textColor
+                    fontSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
+                    font.weight: Font.DemiBold
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: qselector.implicitHeight + units.gu(2)
+                    radius: radiusMedium
+                    color: surfaceColor
+
+                    UListItem.ItemSelector {
+                        id: qselector
+                        anchors.fill: parent
+                        anchors.margins: units.gu(1)
+                        text: i18n.tr("Download quality")
+                        model: customModel
+                        delegate: selectorDelegate
+                    }
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: qselector2.implicitHeight + units.gu(2)
+                    radius: radiusMedium
+                    color: surfaceColor
+
+                    UListItem.ItemSelector {
+                        id: qselector2
+                        anchors.fill: parent
+                        anchors.margins: units.gu(1)
+                        text: i18n.tr("Streaming quality")
+                        model: customModel2
+                        delegate: selectorDelegate2
+                    }
+                }
+
+                Label {
+                    text: i18n.tr("Appearance")
+                    color: textColor
+                    fontSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.title : "large"
+                    font.weight: Font.DemiBold
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: themeSelector.implicitHeight + units.gu(2)
+                    radius: radiusMedium
+                    color: surfaceColor
+
+                    UListItem.ItemSelector {
+                        id: themeSelector
+                        anchors.fill: parent
+                        anchors.margins: units.gu(1)
+                        text: i18n.tr("Theme")
+                        model: themeModel
+                        delegate: themeSelectorDelegate
+                        Component.onCompleted: {
+                            if (appRoot && appRoot.settings && appRoot.settings.theme == 'System') {
+                                selectedIndex = 0
+                            } else if (appRoot && appRoot.settings && appRoot.settings.theme == 'Ambiance') {
+                                selectedIndex = 1
+                            } else {
+                                selectedIndex = 2
+                            }
+                        }
+                    }
+                }
+
             Component {
                 id: selectorDelegate
                 OptionSelectorDelegate {
@@ -102,22 +187,6 @@ Page {
                 }
             }
 
-            //Theme cloudMusic.settings
-            UListItem.ItemSelector {
-                id: themeSelector
-                text: i18n.tr("Theme")
-                model: themeModel
-                delegate: themeSelectorDelegate
-                Component.onCompleted: {
-                    if (appRoot && appRoot.settings && appRoot.settings.theme == 'System') {
-                        selectedIndex = 0
-                    } else if (appRoot && appRoot.settings && appRoot.settings.theme == 'Ambiance') {
-                        selectedIndex = 1
-                    } else {
-                        selectedIndex = 2
-                    }
-                }
-            }
             ListModel {
                 id: themeModel
                 ListElement { name: "System" }
@@ -135,6 +204,7 @@ Page {
                         }
                     }
                 }
+            }
             }
         }
     }
