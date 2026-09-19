@@ -140,7 +140,7 @@ Page {
                         color: appRoot ? appRoot.surfaceElevatedColor : "#ffffff"
 
                         VectorIcon {
-                            anchors { left: parent.left; top: parent.top; margins: units.gu(1.2) }
+                            anchors { right: parent.right; top: parent.top; margins: units.gu(1.2) }
                             width: units.gu(2.5)
                             height: width
                             iconName: modelData.icon === "like" ? "heart" : (modelData.icon === "history" ? "history" : "list-music")
