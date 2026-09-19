@@ -8,12 +8,17 @@ ListItem {
     property var appRoot: (typeof cloudMusic !== "undefined" ? cloudMusic : null)
     property string title: ""
     property string subtitle: ""
+    property string albumText: ""
     property string durationText: ""
     property string coverSource: ""
     property var albumId: 0
     property bool selected: false
     property bool showMenu: true
     property string leadingText: ""
+    // Single-line title/artist/album columns on expanded (desktop) width instead
+    // of the stacked title-over-artist compact layout -- same row, same model,
+    // same actions, just laid out for the space available.
+    property bool expanded: appRoot ? appRoot.isExpanded : false
     property color rowTextColor: appRoot ? appRoot.textColor : "#1f1f1f"
     property color rowSecondaryTextColor: appRoot ? appRoot.secondaryTextColor : "#666666"
     property color selectedColor: appRoot ? appRoot.selectedColor : Qt.rgba(0.9, 0.2, 0.28, 0.16)
@@ -27,6 +32,7 @@ ListItem {
     property real leadWidth: units.gu(3)
     property real textInset: spacingSmall
     property real durationWidth: units.gu(6)
+    property real expandedColumnWidth: units.gu(16)
     property real menuWidth: units.gu(5)
     property real menuIconSize: units.gu(3)
     property string smallTextSize: appRoot && appRoot.designTokens ? appRoot.designTokens.typography.bodySmall : "small"
@@ -87,6 +93,7 @@ ListItem {
 
     Label {
         id: titleLabel
+        visible: !row.expanded
         text: title
         elide: Text.ElideRight
         anchors.left: leadingText !== "" ? leadLabel.right : coverFrame.right
@@ -97,6 +104,7 @@ ListItem {
 
     Label {
         id: subtitleLabel
+        visible: !row.expanded
         text: subtitle
         elide: Text.ElideRight
         anchors.left: leadingText !== "" ? leadLabel.right : coverFrame.right
@@ -105,6 +113,45 @@ ListItem {
         anchors.bottom: parent.bottom
         fontSize: smallTextSize
         color: rowSecondaryTextColor
+    }
+
+    Label {
+        id: expandedAlbumLabel
+        visible: row.expanded && albumText !== ""
+        text: albumText
+        elide: Text.ElideRight
+        width: expandedColumnWidth
+        anchors.right: durationLabel.left
+        anchors.rightMargin: textInset
+        anchors.verticalCenter: parent.verticalCenter
+        color: rowSecondaryTextColor
+        fontSize: smallTextSize
+    }
+
+    Label {
+        id: expandedArtistLabel
+        visible: row.expanded
+        text: subtitle
+        elide: Text.ElideRight
+        width: expandedColumnWidth
+        anchors.right: albumText !== "" ? expandedAlbumLabel.left : durationLabel.left
+        anchors.rightMargin: textInset
+        anchors.verticalCenter: parent.verticalCenter
+        color: rowSecondaryTextColor
+        fontSize: smallTextSize
+    }
+
+    Label {
+        id: expandedTitleLabel
+        visible: row.expanded
+        text: title
+        elide: Text.ElideRight
+        anchors.left: leadingText !== "" ? leadLabel.right : coverFrame.right
+        anchors.leftMargin: textInset
+        anchors.right: expandedArtistLabel.left
+        anchors.rightMargin: textInset
+        anchors.verticalCenter: parent.verticalCenter
+        color: rowTextColor
     }
 
     Label {

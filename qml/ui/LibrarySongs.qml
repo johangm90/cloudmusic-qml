@@ -211,6 +211,7 @@ Item {
                 delegate: SongListItem {
                     title: name
                     subtitle: artist
+                    albumText: album ? album : ""
                     durationText: Format.durationToString(duration)
                     coverSource: image ? image : "../graphics/default.png"
                     albumId: album_id
