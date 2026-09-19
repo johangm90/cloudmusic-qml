@@ -297,7 +297,8 @@ Item {
                 Layout.fillHeight: true
                 Layout.row: 0
                 Layout.column: 0
-                Layout.preferredWidth: mainLayout.columns === 1 ? mainLayout.width : mainLayout.width / 3
+                Layout.columnSpan: mainLayout.columns
+                Layout.preferredWidth: mainLayout.width
                 Layout.preferredHeight: mainLayout.columns === 1 ? units.gu(34) : units.gu(28)
                 radius: radiusMedium
                 color: cardColor

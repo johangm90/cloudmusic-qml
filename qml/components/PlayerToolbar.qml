@@ -31,7 +31,7 @@ Rectangle {
         right: parent.right
         leftMargin: cloudMusic ? cloudMusic.navInset : 0
     }
-    color: "transparent"
+    color: cloudMusic ? cloudMusic.cardColor : "#ffffff"
     height: cloudMusic && cloudMusic.layoutPlayerInset ? cloudMusic.layoutPlayerInset : units.gu(7.25)
 
     function cargar(name, artist, image){

@@ -24,6 +24,10 @@ ApplicationWindow {
     width: units.gu(45)
     height: units.gu(75)
     visible: true
+    // Fallback for any gap a page/overlay doesn't paint itself (e.g. a
+    // transparent toolbar, an unfilled layout cell): match the theme instead
+    // of leaking Qt's raw white window background through on dark theme.
+    color: cloudMusic ? cloudMusic.pageColor : "#f5f5f5"
 
     property string app_version: "1.8.0"
 
