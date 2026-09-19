@@ -165,6 +165,8 @@ Page {
                         fill: parent
                         margins: spacingSmall / 2
                     }
+                    scale: cardArea.containsMouse ? 1.02 : 1.0
+                    Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
                     border.width: 0
                     radius: radiusMedium
@@ -204,6 +206,8 @@ Page {
                             elide: Label.ElideRight
                             fontSize: bodyTextSize
                             color: primaryTextColor
+                            leftPadding: spacingSmall
+                            rightPadding: spacingSmall
                         }
 
 
@@ -216,6 +220,8 @@ Page {
                             elide: Label.ElideRight
                             fontSize: bodySmallTextSize
                             color: secondaryTextColor
+                            leftPadding: spacingSmall
+                            rightPadding: spacingSmall
                         }
                     }
                 }

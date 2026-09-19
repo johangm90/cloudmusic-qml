@@ -11,6 +11,7 @@
         <file>graphics/icons/list-music.svg</file>
         <file>graphics/icons/settings.svg</file>
         <file>graphics/icons/circle-help.svg</file>
+        <file>graphics/icons/chevron-right.svg</file>
         <file>graphics/icons/volume-2.svg</file>
         <file>logic</file>
         <file>ui</file>

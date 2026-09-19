@@ -198,11 +198,11 @@ Page {
                         anchors.fill: parent
                         anchors.margins: spacingMedium + (spacingSmall / 2)
                         spacing: spacingMedium + compactSpacing
-                        Icon {
+                         VectorIcon {
                             width: iconSize
                             height: iconSize
-                            name: "like"
-                            color: accentColor
+                             iconName: "heart"
+                             color: textColor
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Column {
@@ -242,11 +242,11 @@ Page {
                         anchors.fill: parent
                         anchors.margins: spacingMedium + (spacingSmall / 2)
                         spacing: spacingMedium + compactSpacing
-                        Icon {
+                         VectorIcon {
                             width: iconSize
                             height: iconSize
-                            name: "history"
-                            color: accentColor
+                             iconName: "history"
+                             color: textColor
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Column {
@@ -340,13 +340,13 @@ Page {
                                     ]
                                 }
 
-                                Icon {
+                                 VectorIcon {
                                     id: playlistChevron
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: playlistChevronSize
                                     height: width
-                                    name: "go-next"
+                                     iconName: "chevron-right"
                                     color: secondaryTextColor
                                 }
 
